@@ -1,0 +1,721 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Web · Dataset — Tencent WorkBuddy Bench</title>
+  <link rel="icon" type="image/png" href="static/img/wb-icon.png?v=6">
+  <link rel="stylesheet" href="wbds-detail.css?v=17">
+  <link rel="stylesheet" href="wbds-chrome.css?v=6">
+  <script>(function(){try{var t=localStorage.getItem('cbTheme');var d=(t==='dark'||(t==null&&window.matchMedia&&window.matchMedia('(prefers-color-scheme: dark)').matches));document.documentElement.setAttribute('data-theme',d?'dark':'light');}catch(e){}})();</script>
+  <script src="https://cdn.jsdelivr.net/npm/echarts@5.5.1/dist/echarts.min.js"></script>
+  <style>
+    .hl-sub{font-size:14.5px;font-weight:600;color:var(--wb-text-heading);margin:26px 0 8px;display:flex;align-items:center;gap:9px}
+    .hl-sub .n{flex-shrink:0;display:inline-grid;place-items:center;width:22px;height:22px;border-radius:var(--wb-radius-pill);background:var(--wb-brand-primary);color:#fff;font-family:var(--wb-font-mono);font-size:11px;font-weight:700}
+    .chart-note{font-size:12px;color:var(--wb-text-tertiary);margin:2px 0 10px}
+    .lb-harness-strip{display:flex;justify-content:center;margin:12px 0 0}
+    .lb-harness-seg{display:inline-flex;align-items:center;gap:2px;padding:3px;border:1px solid var(--wb-border-subtle);border-radius:var(--wb-radius-pill);background:var(--wb-surface-1)}
+    .lb-harness-seg button{height:30px;padding:0 13px;border:0;border-radius:var(--wb-radius-pill);background:transparent;color:var(--wb-text-secondary);font:inherit;font-size:12px;font-weight:650;white-space:nowrap;cursor:pointer;transition:background .16s ease,color .16s ease,box-shadow .16s ease}
+    .lb-harness-seg button:hover{background:var(--wb-surface-2);color:var(--wb-text-heading)}
+    .lb-harness-seg button.is-active{background:var(--wb-brand-primary);color:#fff;box-shadow:0 6px 14px rgba(40,184,148,.2)}
+    @media(max-width:700px){.lb-harness-seg{width:100%;display:grid;grid-template-columns:1fr 1fr}.lb-harness-seg button{padding:0 8px}}
+    .web-highlight-list{margin-top:18px;border:1px solid var(--wb-border-subtle);border-radius:var(--wb-radius-lg);overflow:hidden;background:var(--wb-surface-1);box-shadow:var(--wb-shadow-card)}
+    .web-panel{display:grid;grid-template-columns:minmax(260px,.92fr) minmax(0,1fr);gap:24px;align-items:center;padding:24px}
+    .web-panel+.web-panel{border-top:1px solid var(--wb-border-subtle)}
+    .web-panel:nth-child(even){background:color-mix(in srgb,var(--wb-surface-section) 50%,var(--wb-surface-1))}
+    .web-panel .hl-sub{margin:0 0 10px;font-size:15px}
+    .web-panel-copy{min-width:0}
+    .web-panel-copy p{margin:0;color:var(--wb-text-body)}
+    .web-panel-copy .chart-note{margin:10px 0 0}
+    .web-chart{width:100%;height:320px;min-width:0}
+    .web-panel[id]{scroll-margin-top:calc(var(--topbar-h) + 20px)}
+    @media(max-width:760px){.web-panel{grid-template-columns:1fr;padding:18px}.web-chart{height:300px}}
+    /* left sticky table-of-contents */
+    .detail-wrap{max-width:1120px;display:grid;grid-template-columns:212px minmax(0,1fr);gap:44px;align-items:start}
+    .detail-main{min-width:0}
+    .toc{position:sticky;top:calc(var(--topbar-h) + 22px);align-self:start;max-height:calc(100vh - var(--topbar-h) - 44px);overflow-y:auto;padding-top:56px}
+    .toc-head{font-family:var(--wb-font-mono);font-size:10px;font-weight:600;letter-spacing:.09em;text-transform:uppercase;color:var(--wb-text-tertiary);padding:0 0 10px 11px}
+    .toc-nav{display:flex;flex-direction:column;gap:1px;border-left:1px solid var(--wb-border-subtle)}
+    .toc-nav a{display:block;padding:6px 12px;margin-left:-1px;border-left:2px solid transparent;font-size:12.5px;line-height:1.4;color:var(--wb-text-secondary);transition:color .16s ease,border-color .16s ease,background .16s ease}
+    .toc-nav a:hover{color:var(--wb-text-heading)}
+    .toc-nav a.toc-sub{padding-left:24px;font-size:12px;color:var(--wb-text-tertiary)}
+    .toc-nav a.is-active{color:var(--wb-brand-primary);border-left-color:var(--wb-brand-primary);font-weight:600}
+    .toc-nav a.toc-sub.is-active{color:var(--wb-brand-primary)}
+    .detail-sec[id],.detail-hero[id],.hl-sub[id]{scroll-margin-top:calc(var(--topbar-h) + 20px)}
+    @media(max-width:960px){.detail-wrap{display:block;max-width:var(--content-max)}.toc{display:none}}
+    /* comparison matrix */
+    .cmp{position:relative;overflow-x:auto;margin:18px 0 6px;border:1px solid var(--wb-border-subtle);border-radius:var(--wb-radius-lg);background:var(--wb-surface-1);box-shadow:var(--wb-shadow-card)}
+    .cmp table{border-collapse:separate;border-spacing:0;width:100%;min-width:760px;font-size:11px;line-height:1.32;text-align:center}
+    .cmp th,.cmp td{border:0;border-bottom:1px solid var(--wb-border-subtle);padding:8px 7px}
+    .cmp thead th{background:var(--wb-surface-2);color:var(--wb-text-heading);font-weight:600}
+    .cmp thead th.grp{background:var(--wb-surface-3);font-family:var(--wb-font-mono);font-size:9.5px;letter-spacing:.05em;text-transform:uppercase;color:var(--wb-text-secondary)}
+    .cmp thead tr:first-child th:first-child{border-top-left-radius:var(--wb-radius-lg)}
+    .cmp thead tr:first-child th:last-child{border-top-right-radius:var(--wb-radius-lg)}
+    .cmp tbody tr:last-child td{border-bottom:0}
+    .cmp tbody tr:hover td{background:var(--wb-surface-2)}
+    .cmp tbody td:first-child{text-align:left;font-weight:600;color:var(--wb-text-heading);width:140px;white-space:normal}
+    .cmp tbody td:first-child .scale{display:block;margin-top:3px;font-family:var(--wb-font-mono);font-size:9px;font-weight:500;color:var(--wb-text-tertiary)}
+    .cmp tr.self td{background:rgba(40,184,148,.09)}
+    .cmp tr.self td:first-child{color:var(--wb-brand-primary)}
+    .cmp::after{content:'';position:absolute;top:1px;right:0;bottom:1px;width:44px;pointer-events:none;background:linear-gradient(to right,transparent,var(--wb-bg-page) 55%,var(--wb-bg-page) 100%);opacity:0;transition:opacity .2s ease}
+    .cmp.is-scrollable::after{opacity:1}
+    .cmp .cov{display:inline-block;width:13px;height:13px;border-radius:999px;vertical-align:-2px}
+    .cmp .cov.full{background:var(--wb-brand-primary);box-shadow:0 0 0 2px rgba(40,184,148,.14)}
+    .cmp .cov.partial{border:1.5px solid var(--wb-brand-primary);background:transparent;box-shadow:0 0 0 2px rgba(40,184,148,.10)}
+    .cmp .cov.none{border:1.5px solid var(--wb-border-strong);background:transparent}
+    .cmp-legend{display:flex;flex-wrap:wrap;gap:10px 16px;margin:10px 0 0;font-size:12px;color:var(--wb-text-secondary)}
+    .cmp-legend .legend-item{display:inline-flex;align-items:center;gap:6px}
+    .cmp-legend .cov{display:inline-block;width:12px;height:12px;border-radius:999px}
+    .cmp-legend .cov.full{background:var(--wb-brand-primary)}
+    .cmp-legend .cov.partial{border:1.5px solid var(--wb-brand-primary)}
+    .cmp-legend .cov.none{border:1.5px solid var(--wb-border-strong)}
+    /* interactive demo viewer */
+    .demo-viewer{display:grid;grid-template-columns:minmax(0,7fr) minmax(260px,3fr);align-items:stretch;border:1px solid var(--wb-border-subtle);border-radius:var(--wb-radius-lg);background:var(--wb-surface-1);box-shadow:var(--wb-shadow-card);overflow:hidden;margin:16px 0 4px}
+    .demo-side{display:flex;flex-direction:column;gap:16px;min-width:0;padding:18px;background:var(--wb-surface-section);border-left:1px solid var(--wb-border-subtle)}
+    .demo-nav{display:grid;grid-template-columns:34px minmax(0,1fr) 34px;gap:10px;align-items:center}
+    .demo-copy{min-width:0;text-align:left}
+    .demo-kicker{font-family:var(--wb-font-mono);font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--wb-text-tertiary)}
+    .demo-title{margin-top:8px;font-size:16px;line-height:1.38;font-weight:650;color:var(--wb-text-heading)}
+    .demo-desc{margin:8px 0 0;font-size:12.5px;line-height:1.55;color:var(--wb-text-secondary)}
+    .demo-arrow{display:inline-grid;place-items:center;width:34px;height:34px;border:1px solid var(--wb-border-subtle);border-radius:var(--wb-radius-sm);background:var(--wb-surface-1);color:var(--wb-text-secondary);cursor:pointer;transition:background .16s ease,color .16s ease,border-color .16s ease}
+    .demo-arrow:hover{background:var(--wb-surface-2);color:var(--wb-text-heading);border-color:var(--wb-border-strong)}
+    .demo-arrow svg{width:17px;height:17px}
+    .demo-stage{position:relative;background:#050609;padding:0;overflow:hidden;aspect-ratio:926/570;line-height:0}
+    .demo-stage video{position:absolute;left:0;top:0;display:block;max-width:none;max-height:none;background:#000;cursor:default;width:331.74946%;height:auto;transform:translate(-2.34375%,-10.30641%);transform-origin:0 0}
+    .demo-tabs{display:grid;grid-template-columns:repeat(3,1fr);gap:0;margin-top:auto;padding:3px;border:1px solid var(--wb-border-subtle);border-radius:var(--wb-radius-pill);background:var(--wb-surface-1)}
+    .demo-tab{height:32px;border:0;border-radius:var(--wb-radius-pill);background:transparent;color:var(--wb-text-secondary);font:inherit;font-size:12px;font-weight:650;cursor:pointer;transition:background .16s ease,color .16s ease,box-shadow .16s ease}
+    .demo-tab:hover{background:var(--wb-surface-2);color:var(--wb-text-heading)}
+    .demo-tab.is-active{background:var(--wb-brand-primary);color:#fff;box-shadow:0 6px 14px rgba(40,184,148,.22)}
+    @media(max-width:860px){.demo-viewer{grid-template-columns:1fr}.demo-side{border-left:0;border-top:1px solid var(--wb-border-subtle)}}
+    @media(max-width:640px){.demo-side{padding:14px}.demo-nav{grid-template-columns:32px minmax(0,1fr) 32px}.demo-arrow{width:32px;height:32px}}
+    /* evaluation trace */
+    .eval-trace{display:grid;grid-template-columns:minmax(0,7fr) minmax(280px,3fr);align-items:stretch;margin:16px 0 4px;border:1px solid var(--wb-border-subtle);border-radius:var(--wb-radius-lg);background:var(--wb-surface-1);box-shadow:var(--wb-shadow-card);overflow:hidden;isolation:isolate}
+    .eval-video-stage{position:relative;z-index:0;overflow:hidden;contain:paint;background:#050609;aspect-ratio:1992/1420;line-height:0}
+    .eval-video-stage video{position:absolute;z-index:0;left:0;top:0;display:block;width:154.21687%;height:auto;max-width:none;max-height:none;transform:translate(-1.07422%,-2.34584%);transform-origin:0 0;background:#050609}
+    .eval-panel{position:relative;z-index:1;display:flex;flex-direction:column;gap:12px;min-width:0;padding:18px;background:var(--wb-surface-section);border-left:1px solid var(--wb-border-subtle)}
+    .eval-head{display:flex;justify-content:space-between;gap:14px;align-items:flex-start}
+    .eval-kicker{font-family:var(--wb-font-mono);font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--wb-text-tertiary)}
+    .eval-meter{height:6px;border-radius:999px;background:color-mix(in srgb,var(--wb-border-subtle) 70%,transparent);overflow:hidden}
+    .eval-meter span{display:block;width:0;height:100%;border-radius:inherit;background:linear-gradient(90deg,var(--wb-brand-primary),#32E6B9);transition:width .18s ease}
+    .eval-checks{display:grid;gap:7px;margin:0;padding:0;list-style:none}
+    .eval-check{display:grid;grid-template-columns:22px minmax(0,1fr) auto;gap:10px;align-items:center;min-height:42px;padding:8px 10px;border:1px solid var(--wb-border-subtle);border-radius:var(--wb-radius-sm);background:var(--wb-surface-1);color:var(--wb-text-secondary);transition:background .18s ease,border-color .18s ease,color .18s ease}
+    .eval-check-status{position:relative;display:inline-grid;place-items:center;width:18px;height:18px;border:1.5px solid var(--wb-border-strong);border-radius:999px;background:transparent}
+    .eval-check-label{font-size:12.5px;line-height:1.35;font-weight:600}
+    .eval-check-tag{padding:3px 6px;border-radius:var(--wb-radius-pill);background:var(--wb-surface-section);font-family:var(--wb-font-mono);font-size:9.5px;font-weight:700;text-transform:uppercase;color:var(--wb-text-tertiary)}
+    .eval-check.is-passed{border-color:rgba(40,184,148,.38);background:rgba(40,184,148,.09);color:var(--wb-text-heading)}
+    .eval-check.is-passed .eval-check-status{border-color:var(--wb-brand-primary);background:var(--wb-brand-primary);box-shadow:0 0 0 3px rgba(40,184,148,.12)}
+    .eval-check.is-passed .eval-check-status::after{content:"";width:5px;height:9px;border:solid #fff;border-width:0 2px 2px 0;transform:translateY(-1px) rotate(45deg)}
+    .eval-check.is-passed .eval-check-tag{background:rgba(40,184,148,.13);color:var(--wb-brand-primary)}
+    @media(max-width:860px){.eval-trace{grid-template-columns:1fr}.eval-panel{border-left:0;border-top:1px solid var(--wb-border-subtle)}}
+    @media(max-width:640px){.eval-panel{padding:14px}.eval-head{display:block}.eval-check{grid-template-columns:22px minmax(0,1fr)}.eval-check-tag{grid-column:2;justify-self:start}}
+    .scoring-list{display:grid;gap:8px;margin:4px 0 14px;padding:0;list-style:none}
+    .scoring-list li{padding:10px 12px;border:1px solid var(--wb-border-subtle);border-radius:var(--wb-radius-sm);background:var(--wb-surface-1);font-size:13.5px;line-height:1.65;color:var(--wb-text-body)}
+    .scoring-list b{font-family:var(--wb-font-mono);font-size:12px;color:var(--wb-brand-primary)}
+  </style>
+</head>
+<body class="lang-zh">
+  <nav class="topbar">
+    <div class="bar-inner">
+      <a class="topbar__brand" href="index.html" aria-label="Tencent WorkBuddy Bench home">
+        <img class="theme-logo--light" src="static/img/wb-bench.png?v=2" alt="Tencent WorkBuddy Bench">
+        <img class="theme-logo--dark" src="static/img/wb-bench-light.png?v=2" alt="Tencent WorkBuddy Bench">
+      </a>
+      <div class="topbar__nav">
+        <a href="index.html#leaderboard"><span class="en">Leaderboard</span><span class="zh">排行榜</span></a>
+        <a class="is-current" href="overview.html"><span class="en">Overview</span><span class="zh">概览</span></a>
+        <a href="report/main.pdf"><span class="en">Paper</span><span class="zh">论文</span></a>
+        <a href="https://github.com/Tencent/workbuddy-bench"><span class="en">Code</span><span class="zh">代码</span></a>
+        <a href="https://huggingface.co/datasets/tencent/workbuddy-bench"><span class="en">Dataset</span><span class="zh">数据集</span></a>
+        <a href="https://github.com/Tencent/workbuddy-bench/tree/main/.agents/skills"><span class="en">Skill Bundle</span><span class="zh">技能包</span></a>
+      </div>
+      <div class="topbar__controls">
+        <div class="seg lang-toggle">
+          <button data-lang-btn="zh">中文</button>
+          <button data-lang-btn="en">EN</button>
+        </div>
+        <button class="theme-toggle" id="themeToggle" aria-label="Toggle theme" title="Light / Dark">
+          <svg class="ic-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+          <svg class="ic-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/></svg>
+        </button>
+      </div>
+    </div>
+  </nav>
+
+  <div class="ov-bar">
+    <div class="ov-bar-inner">
+      <a href="overview.html"><span class="en">Overview</span><span class="zh">总览</span></a>
+      <span class="sep"></span>
+      <a href="code.html">Code</a>
+      <a class="is-current" href="web.html">Web</a>
+      <a href="office.html">Office</a>
+      <a href="security.html">Security</a>
+    </div>
+  </div>
+
+  <div class="detail-wrap">
+    <aside class="toc" id="toc" aria-label="On this page">
+      <div class="toc-head"><span class="en">On this page</span><span class="zh">本页目录</span></div>
+      <nav class="toc-nav">
+        <a href="#leaderboard"><span class="en">Leaderboard</span><span class="zh">排行榜</span></a>
+        <a href="#demos"><span class="en">Artifact comparison</span><span class="zh">产物对比</span></a>
+        <a href="#eval-trace"><span class="en">Evaluation process</span><span class="zh">评测过程</span></a>
+        <a href="#highlights"><span class="en">Dataset overview</span><span class="zh">数据集概览</span></a>
+        <a class="toc-sub" href="#task-coverage"><span class="en">Task categories</span><span class="zh">任务分类</span></a>
+        <a class="toc-sub" href="#lifecycle"><span class="en">Dev lifecycle</span><span class="zh">开发生命周期</span></a>
+        <a class="toc-sub" href="#interaction-state"><span class="en">Interaction / state</span><span class="zh">交互与状态</span></a>
+        <a href="#scoring"><span class="en">Scoring</span><span class="zh">评测方式</span></a>
+        <a href="#example"><span class="en">Example task</span><span class="zh">示例任务</span></a>
+        <a href="#comparison"><span class="en">Related work</span><span class="zh">相关工作</span></a>
+      </nav>
+    </aside>
+
+    <div class="detail-main">
+    <header class="detail-hero">
+      <div class="eyebrow">Front-end / GUI</div>
+      <h1>Web <span class="ver"><span class="en">70 tasks</span><span class="zh">70 道任务</span></span></h1>
+      <p class="tagline">
+        <span class="en">Can a model build a runnable, interactive front-end artifact that survives end-to-end verification &mdash; not just generate pretty HTML?</span>
+        <span class="zh">模型能否构建一个可运行、可交互、能通过端到端验证的前端产物，而非只是生成好看的 HTML？</span>
+      </p>
+    </header>
+
+    <!-- LEADERBOARD -->
+    <section class="detail-sec" id="leaderboard">
+      <h2><span class="en">Leaderboard</span><span class="zh">排行榜</span></h2>
+      <p><span class="en">How models rank on this subset. Scores are averaged over three runs on the current 70-task Web set.</span><span class="zh">各模型在该子集上的排名。分数为当前 70 道 Web 任务三轮运行的平均结果。</span></p>
+      <p><span class="en">Across both harnesses, the main separator is front-end engineering closure rather than visible page generation. Document conversion and constrained visual/page tasks are stronger; code testing, analysis reports, data semantics and multi-step state closure expose more failures. The common failure modes are stale runtime state or payloads, weak source-to-output evidence for charts and reports, and tests that do not fully bind to real product behavior.</span><span class="zh">两个运行环境下，主要区分点不是能否生成可见页面，而是前端工程闭环能力。文档转换和约束明确的视觉/页面任务相对更稳；前端代码测试、前端分析报告、数据语义和多步骤状态闭环更容易暴露问题。常见失败包括运行时状态或 payload 不闭合、图表和报告缺少 source-to-output 证据链，以及测试没有充分绑定真实产品行为。</span></p>
+      <p><span class="en">Most failed items come from the broad LLM/VLM layer; rule failures usually point to hard delivery-contract misses, and agent failures correspond to broken workflow or state behavior.</span><span class="zh">失败项主要来自覆盖面最广的 LLM/VLM 层；rule 失败通常对应硬性交付契约缺失，agent 失败则对应流程或状态行为没有真正走通。</span></p>
+      <div id="lb-web"></div>
+      <div class="lb-harness-strip" id="webHarnessSwitch">
+        <div class="lb-harness-seg" role="tablist" aria-label="Harness selector">
+          <button class="is-active" type="button" data-score-key="scores" role="tab" aria-selected="true">CodeBuddy Code</button>
+          <button type="button" data-score-key="scores_cc" role="tab" aria-selected="false">Claude Code</button>
+        </div>
+      </div>
+      <p class="chart-note" role="note" style="margin:12px 2px 0;line-height:1.6">
+        <span class="en">Model settings: reasoning effort defaults to high, and each model runs with its provider-default inference hyperparameters.</span><span class="zh">模型设置：reasoning effort 默认为 high，各模型使用其默认推理超参。</span><br>
+        <span class="en">Harness settings: the context window is unified at 200k with a unified auto-compaction threshold; the WebSearch and AskUserQuestion tools are disabled.</span><span class="zh">harness 设置：上下文窗口统一为 200k，自动压缩阈值统一；禁用 WebSearch 与 AskUserQuestion 工具。</span><br>
+        <span class="en">Evaluation is pinned to specific harness builds &mdash; codebuddy-code:2.109.3 and claude-code:2.1.187; metrics may shift as harness versions evolve.</span><span class="zh">评测固定在特定 harness 构建上：codebuddy-code:2.109.3 与 claude-code:2.1.187；随 harness 版本演进，指标可能变化。</span><br>
+        <span class="en">The HY (Hunyuan) endpoint in this evaluation is served first-party by its provider; the other models are accessed through third-party serving endpoints, whose parameter configuration and request handling may affect metrics.</span><span class="zh">本次评测中 HY（混元）端点由其提供方第一方部署；其余模型通过第三方推理端点接入，第三方的参数配置与请求处理可能影响指标。</span>
+      </p>
+    </section>
+
+    <!-- DEMOS -->
+    <section class="detail-sec" id="demos">
+      <h2><span class="en">Artifact comparison</span><span class="zh">产物对比</span></h2>
+      <p><span class="en">Artifacts generated by different models for the same task. The examples cover an interactive page, a 3D rendered page, an advertising design page, and a Web game. Use the tabs at the bottom to switch between model outputs.</span><span class="zh">同一题目在不同模型生成的产物。演示题目覆盖：可交互页面、3D 渲染页面、广告设计页面、网页游戏。点击底部切换查看不同模型的产物结果。</span></p>
+      <div class="demo-viewer" id="webDemoViewer">
+        <div class="demo-stage" data-demo-stage>
+          <video data-demo-video autoplay muted loop preload="auto" playsinline src="static/img/web-demo-48909524.mp4"></video>
+        </div>
+        <div class="demo-side">
+          <div class="demo-nav">
+            <button class="demo-arrow" type="button" data-demo-prev aria-label="Previous demo" title="Previous demo">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
+            </button>
+            <div class="demo-kicker" data-demo-index>Example 1 / 4</div>
+            <button class="demo-arrow" type="button" data-demo-next aria-label="Next demo" title="Next demo">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg>
+            </button>
+          </div>
+          <div class="demo-copy">
+            <div class="demo-title" data-demo-title>
+              <span class="en">Build a 3D snow-mountain cable-car hut scene with drag rotation and wheel zoom</span><span class="zh">生成一个 3D 的雪山缆车小屋场景，需要支持鼠标拖拽旋转视角和滚轮缩放</span>
+            </div>
+            <div class="demo-desc" data-demo-desc>
+              <span class="en"></span><span class="zh"></span>
+            </div>
+          </div>
+          <div class="demo-tabs" role="tablist" aria-label="Model runs">
+            <button class="demo-tab is-active" type="button" data-model-tab="0" role="tab" aria-selected="true">Model A</button>
+            <button class="demo-tab" type="button" data-model-tab="1" role="tab" aria-selected="false">Model B</button>
+            <button class="demo-tab" type="button" data-model-tab="2" role="tab" aria-selected="false">Model C</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- EVALUATION TRACE -->
+    <section class="detail-sec" id="eval-trace">
+      <h2><span class="en">Evaluation process</span><span class="zh">评测过程</span></h2>
+      <p><span class="en">A representative run shows how the evaluator follows the artifact like a user and turns workflow evidence into rubric item verdicts.</span><span class="zh">下面用一个代表性运行展示评测器如何像用户一样操作产物，并把交互证据转成 rubric item 判定结果。</span></p>
+      <div class="eval-trace" id="webEvalTrace">
+        <div class="eval-video-stage" data-eval-video-stage>
+          <video data-eval-video autoplay muted loop preload="auto" playsinline src="static/img/web-eval-trace-48914519.mp4"></video>
+        </div>
+        <aside class="eval-panel" aria-label="Evaluation checklist">
+          <div class="eval-head">
+            <div>
+              <div class="eval-kicker"><span class="en">Agent-style review</span><span class="zh">Agent 式审查</span></div>
+            </div>
+          </div>
+          <div class="eval-meter" aria-hidden="true"><span data-eval-meter></span></div>
+          <ol class="eval-checks" data-eval-checks>
+            <li class="eval-check" data-eval-step="0"><span class="eval-check-status" aria-hidden="true"></span><span class="eval-check-label"><span class="en">Page opens and renders</span><span class="zh">页面能否打开</span></span><span class="eval-check-tag">rule</span></li>
+            <li class="eval-check" data-eval-step="1"><span class="eval-check-status" aria-hidden="true"></span><span class="eval-check-label"><span class="en">Game can start normally</span><span class="zh">是否可以正常开始游戏</span></span><span class="eval-check-tag">flow</span></li>
+            <li class="eval-check" data-eval-step="2"><span class="eval-check-status" aria-hidden="true"></span><span class="eval-check-label"><span class="en">Directional controls work</span><span class="zh">方向控制是否正常</span></span><span class="eval-check-tag">agent</span></li>
+            <li class="eval-check" data-eval-step="3"><span class="eval-check-status" aria-hidden="true"></span><span class="eval-check-label"><span class="en">Difficulty can be changed</span><span class="zh">是否可以切换难度</span></span><span class="eval-check-tag">flow</span></li>
+            <li class="eval-check" data-eval-step="4"><span class="eval-check-status" aria-hidden="true"></span><span class="eval-check-label"><span class="en">Wall collision ends the game</span><span class="zh">贪吃蛇撞墙是否结束游戏</span></span><span class="eval-check-tag">agent</span></li>
+            <li class="eval-check" data-eval-step="5"><span class="eval-check-status" aria-hidden="true"></span><span class="eval-check-label"><span class="en">Score calculation is correct</span><span class="zh">分数计算是否正确</span></span><span class="eval-check-tag">rule</span></li>
+          </ol>
+        </aside>
+      </div>
+    </section>
+
+    <!-- DATASET OVERVIEW -->
+    <section class="detail-sec" id="highlights">
+      <h2><span class="en">Dataset overview</span><span class="zh">数据集概览</span></h2>
+      <div class="en">
+        <p>Web is a benchmark for front-end artifact <b>generation, modification, analysis and quality assurance</b> &mdash; <b>70 tasks</b> covering page implementation, interactive apps, visual design, data visualization, analysis reports, state repair and test generation.</p>
+        <p>It targets the capability mix behind front-end work: requirement understanding, context handoff, state modelling, data and business semantics, visual quality, test coverage and interactive acceptance. The goal is not just to produce a visible page, but to deliver a runnable artifact that can be checked against user-facing behavior.</p>
+      </div>
+      <div class="zh">
+        <p>Web 是一套面向前端产物<b>生成、修改、分析与质量保障</b>的数据集，共 <b>70 道任务</b>，覆盖页面实现、交互应用、视觉设计、数据可视化、分析报告、状态修复与测试生成。</p>
+        <p>它关注的是前端工作背后的能力组合：需求理解、上下文接手、状态建模、数据与业务语义表达、视觉质量、测试补齐和交互式验收。目标是一个能围绕用户可见行为被检查的可运行产物，而非仅仅生成一个可见页面。</p>
+      </div>
+      <p><span class="en">Existing Web and front-end benchmarks are often strong on one slice: static-page reproduction, interactive generation, browser-agent operation, front-end testing, or real code maintenance. This subset puts those slices in one task space. Its task categories, lifecycle coverage, and interaction complexity are sampled from open-source datasets and real user-request datasets, then designed to approximate the request mix seen in real Web scenarios.</span><span class="zh">已有 Web 与前端基准往往强在某一个截面：静态页面复刻、交互网页生成、浏览器 agent 操作、前端测试或真实代码维护。该子集把这些能力放进同一套任务空间。任务分类、覆盖生命周期和交互难度，都基于开源数据集和真实用户请求数据集采样，模拟真实用户在 Web 场景的真实请求比例进行设计。</span></p>
+
+      <div class="web-highlight-list">
+        <article class="web-panel" id="task-coverage">
+          <div class="web-chart" id="ch-web-cat"></div>
+          <div class="web-panel-copy">
+            <div class="hl-sub"><span class="n">1</span><span class="en">Beyond page generation &mdash; the full Web work-surface</span><span class="zh">覆盖完整 Web 工作面，而非仅页面生成</span></div>
+            <p><span class="en">Many Web benchmarks concentrate on single-page generation or visual reproduction. The task face here is wider: <b>70 tasks split into 7 categories</b>, led by page interaction and data visualization, while keeping front-end project analysis, code testing and document conversion &mdash; work that appears around real Web delivery, not just page authoring. Over half the suite lands on interaction and visualization; <b>19 tasks</b> cover front-end analysis, testing and conversion.</span><span class="zh">很多 Web 基准集中在单页生成或视觉复刻。该子集的任务面更宽：<b>70 道任务切成 7 类主分类</b>，以页面交互和数据可视化为主，同时保留前端项目分析、代码测试与文档转换等真实 Web 交付周边工作，而非仅评测页面编写。超过一半任务落在交互与可视化上；另有 <b>19 道</b> 前端分析、测试与转换类任务。</span></p>
+          </div>
+        </article>
+        <article class="web-panel" id="lifecycle">
+          <div class="web-chart" id="ch-web-mode"></div>
+          <div class="web-panel-copy">
+            <div class="hl-sub"><span class="n">2</span><span class="en">The whole dev lifecycle, not just From Scratch</span><span class="zh">覆盖开发生命周期，而非仅从零开发</span></div>
+            <p><span class="en">The subset is not only &ldquo;can you write a page from zero&rdquo;. From Scratch is the largest mode but only <b>half the suite (35/70)</b>; the other half spreads across bug fix, feature extension, review &amp; analysis, test generation and format conversion &mdash; existing-context work that is common in real front-end development.</span><span class="zh">该子集并非单纯测能不能从零写出一个页面。从零开发是最大类，但只占 <b>一半（35/70）</b>；另一半分布在缺陷修复、功能扩展、审查分析、测试生成与格式转换，这些都是实际前端开发中常见的已有上下文工作。</span></p>
+          </div>
+        </article>
+        <article class="web-panel" id="interaction-state">
+          <div class="web-chart" id="ch-web-state"></div>
+          <div class="web-panel-copy">
+            <div class="hl-sub"><span class="n">3</span><span class="en">Interaction and state are first-class requirements</span><span class="zh">交互与状态是一等能力项</span></div>
+            <p><span class="en">Many failures only appear after interaction: filters drift, submitted state is lost, views disagree, or a workflow cannot recover after refresh. The subset explicitly tags this axis: <b>45 of 70</b> tasks require some interaction or state behavior, including single-flow state, persistence/offline/cross-state behavior, multi-step workflows and lighter UI state.</span><span class="zh">很多失败只有交互后才会出现：筛选状态漂移、提交状态丢失、不同视图不一致，或刷新后流程无法恢复。该子集显式标注这条轴线：<b>70 道任务中的 45 道</b>包含交互或状态要求，覆盖单流程状态、持久化 / 离线 / 跨状态、多步骤工作流和轻量 UI 状态。</span></p>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <!-- SCORING -->
+    <section class="detail-sec" id="scoring">
+      <h2><span class="en">Scoring</span><span class="zh">评测方式</span></h2>
+      <div class="en">
+        <p>Scoring is rubric-item based. Each task defines scored items, each item maps to one judge type, and each item returns <code>pass</code> or <code>fail</code> before penalties are aggregated into the task score.</p>
+        <ul class="scoring-list">
+          <li><b>Rule judge</b> checks deterministic requirements such as files, output paths, structured fields, test/build signals and task-specific prechecks.</li>
+          <li><b>LLM/VLM judge</b> reads text, code, reports, structured evidence and screenshots to judge semantics, layout, visual consistency and information visibility.</li>
+          <li><b>Agent judge</b> opens the running artifact, executes the required workflow and checks state changes from a user-like path.</li>
+        </ul>
+        <p>Task score is subtractive: failed items subtract their penalties from <code>1.0</code>, using the regular <code>0.1 / 0.2 / 0.3</code> levels; a fatal failure sets the task score to <code>0</code>. The final Web score is the mean over the 70 task scores.</p>
+      </div>
+      <div class="zh">
+        <p>评分采用 rubric-item 级方式。每道任务定义若干 scored items，每个 item 固定对应一种 judge 类型，并在汇总成单题分数前输出 <code>pass</code> 或 <code>fail</code>。</p>
+        <ul class="scoring-list">
+          <li><b>Rule judge</b> 用于文件、输出路径、结构化字段、测试/构建信号和任务专属 precheck 等确定性检查。</li>
+          <li><b>LLM/VLM judge</b> 读取文本、代码、报告、结构化 evidence 和截图，判断语义、布局、视觉一致性与关键信息可见性。</li>
+          <li><b>Agent judge</b> 打开运行产物，执行要求的流程，并从近似真实用户的路径检查状态变化。</li>
+        </ul>
+        <p>单题分数采用倒扣制：失败 item 会按 penalty 从 <code>1.0</code> 中扣除，常规档位为 <code>0.1 / 0.2 / 0.3</code>；fatal failure 会将该题置为 <code>0</code> 分。最终 Web 分数为 70 道任务单题分数的平均值。</p>
+      </div>
+    </section>
+
+    <!-- EXAMPLE -->
+    <section class="detail-sec" id="example">
+      <h2><span class="en">Example task</span><span class="zh">示例任务</span></h2>
+      <div class="example">
+        <div class="ex-body">
+          <p style="margin:0 0 4px;font-weight:600;"><span class="en">instruction.md (excerpt)</span><span class="zh">instruction.md（节选）</span></p>
+          <p style="margin:0;font-size:14px;color:#475569;line-height:1.7;"><span class="en">&ldquo;Based on the player feedback, difficulty parameters, and input rules in the attachments, please build a Snake mini-game. The arrow-key controls, difficulty tiers, turn buffering, and speed pacing all need to match the spec — no accidental reverse moves and no dropped inputs.&rdquo;</span><span class="zh">「根据附件中的玩家反馈、难度参数和输入规则，构建一个贪吃蛇小游戏。方向键控制、难度档位、转向缓冲和速度节奏都需要符合规格，不能出现误反向移动或输入丢失。」</span></p>
+          <p style="margin:14px 0 4px;font-weight:600;"><span class="en">Rubric items</span><span class="zh">Rubric 列表</span></p>
+          <pre><span class="c"># snake-gameplay-implementation-L3-010</span>
+llm     difficulty_modes_present              four selectable difficulty tiers
+llm     timing_bands_match                    movement timing follows the parameter table
+agent   input_buffer_rules                    legal double turns execute; reverse moves are rejected
+llm     deterministic_trace_stable            fresh rounds follow the supplied baseline trace
+agent   self_collision_excludes_tail          collision logic allows moving into the old tail cell
+agent   best_score_persists_across_reload     best score is displayed and restored after reload</pre>
+        </div>
+      </div>
+    </section>
+
+    <!-- COMPARISON -->
+    <section class="detail-sec" id="comparison">
+      <h2><span class="en">Related work</span><span class="zh">相关工作</span></h2>
+      <p><span class="en">Compared with representative Web and front-end benchmarks: visual/page reproduction, interactive page generation, browser-agent operation, and coding-agent workflow benchmarks. Our benchmark covers a broader combination of task types, development modes, interaction/state behavior, and rule, LLM/VLM, and agent judges.</span><span class="zh">与代表性 Web 和前端基准对比，包括视觉/页面复刻、交互页面生成、浏览器 agent 操作和 coding-agent 工作流基准。我们的基准在任务类型、开发模式、交互/状态覆盖，以及 rule、LLM/VLM、agent judge 组合上覆盖更全面。</span></p>
+  <div class="cmp">
+   <table>
+    <thead>
+      <tr>
+        <th rowspan="2">Benchmark</th>
+        <th class="grp" colspan="4">Task type</th>
+        <th class="grp" colspan="3">Task mode</th>
+        <th class="grp" colspan="2">Interaction &amp; state</th>
+        <th class="grp" colspan="3">Judge / Oracle</th>
+      </tr>
+      <tr><th>Page / UI</th><th>Interactive apps</th><th>Data / charts</th><th>Doc / test / analysis</th><th>From scratch</th><th>Extend / fix</th><th>Review / test / convert</th><th>Actionable interaction</th><th>State consistency</th><th>Rule</th><th>VLM</th><th>Agent</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>Vibe Code Bench v1.1<span class="scale">100</span></td><td><span class="cov full" title="Covered" aria-label="covered"></span></td><td><span class="cov full" title="Covered" aria-label="covered"></span></td><td><span class="cov partial" title="Partial" aria-label="partial coverage"></span></td><td><span class="cov none" title="Not covered" aria-label="not covered"></span></td><td><span class="cov full" title="Covered" aria-label="covered"></span></td><td><span class="cov none" title="Not covered" aria-label="not covered"></span></td><td><span class="cov none" title="Not covered" aria-label="not covered"></span></td><td><span class="cov full" title="Covered" aria-label="covered"></span></td><td><span class="cov partial" title="Partial" aria-label="partial coverage"></span></td><td><span class="cov full" title="Covered" aria-label="covered"></span></td><td><span class="cov none" title="Not covered" aria-label="not covered"></span></td><td><span class="cov partial" title="Partial" aria-label="partial coverage"></span></td></tr>
+      <tr><td>CursorBench 3.1<span class="scale">undisclosed</span></td><td><span class="cov partial" title="Partial" aria-label="partial coverage"></span></td><td><span class="cov none" title="Not covered" aria-label="not covered"></span></td><td><span class="cov none" title="Not covered" aria-label="not covered"></span></td><td><span class="cov partial" title="Partial" aria-label="partial coverage"></span></td><td><span class="cov partial" title="Partial" aria-label="partial coverage"></span></td><td><span class="cov full" title="Covered" aria-label="covered"></span></td><td><span class="cov full" title="Covered" aria-label="covered"></span></td><td><span class="cov none" title="Not covered" aria-label="not covered"></span></td><td><span class="cov none" title="Not covered" aria-label="not covered"></span></td><td><span class="cov partial" title="Partial" aria-label="partial coverage"></span></td><td><span class="cov none" title="Not covered" aria-label="not covered"></span></td><td><span class="cov full" title="Covered" aria-label="covered"></span></td></tr>
+      <tr><td>Design2Code<span class="scale">484</span></td><td><span class="cov full" title="Covered" aria-label="covered"></span></td><td><span class="cov none" title="Not covered" aria-label="not covered"></span></td><td><span class="cov none" title="Not covered" aria-label="not covered"></span></td><td><span class="cov none" title="Not covered" aria-label="not covered"></span></td><td><span class="cov full" title="Covered" aria-label="covered"></span></td><td><span class="cov none" title="Not covered" aria-label="not covered"></span></td><td><span class="cov none" title="Not covered" aria-label="not covered"></span></td><td><span class="cov none" title="Not covered" aria-label="not covered"></span></td><td><span class="cov none" title="Not covered" aria-label="not covered"></span></td><td><span class="cov partial" title="Partial" aria-label="partial coverage"></span></td><td><span class="cov full" title="Covered" aria-label="covered"></span></td><td><span class="cov none" title="Not covered" aria-label="not covered"></span></td></tr>
+      <tr><td>Interaction2Code<span class="scale">127</span></td><td><span class="cov full" title="Covered" aria-label="covered"></span></td><td><span class="cov full" title="Covered" aria-label="covered"></span></td><td><span class="cov none" title="Not covered" aria-label="not covered"></span></td><td><span class="cov none" title="Not covered" aria-label="not covered"></span></td><td><span class="cov full" title="Covered" aria-label="covered"></span></td><td><span class="cov none" title="Not covered" aria-label="not covered"></span></td><td><span class="cov none" title="Not covered" aria-label="not covered"></span></td><td><span class="cov full" title="Covered" aria-label="covered"></span></td><td><span class="cov partial" title="Partial" aria-label="partial coverage"></span></td><td><span class="cov full" title="Covered" aria-label="covered"></span></td><td><span class="cov partial" title="Partial" aria-label="partial coverage"></span></td><td><span class="cov none" title="Not covered" aria-label="not covered"></span></td></tr>
+      <tr><td>FrontendBench<span class="scale">148</span></td><td><span class="cov full" title="Covered" aria-label="covered"></span></td><td><span class="cov partial" title="Partial" aria-label="partial coverage"></span></td><td><span class="cov none" title="Not covered" aria-label="not covered"></span></td><td><span class="cov none" title="Not covered" aria-label="not covered"></span></td><td><span class="cov full" title="Covered" aria-label="covered"></span></td><td><span class="cov none" title="Not covered" aria-label="not covered"></span></td><td><span class="cov none" title="Not covered" aria-label="not covered"></span></td><td><span class="cov full" title="Covered" aria-label="covered"></span></td><td><span class="cov partial" title="Partial" aria-label="partial coverage"></span></td><td><span class="cov full" title="Covered" aria-label="covered"></span></td><td><span class="cov none" title="Not covered" aria-label="not covered"></span></td><td><span class="cov none" title="Not covered" aria-label="not covered"></span></td></tr>
+      <tr><td>WebArena<span class="scale">812</span></td><td><span class="cov none" title="Not covered" aria-label="not covered"></span></td><td><span class="cov full" title="Covered" aria-label="covered"></span></td><td><span class="cov none" title="Not covered" aria-label="not covered"></span></td><td><span class="cov none" title="Not covered" aria-label="not covered"></span></td><td><span class="cov none" title="Not covered" aria-label="not covered"></span></td><td><span class="cov none" title="Not covered" aria-label="not covered"></span></td><td><span class="cov none" title="Not covered" aria-label="not covered"></span></td><td><span class="cov full" title="Covered" aria-label="covered"></span></td><td><span class="cov full" title="Covered" aria-label="covered"></span></td><td><span class="cov full" title="Covered" aria-label="covered"></span></td><td><span class="cov none" title="Not covered" aria-label="not covered"></span></td><td><span class="cov none" title="Not covered" aria-label="not covered"></span></td></tr>
+      <tr><td>VisualWebArena<span class="scale">910</span></td><td><span class="cov none" title="Not covered" aria-label="not covered"></span></td><td><span class="cov full" title="Covered" aria-label="covered"></span></td><td><span class="cov none" title="Not covered" aria-label="not covered"></span></td><td><span class="cov none" title="Not covered" aria-label="not covered"></span></td><td><span class="cov none" title="Not covered" aria-label="not covered"></span></td><td><span class="cov none" title="Not covered" aria-label="not covered"></span></td><td><span class="cov none" title="Not covered" aria-label="not covered"></span></td><td><span class="cov full" title="Covered" aria-label="covered"></span></td><td><span class="cov full" title="Covered" aria-label="covered"></span></td><td><span class="cov full" title="Covered" aria-label="covered"></span></td><td><span class="cov partial" title="Partial" aria-label="partial coverage"></span></td><td><span class="cov none" title="Not covered" aria-label="not covered"></span></td></tr>
+      <tr class="self"><td>Web<span class="scale">70</span></td><td><span class="cov full" title="Covered" aria-label="covered"></span></td><td><span class="cov full" title="Covered" aria-label="covered"></span></td><td><span class="cov full" title="Covered" aria-label="covered"></span></td><td><span class="cov full" title="Covered" aria-label="covered"></span></td><td><span class="cov full" title="Covered" aria-label="covered"></span></td><td><span class="cov full" title="Covered" aria-label="covered"></span></td><td><span class="cov full" title="Covered" aria-label="covered"></span></td><td><span class="cov full" title="Covered" aria-label="covered"></span></td><td><span class="cov full" title="Covered" aria-label="covered"></span></td><td><span class="cov full" title="Covered" aria-label="covered"></span></td><td><span class="cov full" title="Covered" aria-label="covered"></span></td><td><span class="cov full" title="Covered" aria-label="covered"></span></td></tr>
+    </tbody>
+   </table>
+  </div>
+      <div class="cmp-legend" aria-label="Coverage legend">
+        <span class="legend-item"><i class="cov full"></i><span class="en">Covered</span><span class="zh">覆盖</span></span>
+        <span class="legend-item"><i class="cov partial"></i><span class="en">Partial</span><span class="zh">部分覆盖</span></span>
+        <span class="legend-item"><i class="cov none"></i><span class="en">Not covered / N.A.</span><span class="zh">未覆盖 / 不适用</span></span>
+      </div>
+    </section>
+
+    </div><!-- /.detail-main -->
+  </div>
+
+  <footer class="site-footer">
+    <div class="site-footer__inner">
+      <p class="site-footer__byline">Tencent Youtu Lab · Keen &amp; Yunding Security Lab · WorkBuddy</p>
+    </div>
+  </footer>
+
+  <script>(function(){
+    var cmp=document.querySelector('.cmp');
+    if(!cmp)return;
+    function update(){
+      var overflowing=cmp.scrollWidth>cmp.clientWidth+1;
+      var atEnd=cmp.scrollLeft+cmp.clientWidth>=cmp.scrollWidth-2;
+      cmp.classList.toggle('is-scrollable',overflowing&&!atEnd);
+    }
+    cmp.addEventListener('scroll',update,{passive:true});
+    window.addEventListener('resize',update);
+    window.addEventListener('load',update);
+    update();
+  })();
+  </script>
+  <script>(function(){
+    var root=document.getElementById('webDemoViewer');
+    if(!root)return;
+    var demos=[
+      {
+        id:'48909524',
+        src:'static/img/web-demo-48909524.mp4',
+        full:{w:3072,h:718},
+        crop:{x:[64,1068,2070],y:66,w:[942,936,936],h:586},
+        title:{en:'Build a 3D snow-mountain cable-car hut scene with drag rotation and wheel zoom',zh:'生成一个 3D 的雪山缆车小屋场景，需要支持鼠标拖拽旋转视角和滚轮缩放'},
+        desc:{en:'',zh:''}
+      },
+      {
+        id:'48909521',
+        src:'static/img/web-demo-48909521.mp4',
+        full:{w:3072,h:916},
+        crop:{x:[66,1068,2070],y:66,w:[936,936,936],h:784},
+        title:{en:'Build a particle-cloud simulation with adjustable physics parameters',zh:'生成一个粒子云模拟效果，并且支持调整相关物理参数'},
+        desc:{en:'',zh:''}
+      },
+      {
+        id:'48909519',
+        src:'static/img/web-demo-48909519.mp4',
+        full:{w:3072,h:980},
+        crop:{x:[66,1068,2070],y:66,w:[936,936,936],h:848},
+        title:{en:'Build a deep-sea exploration game with submarine controls, health and score',zh:'生成一个深海探索小游戏，支持使用方向键上下控制潜水艇，并有生命值/分值管理'},
+        desc:{en:'',zh:''}
+      },
+      {
+        id:'48909516',
+        src:'static/img/web-demo-48909516.mp4',
+        full:{w:3072,h:980},
+        crop:{x:[66,1068,2070],y:66,w:[936,936,936],h:848},
+        title:{en:'Build a memorable headphone marketing page at advertising-design quality',zh:'生成一个耳机的广告营销页面，要求视觉风格有记忆点，满足广告设计水平'},
+        desc:{en:'',zh:''}
+      }
+    ];
+    var models=[
+      {key:'model-a',label:'Model A'},
+      {key:'model-b',label:'Model B'},
+      {key:'model-c',label:'Model C'}
+    ];
+    var state={demo:0,model:0,timeByDemo:{}};
+    var stage=root.querySelector('[data-demo-stage]');
+    var video=root.querySelector('[data-demo-video]');
+    var indexEl=root.querySelector('[data-demo-index]');
+    var titleEl=root.querySelector('[data-demo-title]');
+    var descEl=root.querySelector('[data-demo-desc]');
+    var tabs=[].slice.call(root.querySelectorAll('[data-model-tab]'));
+    if(!stage||!video)return;
+    video.muted=true;
+    video.loop=true;
+    video.autoplay=true;
+    video.playsInline=true;
+    function lang(){return document.body.classList.contains('lang-zh')?'zh':'en';}
+    function cropFor(){
+      var c=demos[state.demo].crop;
+      var inset=8;
+      return {x:c.x[state.model]+inset,y:c.y+inset,w:c.w[state.model]-inset*2,h:c.h-inset*2};
+    }
+    function setLangText(el,text){
+      el.innerHTML='<span class="en">'+text.en+'</span><span class="zh">'+text.zh+'</span>';
+    }
+    function play(){
+      var p=video.play();
+      if(p&&p.catch)p.catch(function(){});
+    }
+    function saveTime(){
+      var d=demos[state.demo];
+      if(video.readyState>0&&isFinite(video.currentTime))state.timeByDemo[d.id]=video.currentTime||0;
+    }
+    function restoreTime(){
+      var d=demos[state.demo];
+      var target=state.timeByDemo[d.id]||0;
+      function apply(){
+        if(target>0&&isFinite(video.duration)&&video.duration>0){
+          try{video.currentTime=Math.min(target,Math.max(0,video.duration-.2));}catch(e){}
+        }
+        play();
+      }
+      if(video.readyState>=1)apply();
+      else video.addEventListener('loadedmetadata',apply,{once:true});
+    }
+    function applyCrop(){
+      var d=demos[state.demo];
+      var c=cropFor();
+      stage.style.aspectRatio=c.w+' / '+c.h;
+      video.style.width=(d.full.w/c.w*100).toFixed(5)+'%';
+      video.style.transform='translate('+(-c.x/d.full.w*100).toFixed(5)+'%, '+(-c.y/d.full.h*100).toFixed(5)+'%)';
+    }
+    function updateCopy(){
+      var d=demos[state.demo], l=lang();
+      indexEl.textContent=(l==='zh'?'示例 ':'Example ')+(state.demo+1)+' / '+demos.length;
+      setLangText(titleEl,d.title);
+      setLangText(descEl,d.desc);
+    }
+    function updateTabs(){
+      tabs.forEach(function(tab,i){
+        var active=i===state.model;
+        tab.classList.toggle('is-active',active);
+        tab.setAttribute('aria-selected',active?'true':'false');
+        tab.textContent=models[i].label;
+      });
+    }
+    function render(){
+      var d=demos[state.demo];
+      updateCopy();
+      updateTabs();
+      applyCrop();
+      if(video.getAttribute('src')!==d.src){
+        video.src=d.src;
+        video.load();
+        restoreTime();
+      }else{
+        play();
+      }
+    }
+    video.addEventListener('timeupdate',saveTime);
+    tabs.forEach(function(tab){
+      tab.addEventListener('click',function(){
+        var next=Number(tab.getAttribute('data-model-tab'));
+        if(next===state.model)return;
+        saveTime();
+        state.model=next;
+        updateTabs();
+        applyCrop();
+        play();
+      });
+    });
+    root.querySelector('[data-demo-prev]').addEventListener('click',function(){
+      saveTime();
+      state.demo=(state.demo+demos.length-1)%demos.length;
+      render();
+    });
+    root.querySelector('[data-demo-next]').addEventListener('click',function(){
+      saveTime();
+      state.demo=(state.demo+1)%demos.length;
+      render();
+    });
+    document.querySelectorAll('[data-lang-btn]').forEach(function(btn){btn.addEventListener('click',function(){setTimeout(updateCopy,30);});});
+    render();
+  })();
+  </script>
+  <script>(function(){
+    var root=document.getElementById('webEvalTrace');
+    if(!root)return;
+    var video=root.querySelector('[data-eval-video]');
+    var checks=[].slice.call(root.querySelectorAll('[data-eval-step]'));
+    var meter=root.querySelector('[data-eval-meter]');
+    var steps=[
+      {t:.45},
+      {t:1.25},
+      {t:2.45},
+      {t:5.15},
+      {t:8.15},
+      {t:8.55}
+    ];
+    var lastTime=0;
+    if(video){
+      video.muted=true;
+      video.loop=true;
+      video.autoplay=true;
+      video.playsInline=true;
+    }
+    function update(){
+      if(!video)return;
+      var t=video.currentTime||0;
+      if(t+0.35<lastTime)t=0;
+      lastTime=video.currentTime||0;
+      var passed=0;
+      steps.forEach(function(step,i){
+        var ok=t>=step.t;
+        if(ok)passed++;
+        if(checks[i]){
+          checks[i].classList.toggle('is-passed',ok);
+          checks[i].setAttribute('aria-checked',ok?'true':'false');
+        }
+      });
+      if(meter)meter.style.width=(passed/steps.length*100).toFixed(2)+'%';
+    }
+    if(video){
+      video.addEventListener('timeupdate',update);
+      video.addEventListener('seeked',update);
+      video.addEventListener('loadedmetadata',update);
+      video.addEventListener('ended',function(){lastTime=0;update();});
+      var p=video.play();
+      if(p&&p.catch)p.catch(function(){});
+    }
+    update();
+  })();
+  </script>
+  <script src="lang.js?v=3"></script>
+  <script>
+  (function(){
+    if (typeof echarts === 'undefined') return;
+    var charts = [];
+    function css(n,f){var v=getComputedStyle(document.documentElement).getPropertyValue(n).trim();return v||f;}
+    var BRAND='#28B894', ACCENT='#32E6B9';
+    var PIE_COLORS={
+      green:BRAND,
+      mint:'#7EDDC7',
+      teal:'#5CC8BC',
+      cyan:'#75C9E8',
+      blue:'#8FB6E8',
+      lime:'#B7D977',
+      yellow:'#E3CB74',
+      amber:'#E9B56A',
+      neutral:'#B8C2BE'
+    };
+    function theme(){return{text:css('--wb-text-heading','#000'),body:css('--wb-text-body','#242424'),sub:css('--wb-text-secondary','#808080'),faint:css('--wb-text-tertiary','#B1B1B1'),border:css('--wb-border-subtle','rgba(0,0,0,.08)'),borderStr:css('--wb-border-strong','rgba(0,0,0,.12)'),surface:css('--wb-surface-1','#fff'),split:css('--wb-border-subtle','rgba(0,0,0,.08)')};}
+    function tip(t){return{backgroundColor:t.surface,borderColor:t.borderStr,textStyle:{color:t.text,fontSize:12},extraCssText:'box-shadow:0 8px 24px rgba(0,0,0,.12);border-radius:8px'};}
+    function build(id,fn){var el=document.getElementById(id);if(!el)return;var c=echarts.init(el);charts.push({chart:c,fn:fn});c.setOption(fn(theme()));}
+    function donut(id,title,groups,total,center){
+      build(id,function(t){
+        var zh=document.body.classList.contains('lang-zh');
+        return {backgroundColor:'transparent',
+          tooltip:Object.assign({trigger:'item',formatter:function(p){var g=groups[p.dataIndex];var unit=zh?' 道任务':' tasks';return '<b>'+(zh?g.zh:g.en)+'</b><br/>'+p.marker+g.v+unit+' · '+p.percent+'%';}},tip(t)),
+          series:[{type:'pie',radius:['42%','66%'],center:center||['50%','52%'],avoidLabelOverlap:true,
+            itemStyle:{borderColor:t.surface,borderWidth:2,borderRadius:4},
+            label:{show:true,color:t.body,fontSize:11,formatter:function(p){return p.name;},width:96,overflow:'break'},
+            labelLine:{length:12,length2:10,lineStyle:{color:t.faint}},
+            labelLayout:{hideOverlap:true},
+            emphasis:{scale:true,scaleSize:6,label:{fontSize:12,fontWeight:600,color:t.text}},
+            data:groups.map(function(g){return {name:zh?g.zh:g.en,value:g.v,itemStyle:{color:g.c}};})}]};
+      });
+    }
+    function hbar(id,title,groups,total,opts){
+      opts=opts||{};
+      build(id,function(t){
+        var zh=document.body.classList.contains('lang-zh');
+        return {backgroundColor:'transparent',
+          tooltip:Object.assign({trigger:'item',formatter:function(p){
+            var g=groups[p.dataIndex];
+            var pct=Math.round(g.v/total*1000)/10;
+            var unit=opts.unit||(zh?'道任务':'tasks');
+            return '<b>'+(zh?g.zh:g.en)+'</b><br/>'+p.marker+g.v+(opts.coverage?' / '+total+' '+unit+' · '+pct+'%':' '+unit+' · '+pct+'%');
+          }},tip(t)),
+          grid:{left:4,right:46,top:10,bottom:6,containLabel:true},
+          xAxis:{type:'value',max:opts.coverage?total:null,
+            axisLabel:{color:t.faint,fontSize:10},
+            splitLine:{lineStyle:{color:t.border}},
+            axisLine:{show:false},axisTick:{show:false}},
+          yAxis:{type:'category',inverse:true,
+            data:groups.map(function(g){return zh?g.zh:g.en;}),
+            axisLabel:{color:t.body,fontSize:11,width:104,overflow:'break',lineHeight:14},
+            axisLine:{show:false},axisTick:{show:false}},
+          series:[{type:'bar',barWidth:15,
+            itemStyle:{borderRadius:[0,3,3,0]},
+            label:{show:true,position:'right',distance:6,color:t.sub,fontSize:10.5,fontWeight:600,
+              formatter:function(p){var g=groups[p.dataIndex];return opts.coverage?g.v+' / '+total:String(g.v);}},
+            emphasis:{itemStyle:{opacity:.85}},
+            data:groups.map(function(g){return {value:g.v,itemStyle:{color:g.c}};})}]};
+      });
+    }
+    // 1. categories
+    donut('ch-web-cat',{en:'7 task categories · 70 tasks',zh:'7 类主分类 · 共 70 道任务'},[
+      {en:'Page interaction',zh:'页面交互',v:21,c:PIE_COLORS.green},
+      {en:'Data visualization',zh:'数据可视化',v:15,c:PIE_COLORS.cyan},
+      {en:'Visual design',zh:'视觉设计',v:9,c:PIE_COLORS.blue},
+      {en:'Front-end analysis',zh:'前端分析',v:7,c:PIE_COLORS.amber},
+      {en:'Code & testing',zh:'代码测试',v:7,c:PIE_COLORS.teal},
+      {en:'Page implementation',zh:'页面实现',v:6,c:PIE_COLORS.mint},
+      {en:'Doc conversion',zh:'文档转换',v:5,c:PIE_COLORS.yellow}
+    ],70);
+    // 2. modes
+    hbar('ch-web-mode',{en:'6 task modes · From Scratch 35/70',zh:'6 种任务模式 · From Scratch 占 35/70'},[
+      {en:'From Scratch',zh:'从零开发',v:35,c:PIE_COLORS.green},
+      {en:'Bug fix',zh:'缺陷修复',v:8,c:PIE_COLORS.amber},
+      {en:'Feature extension',zh:'功能扩展',v:8,c:PIE_COLORS.cyan},
+      {en:'Review & analysis',zh:'审查分析',v:7,c:PIE_COLORS.yellow},
+      {en:'Test generation',zh:'测试生成',v:7,c:PIE_COLORS.blue},
+      {en:'Format conversion',zh:'格式转换',v:5,c:PIE_COLORS.teal}
+    ],70);
+    // 3. interaction / state complexity
+    donut('ch-web-state',{en:'Interaction and state complexity · 70 tasks',zh:'交互与状态复杂度 · 共 70 道任务'},[
+      {en:'No interaction',zh:'无交互',v:25,c:PIE_COLORS.neutral},
+      {en:'Single-flow state',zh:'单流程状态',v:15,c:PIE_COLORS.green},
+      {en:'Persistence / offline / cross-state',zh:'持久化 / 离线 / 跨状态',v:13,c:PIE_COLORS.cyan},
+      {en:'Multi-step workflow',zh:'多步骤工作流',v:9,c:PIE_COLORS.blue},
+      {en:'Light interaction',zh:'轻量交互',v:8,c:PIE_COLORS.yellow}
+    ],70);
+    // 4. evaluation items by judge type
+    window.addEventListener('resize',function(){charts.forEach(function(o){o.chart.resize();});});
+    function rerender(){var t=theme();charts.forEach(function(o){o.chart.setOption(o.fn(t),true);});}
+    var tgl=document.getElementById('themeToggle');
+    if(tgl)tgl.addEventListener('click',function(){setTimeout(rerender,60);});
+    document.querySelectorAll('[data-lang-btn]').forEach(function(b){b.addEventListener('click',function(){setTimeout(rerender,30);});});
+    window.addEventListener('load',rerender);
+  })();
+  </script>
+  <script src="roster.js?v=12"></script>
+  <script src="data.js?v=22"></script>
+  <script src="subset-lb.js?v=6"></script>
+  <script>
+  (function(){
+    var root=document.getElementById('webHarnessSwitch');
+    var current='scores';
+    function render(){
+      renderSubsetLB("WorkBuddyBench-Web","lb-web",{scoreKey:current});
+    }
+    if(root){
+      root.querySelectorAll('[data-score-key]').forEach(function(btn){
+        btn.addEventListener('click',function(){
+          current=btn.getAttribute('data-score-key')||'scores';
+          root.querySelectorAll('[data-score-key]').forEach(function(b){
+            var active=b===btn;
+            b.classList.toggle('is-active',active);
+            b.setAttribute('aria-selected',active?'true':'false');
+          });
+          render();
+        });
+      });
+    }
+    render();
+  })();
+  </script>
+  <script src="site.js?v=1"></script>
+</body>
+</html>

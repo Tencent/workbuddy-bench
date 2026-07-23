@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>亮点5：五层反作弊基础设施</title>
+<style>
+html, body {
+  margin: 0; padding: 0; box-sizing: border-box;
+  width: 100%; overflow: hidden;
+  background: #ffffff;
+  font-family: 'Noto Sans SC', 'PingFang SC', 'Microsoft Yahei', system-ui, sans-serif;
+}
+svg { display: block; width: 100%; height: auto; }
+</style>
+</head>
+<body>
+<svg viewBox="0 0 1600 900" width="1600" height="900" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <marker id="arr" markerWidth="8" markerHeight="8" refX="6" refY="2.5" orient="auto">
+      <path d="M0,0 L6,2.5 L0,5 Z" fill="#59636e"/>
+    </marker>
+    <marker id="arr-block" markerWidth="8" markerHeight="8" refX="6" refY="2.5" orient="auto">
+      <path d="M0,0 L6,2.5 L0,5 Z" fill="#E53935"/>
+    </marker>
+    <marker id="arr-pass" markerWidth="8" markerHeight="8" refX="6" refY="2.5" orient="auto">
+      <path d="M0,0 L6,2.5 L0,5 Z" fill="#2E7D32"/>
+    </marker>
+  </defs>
+
+  <!-- Title -->
+  <text x="800" y="60" text-anchor="middle" font-size="40" font-weight="900" fill="#1f2328" font-family="'Noto Sans SC',sans-serif">五层反作弊基础设施</text>
+  <text x="800" y="95" text-anchor="middle" font-size="18" fill="#59636e" font-family="'Noto Sans SC',sans-serif">从输入、代码、输出三个维度封堵作弊路径，让分数真正反映分析能力</text>
+
+  <!-- Three dimension labels -->
+  <text x="280" y="155" text-anchor="middle" font-size="16" font-weight="700" fill="#1565C0" font-family="'Noto Sans SC',sans-serif">输入维度</text>
+  <text x="800" y="155" text-anchor="middle" font-size="16" font-weight="700" fill="#E65100" font-family="'Noto Sans SC',sans-serif">代码维度</text>
+  <text x="1320" y="155" text-anchor="middle" font-size="16" font-weight="700" fill="#6A1B9A" font-family="'Noto Sans SC',sans-serif">输出维度</text>
+
+  <!-- 5 layer cards in a horizontal flow -->
+
+  <!-- Layer 1: Forbidden Literals (code) -->
+  <rect x="80" y="180" width="280" height="160" rx="10" fill="#FFF3E0" stroke="#FF9800" stroke-width="2.5"/>
+  <foreignObject x="80" y="180" width="280" height="160">
+    <div xmlns="http://www.w3.org/1999/xhtml" style="width:100%;height:100%;padding:14px;box-sizing:border-box;display:flex;flex-direction:column;align-items:center;justify-content:center;font:15px/1.4 'Noto Sans SC',sans-serif;text-align:center;word-wrap:break-word;">
+      <span style="font-size:28px;font-weight:900;color:#BF360C;">①</span>
+      <span style="font-weight:700;font-size:16px;color:#E65100;margin-top:4px;">禁用字面量扫描</span>
+      <span style="font-size:12px;color:#8d6e63;margin-top:6px;">扫描提取器源码，命中样本特定值则鲁棒性子项归零</span>
+    </div>
+  </foreignObject>
+
+  <!-- Layer 2: Renamed Input (input) -->
+  <rect x="400" y="180" width="280" height="160" rx="10" fill="#E3F2FD" stroke="#42A5F5" stroke-width="2.5"/>
+  <foreignObject x="400" y="180" width="280" height="160">
+    <div xmlns="http://www.w3.org/1999/xhtml" style="width:100%;height:100%;padding:14px;box-sizing:border-box;display:flex;flex-direction:column;align-items:center;justify-content:center;font:15px/1.4 'Noto Sans SC',sans-serif;text-align:center;word-wrap:break-word;">
+      <span style="font-size:28px;font-weight:900;color:#0D47A1;">②</span>
+      <span style="font-weight:700;font-size:16px;color:#1565C0;margin-top:4px;">重命名输入测试</span>
+      <span style="font-size:12px;color:#5c6f7a;margin-top:6px;">样本重命名后重跑提取器，验证从结构解析而非依赖文件名</span>
+    </div>
+  </foreignObject>
+
+  <!-- Layer 3: Overlay Input (input) -->
+  <rect x="720" y="180" width="280" height="160" rx="10" fill="#E3F2FD" stroke="#42A5F5" stroke-width="2.5"/>
+  <foreignObject x="720" y="180" width="280" height="160">
+    <div xmlns="http://www.w3.org/1999/xhtml" style="width:100%;height:100%;padding:14px;box-sizing:border-box;display:flex;flex-direction:column;align-items:center;justify-content:center;font:15px/1.4 'Noto Sans SC',sans-serif;text-align:center;word-wrap:break-word;">
+      <span style="font-size:28px;font-weight:900;color:#0D47A1;">③</span>
+      <span style="font-weight:700;font-size:16px;color:#1565C0;margin-top:4px;">覆盖层输入测试</span>
+      <span style="font-size:12px;color:#5c6f7a;margin-top:6px;">样本尾部追加数据后验证输出不变，确保不受尾部篡改影响</span>
+    </div>
+  </foreignObject>
+
+  <!-- Layer 4: Encoded Dependency (output) -->
+  <rect x="1040" y="180" width="280" height="160" rx="10" fill="#F3E5F5" stroke="#AB47BC" stroke-width="2.5"/>
+  <foreignObject x="1040" y="180" width="280" height="160">
+    <div xmlns="http://www.w3.org/1999/xhtml" style="width:100%;height:100%;padding:14px;box-sizing:border-box;display:flex;flex-direction:column;align-items:center;justify-content:center;font:15px/1.4 'Noto Sans SC',sans-serif;text-align:center;word-wrap:break-word;">
+      <span style="font-size:28px;font-weight:900;color:#4A148C;">④</span>
+      <span style="font-weight:700;font-size:16px;color:#6A1B9A;margin-top:4px;">编码依赖测试</span>
+      <span style="font-size:12px;color:#7b6777;margin-top:6px;">将编码字节清零后验证规则不再匹配，确保锚定编码而非明文</span>
+    </div>
+  </foreignObject>
+
+  <!-- Layer 5: Low-weight Decoy (output) -->
+  <rect x="1360" y="180" width="160" height="160" rx="10" fill="#F3E5F5" stroke="#AB47BC" stroke-width="2.5"/>
+  <foreignObject x="1360" y="180" width="160" height="160">
+    <div xmlns="http://www.w3.org/1999/xhtml" style="width:100%;height:100%;padding:10px;box-sizing:border-box;display:flex;flex-direction:column;align-items:center;justify-content:center;font:15px/1.4 'Noto Sans SC',sans-serif;text-align:center;word-wrap:break-word;">
+      <span style="font-size:28px;font-weight:900;color:#4A148C;">⑤</span>
+      <span style="font-weight:700;font-size:15px;color:#6A1B9A;margin-top:4px;">低权重诱饵</span>
+      <span style="font-size:11px;color:#7b6777;margin-top:4px;">易穷举字段权重压至约 1.5%，引导结构化分析</span>
+    </div>
+  </foreignObject>
+
+  <!-- Connecting arrows between layers (horizontal flow) -->
+  <path d="M 360 260 L 400 260" fill="none" stroke="#90A4AE" stroke-width="2" marker-end="url(#arr)"/>
+  <path d="M 680 260 L 720 260" fill="none" stroke="#90A4AE" stroke-width="2" marker-end="url(#arr)"/>
+  <path d="M 1000 260 L 1040 260" fill="none" stroke="#90A4AE" stroke-width="2" marker-end="url(#arr)"/>
+  <path d="M 1320 260 L 1360 260" fill="none" stroke="#90A4AE" stroke-width="2" marker-end="url(#arr)"/>
+
+  <!-- Center: converging to final reward -->
+  <path d="M 220 340 L 220 440 L 800 440" fill="none" stroke="#59636e" stroke-width="1.5" stroke-dasharray="6 4" opacity="0.5"/>
+  <path d="M 540 340 L 540 440 L 800 440" fill="none" stroke="#59636e" stroke-width="1.5" stroke-dasharray="6 4" opacity="0.5"/>
+  <path d="M 860 340 L 860 440 L 800 440" fill="none" stroke="#59636e" stroke-width="1.5" stroke-dasharray="6 4" opacity="0.5"/>
+  <path d="M 1180 340 L 1180 440 L 800 440" fill="none" stroke="#59636e" stroke-width="1.5" stroke-dasharray="6 4" opacity="0.5"/>
+  <path d="M 1440 340 L 1440 440 L 800 440" fill="none" stroke="#59636e" stroke-width="1.5" stroke-dasharray="6 4" opacity="0.5"/>
+
+  <!-- Reward box -->
+  <rect x="500" y="470" width="620" height="75" rx="10" fill="#1B5E20" stroke="#0D3D11" stroke-width="0"/>
+  <foreignObject x="500" y="470" width="620" height="75">
+    <div xmlns="http://www.w3.org/1999/xhtml" style="width:100%;height:100%;padding:10px;box-sizing:border-box;display:flex;flex-direction:column;align-items:center;justify-content:center;font:600 18px/1.3 'Noto Sans SC',sans-serif;color:#fff;text-align:center;">
+      reward = w₁×artifact + w₂×correctness + w₃×robustness
+      <span style="font-size:13px;font-weight:400;opacity:0.85;">五层机制影响 robustness 分量，确保分数反映真实分析能力</span>
+    </div>
+  </foreignObject>
+
+  <!-- Three dimensions callout -->
+  <rect x="80" y="590" width="1440" height="250" rx="10" fill="#fafafa" stroke="#e0e0e0" stroke-width="1"/>
+  <text x="100" y="620" font-size="16" font-weight="600" fill="#1f2328" font-family="'Noto Sans SC',sans-serif">三维度封堵</text>
+
+  <!-- Input dimension -->
+  <circle cx="120" cy="655" r="6" fill="#1565C0"/>
+  <text x="138" y="660" font-size="16" font-weight="700" fill="#1565C0" font-family="'Noto Sans SC',sans-serif">输入维度</text>
+  <text x="230" y="660" font-size="14" fill="#59636e" font-family="'Noto Sans SC',sans-serif">重命名输入 + 覆盖层输入：验证提取器从二进制结构解析，不依赖文件名或尾部数据</text>
+
+  <!-- Code dimension -->
+  <circle cx="120" cy="695" r="6" fill="#E65100"/>
+  <text x="138" y="700" font-size="16" font-weight="700" fill="#E65100" font-family="'Noto Sans SC',sans-serif">代码维度</text>
+  <text x="230" y="700" font-size="14" fill="#59636e" font-family="'Noto Sans SC',sans-serif">禁用字面量扫描：拦截硬编码答案，命中样本特定值则鲁棒性子项归零</text>
+
+  <!-- Output dimension -->
+  <circle cx="120" cy="735" r="6" fill="#6A1B9A"/>
+  <text x="138" y="740" font-size="16" font-weight="700" fill="#6A1B9A" font-family="'Noto Sans SC',sans-serif">输出维度</text>
+  <text x="230" y="740" font-size="14" fill="#59636e" font-family="'Noto Sans SC',sans-serif">编码依赖 + 低权重诱饵：确保检测规则锚定编码字节，压制穷举刷分策略</text>
+
+  <!-- Stats -->
+  <line x1="100" y1="765" x2="1500" y2="765" stroke="#e0e0e0" stroke-width="1"/>
+  <text x="120" y="795" font-size="14" font-weight="600" fill="#1f2328" font-family="'Noto Sans SC',sans-serif">覆盖范围</text>
+  <text x="200" y="795" font-size="14" fill="#59636e" font-family="'Noto Sans SC',sans-serif">10 个任务实施反作弊机制 · 门控阈值 0.30-0.95 · 鲁棒性权重占 5%-10%</text>
+</svg>
+</body>
+</html>

@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>亮点2：零LLM裁判程序化验证</title>
+<style>
+html, body {
+  margin: 0; padding: 0; box-sizing: border-box;
+  width: 100%; overflow: hidden;
+  background: #ffffff;
+  font-family: 'Noto Sans SC', 'PingFang SC', 'Microsoft Yahei', system-ui, sans-serif;
+}
+svg { display: block; width: 100%; height: auto; }
+</style>
+</head>
+<body>
+<svg viewBox="0 0 1600 900" width="1600" height="900" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <marker id="arr" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto">
+      <path d="M0,0 L8,3 L0,6 Z" fill="#59636e"/>
+    </marker>
+    <marker id="arr-orange" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto">
+      <path d="M0,0 L8,3 L0,6 Z" fill="#FB8C00"/>
+    </marker>
+    <marker id="arr-blue" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto">
+      <path d="M0,0 L8,3 L0,6 Z" fill="#42A5F5"/>
+    </marker>
+    <marker id="arr-purple" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto">
+      <path d="M0,0 L8,3 L0,6 Z" fill="#AB47BC"/>
+    </marker>
+    <marker id="arr-green" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto">
+      <path d="M0,0 L8,3 L0,6 Z" fill="#2E7D32"/>
+    </marker>
+  </defs>
+
+  <!-- Title -->
+  <text x="800" y="65" text-anchor="middle" font-size="40" font-weight="900" fill="#1f2328" font-family="'Noto Sans SC',sans-serif">零 LLM 裁判，程序化验证</text>
+  <text x="800" y="100" text-anchor="middle" font-size="18" fill="#59636e" font-family="'Noto Sans SC',sans-serif">每次评分都是一次确定性的程序执行，结果可复现</text>
+
+  <!-- ============================================== -->
+  <!-- LLM-as-judge small contrast card (weakened)    -->
+  <!-- Positioned top-left, small, muted styling       -->
+  <!-- ============================================== -->
+  <rect x="80" y="155" width="300" height="150" rx="8" fill="#F5F5F5" stroke="#E0E0E0" stroke-width="1" stroke-dasharray="4 3"/>
+  <!-- "deprecated" style header with strikethrough vibe -->
+  <rect x="80" y="155" width="300" height="32" rx="8" fill="#EEEEEE" stroke="none"/>
+  <rect x="80" y="179" width="300" height="8" fill="#EEEEEE" stroke="none"/>
+  <text x="230" y="176" text-anchor="middle" font-size="14" font-weight="600" fill="#9E9E9E" font-family="'Noto Sans SC',sans-serif" text-decoration="line-through">传统方式：LLM-as-judge</text>
+  <!-- small "已弃用" tag -->
+  <rect x="320" y="162" width="48" height="18" rx="9" fill="#ECEFF1" stroke="#B0BEC5" stroke-width="1"/>
+  <text x="344" y="175" text-anchor="middle" font-size="10" fill="#78909C" font-family="'Noto Sans SC',sans-serif">已弃用</text>
+
+  <foreignObject x="90" y="195" width="280" height="105">
+    <div xmlns="http://www.w3.org/1999/xhtml" style="width:100%;height:100%;padding:6px 10px;box-sizing:border-box;display:flex;flex-direction:column;justify-content:center;gap:4px;font:13px/1.4 'Noto Sans SC',sans-serif;color:#9E9E9E;">
+      <div style="display:flex;align-items:center;gap:6px;">
+        <span style="color:#BDBDBD;font-size:11px;">✕</span>
+        <span>模型偏差 · 随机性</span>
+      </div>
+      <div style="display:flex;align-items:center;gap:6px;">
+        <span style="color:#BDBDBD;font-size:11px;">✕</span>
+        <span>prompt 工程影响评分</span>
+      </div>
+      <div style="display:flex;align-items:center;gap:6px;">
+        <span style="color:#BDBDBD;font-size:11px;">✕</span>
+        <span>不同温度采样不同分数</span>
+      </div>
+    </div>
+  </foreignObject>
+
+  <!-- Contrast arrow: muted, pointing from LLM card toward main pipeline -->
+  <path d="M 380 230 L 590 230" fill="none" stroke="#BDBDBD" stroke-width="2" stroke-dasharray="5 4" marker-end="url(#arr)"/>
+  <text x="485" y="220" text-anchor="middle" font-size="12" fill="#9E9E9E" font-family="'Noto Sans SC',sans-serif">改为</text>
+
+  <!-- ============================================== -->
+  <!-- Main vertical pipeline (centered on x=800)     -->
+  <!-- ============================================== -->
+
+  <!-- Step 1: Agent output  (x:620-980, y:195-265, center 800,230) -->
+  <rect x="620" y="195" width="360" height="70" rx="10" fill="#37474F" stroke="#263238" stroke-width="0"/>
+  <foreignObject x="620" y="195" width="360" height="70">
+    <div xmlns="http://www.w3.org/1999/xhtml" style="width:100%;height:100%;padding:8px;box-sizing:border-box;display:flex;flex-direction:column;align-items:center;justify-content:center;font:600 18px/1.2 'Noto Sans SC',sans-serif;color:#fff;text-align:center;">
+      Agent 输出
+      <span style="font-size:12px;font-weight:400;opacity:0.8;">exploit script · findings report · detection rule</span>
+    </div>
+  </foreignObject>
+
+  <!-- Arrow: Agent output (bottom 265) -> Docker (top 305) -->
+  <path d="M 800 265 L 800 303" fill="none" stroke="#59636e" stroke-width="2.5" marker-end="url(#arr)"/>
+
+  <!-- Step 2: Docker isolation (x:620-980, y:305-375, center 800,340) -->
+  <rect x="620" y="305" width="360" height="70" rx="10" fill="#ECEFF1" stroke="#90A4AE" stroke-width="2"/>
+  <foreignObject x="620" y="305" width="360" height="70">
+    <div xmlns="http://www.w3.org/1999/xhtml" style="width:100%;height:100%;padding:8px;box-sizing:border-box;display:flex;flex-direction:column;align-items:center;justify-content:center;font:600 18px/1.2 'Noto Sans SC',sans-serif;color:#1f2328;text-align:center;">
+      Docker 隔离执行
+      <span style="font-size:12px;font-weight:400;color:#59636e;">确定性评分器在验证器容器内运行</span>
+    </div>
+  </foreignObject>
+
+  <!-- ============================================== -->
+  <!-- Fan-out from Docker bottom (800,375) to 3 branches -->
+  <!-- Horizontal bus at y=405, then drop to branch tops at y=440 -->
+  <!-- Branch centers: PoC=450, YARA=800, Report=1150 -->
+  <!-- ============================================== -->
+  <!-- Vertical down from Docker to bus -->
+  <path d="M 800 375 L 800 405" fill="none" stroke="#59636e" stroke-width="2.5"/>
+  <!-- Horizontal bus -->
+  <path d="M 450 405 L 1150 405" fill="none" stroke="#59636e" stroke-width="2.5"/>
+  <!-- Three drops with colored arrows -->
+  <path d="M 450 405 L 450 438" fill="none" stroke="#FB8C00" stroke-width="2.5" marker-end="url(#arr-orange)"/>
+  <path d="M 800 405 L 800 438" fill="none" stroke="#42A5F5" stroke-width="2.5" marker-end="url(#arr-blue)"/>
+  <path d="M 1150 405 L 1150 438" fill="none" stroke="#AB47BC" stroke-width="2.5" marker-end="url(#arr-purple)"/>
+
+  <!-- Branch A: PoC execution (x:300-600, y:440-520, center 450) -->
+  <rect x="300" y="440" width="300" height="80" rx="8" fill="#FFF3E0" stroke="#FFB74D" stroke-width="2"/>
+  <foreignObject x="300" y="440" width="300" height="80">
+    <div xmlns="http://www.w3.org/1999/xhtml" style="width:100%;height:100%;padding:8px;box-sizing:border-box;display:flex;flex-direction:column;align-items:center;justify-content:center;font:15px/1.3 'Noto Sans SC',sans-serif;text-align:center;word-wrap:break-word;">
+      <span style="font-weight:600;color:#E65100;">PoC 执行验证</span>
+      <span style="font-size:12px;color:#8d6e63;">跑脚本，查 flag</span>
+    </div>
+  </foreignObject>
+
+  <!-- Branch B: YARA / Ground Truth (x:650-950, y:440-520, center 800) -->
+  <rect x="650" y="440" width="300" height="80" rx="8" fill="#E3F2FD" stroke="#42A5F5" stroke-width="2"/>
+  <foreignObject x="650" y="440" width="300" height="80">
+    <div xmlns="http://www.w3.org/1999/xhtml" style="width:100%;height:100%;padding:8px;box-sizing:border-box;display:flex;flex-direction:column;align-items:center;justify-content:center;font:15px/1.3 'Noto Sans SC',sans-serif;text-align:center;word-wrap:break-word;">
+      <span style="font-weight:600;color:#1565C0;">YARA / Ground Truth</span>
+      <span style="font-size:12px;color:#5c6f7a;">匹配率 · 分类准确率 · 排序一致性</span>
+    </div>
+  </foreignObject>
+
+  <!-- Branch C: Structured report (x:1000-1300, y:440-520, center 1150) -->
+  <rect x="1000" y="440" width="300" height="80" rx="8" fill="#F3E5F5" stroke="#AB47BC" stroke-width="2"/>
+  <foreignObject x="1000" y="440" width="300" height="80">
+    <div xmlns="http://www.w3.org/1999/xhtml" style="width:100%;height:100%;padding:8px;box-sizing:border-box;display:flex;flex-direction:column;align-items:center;justify-content:center;font:15px/1.3 'Noto Sans SC',sans-serif;text-align:center;word-wrap:break-word;">
+      <span style="font-weight:600;color:#6A1B9A;">结构化报告比对</span>
+      <span style="font-size:12px;color:#7b6777;">字段匹配 · precision floor</span>
+    </div>
+  </foreignObject>
+
+  <!-- ============================================== -->
+  <!-- Converge: 3 branches (bottoms at y=520) -> reward (top y=580) -->
+  <!-- Horizontal bus at y=550, centered at x=800 -->
+  <!-- ============================================== -->
+  <!-- Three risers from branch bottoms to bus -->
+  <path d="M 450 520 L 450 550" fill="none" stroke="#FB8C00" stroke-width="2.5"/>
+  <path d="M 800 520 L 800 550" fill="none" stroke="#42A5F5" stroke-width="2.5"/>
+  <path d="M 1150 520 L 1150 550" fill="none" stroke="#AB47BC" stroke-width="2.5"/>
+  <!-- Horizontal converge bus -->
+  <path d="M 450 550 L 1150 550" fill="none" stroke="#59636e" stroke-width="2.5"/>
+  <!-- Single drop into reward (centered 800) -->
+  <path d="M 800 550 L 800 578" fill="none" stroke="#2E7D32" stroke-width="3" marker-end="url(#arr-green)"/>
+
+  <!-- Reward output (x:440-1160, y:580-660, center 800,620) -->
+  <rect x="440" y="580" width="720" height="80" rx="10" fill="#1B5E20" stroke="#0D3D11" stroke-width="0"/>
+  <foreignObject x="440" y="580" width="720" height="80">
+    <div xmlns="http://www.w3.org/1999/xhtml" style="width:100%;height:100%;padding:10px;box-sizing:border-box;display:flex;flex-direction:column;align-items:center;justify-content:center;font:600 20px/1.2 'Noto Sans SC',sans-serif;color:#fff;text-align:center;">
+      reward = w₁×artifact + w₂×correctness + w₃×robustness
+      <span style="font-size:13px;font-weight:400;opacity:0.85;">数值型 0-1 最终得分</span>
+    </div>
+  </foreignObject>
+
+  <!-- ============================================== -->
+  <!-- Core guarantees (bottom band)                   -->
+  <!-- ============================================== -->
+  <rect x="80" y="700" width="1440" height="160" rx="10" fill="#fafafa" stroke="#e0e0e0" stroke-width="1"/>
+  <text x="100" y="730" font-size="14" font-weight="600" fill="#1f2328" font-family="'Noto Sans SC',sans-serif">核心保证</text>
+
+  <!-- Guarantee 1: Determinism (green) -->
+  <rect x="100" y="748" width="440" height="96" rx="8" fill="#ffffff" stroke="#C8E6C9" stroke-width="1.5"/>
+  <circle cx="128" cy="778" r="6" fill="#1B5E20"/>
+  <text x="146" y="784" font-size="17" font-weight="700" fill="#1B5E20" font-family="'Noto Sans SC',sans-serif">确定性</text>
+  <text x="120" y="812" font-size="13" fill="#59636e" font-family="'Noto Sans SC',sans-serif">同一任务同一输出，跑两次分数一致</text>
+
+  <!-- Guarantee 2: Reproducible (blue) -->
+  <rect x="580" y="748" width="440" height="96" rx="8" fill="#ffffff" stroke="#BBDEFB" stroke-width="1.5"/>
+  <circle cx="608" cy="778" r="6" fill="#1565C0"/>
+  <text x="626" y="784" font-size="17" font-weight="700" fill="#1565C0" font-family="'Noto Sans SC',sans-serif">可复现</text>
+  <text x="600" y="812" font-size="13" fill="#59636e" font-family="'Noto Sans SC',sans-serif">不引入模型偏差，不受 prompt 工程影响</text>
+
+  <!-- Guarantee 3: Partial score (orange) -->
+  <rect x="1060" y="748" width="440" height="96" rx="8" fill="#ffffff" stroke="#FFE0B2" stroke-width="1.5"/>
+  <circle cx="1088" cy="778" r="6" fill="#E65100"/>
+  <text x="1106" y="784" font-size="17" font-weight="700" fill="#E65100" font-family="'Noto Sans SC',sans-serif">部分得分</text>
+  <text x="1080" y="812" font-size="13" fill="#59636e" font-family="'Noto Sans SC',sans-serif">macro-F1 + smooth ramp + precision floor</text>
+  <text x="1080" y="832" font-size="13" fill="#9E9E9E" font-family="'Noto Sans SC',sans-serif">避免二元 pass/fail</text>
+</svg>
+</body>
+</html>

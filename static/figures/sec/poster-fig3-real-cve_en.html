@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Highlight 3: Real CVE Reproduction</title>
+<style>
+html, body {
+  margin: 0; padding: 0; box-sizing: border-box;
+  width: 100%; overflow: hidden;
+  background: #ffffff;
+  font-family: 'Noto Sans SC', 'PingFang SC', 'Microsoft Yahei', system-ui, sans-serif;
+}
+svg { display: block; width: 100%; height: auto; }
+</style>
+</head>
+<body>
+<svg viewBox="0 0 1600 900" width="1600" height="900" xmlns="http://www.w3.org/2000/svg">
+  <!-- Title -->
+  <text x="800" y="65" text-anchor="middle" font-size="40" font-weight="900" fill="#1f2328" font-family="'Noto Sans SC',sans-serif">Real CVE Reproduction</text>
+  <text x="800" y="100" text-anchor="middle" font-size="18" fill="#59636e" font-family="'Noto Sans SC',sans-serif">Whitebox tasks against real open-source CVEs, plus web-exploitation tasks covering advanced techniques</text>
+
+  <!-- Left column: whitebox projects -->
+  <text x="400" y="155" text-anchor="middle" font-size="22" font-weight="700" fill="#E65100" font-family="'Noto Sans SC',sans-serif">Whitebox audit &middot; real open-source CVEs</text>
+
+  <!-- Project cards grid: 3 cols, last row centered -->
+  <!-- Row 1 -->
+  <rect x="60" y="180" width="220" height="90" rx="8" fill="#FFF3E0" stroke="#FFB74D" stroke-width="2"/>
+  <foreignObject x="60" y="180" width="220" height="90">
+    <div xmlns="http://www.w3.org/1999/xhtml" style="width:100%;height:100%;padding:8px;box-sizing:border-box;display:flex;flex-direction:column;align-items:center;justify-content:center;font:15px/1.3 'Noto Sans SC',sans-serif;text-align:center;word-wrap:break-word;">
+      <span style="font-weight:700;font-size:18px;color:#BF360C;">binutils</span>
+      <span style="font-size:12px;color:#8d6e63;">OOB write · CWE-787</span>
+    </div>
+  </foreignObject>
+
+  <rect x="300" y="180" width="220" height="90" rx="8" fill="#FFF3E0" stroke="#FFB74D" stroke-width="2"/>
+  <foreignObject x="300" y="180" width="220" height="90">
+    <div xmlns="http://www.w3.org/1999/xhtml" style="width:100%;height:100%;padding:8px;box-sizing:border-box;display:flex;flex-direction:column;align-items:center;justify-content:center;font:15px/1.3 'Noto Sans SC',sans-serif;text-align:center;word-wrap:break-word;">
+      <span style="font-weight:700;font-size:18px;color:#BF360C;">curl</span>
+      <span style="font-size:12px;color:#8d6e63;">TFTP heap overflow</span>
+    </div>
+  </foreignObject>
+
+  <rect x="540" y="180" width="220" height="90" rx="8" fill="#FFF3E0" stroke="#FFB74D" stroke-width="2"/>
+  <foreignObject x="540" y="180" width="220" height="90">
+    <div xmlns="http://www.w3.org/1999/xhtml" style="width:100%;height:100%;padding:8px;box-sizing:border-box;display:flex;flex-direction:column;align-items:center;justify-content:center;font:15px/1.3 'Noto Sans SC',sans-serif;text-align:center;word-wrap:break-word;">
+      <span style="font-weight:700;font-size:18px;color:#BF360C;">nginx</span>
+      <span style="font-size:12px;color:#8d6e63;">rewrite heap overflow</span>
+    </div>
+  </foreignObject>
+
+  <!-- Row 2 -->
+  <rect x="60" y="285" width="220" height="90" rx="8" fill="#FFF3E0" stroke="#FFB74D" stroke-width="2"/>
+  <foreignObject x="60" y="285" width="220" height="90">
+    <div xmlns="http://www.w3.org/1999/xhtml" style="width:100%;height:100%;padding:8px;box-sizing:border-box;display:flex;flex-direction:column;align-items:center;justify-content:center;font:15px/1.3 'Noto Sans SC',sans-serif;text-align:center;word-wrap:break-word;">
+      <span style="font-weight:700;font-size:18px;color:#BF360C;">vim</span>
+      <span style="font-size:12px;color:#8d6e63;">modeline sandbox escape</span>
+    </div>
+  </foreignObject>
+
+  <rect x="300" y="285" width="220" height="90" rx="8" fill="#FFF3E0" stroke="#FFB74D" stroke-width="2"/>
+  <foreignObject x="300" y="285" width="220" height="90">
+    <div xmlns="http://www.w3.org/1999/xhtml" style="width:100%;height:100%;padding:8px;box-sizing:border-box;display:flex;flex-direction:column;align-items:center;justify-content:center;font:15px/1.3 'Noto Sans SC',sans-serif;text-align:center;word-wrap:break-word;">
+      <span style="font-weight:700;font-size:18px;color:#BF360C;">jq</span>
+      <span style="font-size:12px;color:#8d6e63;">JSON parser heap overflow</span>
+    </div>
+  </foreignObject>
+
+  <rect x="540" y="285" width="220" height="90" rx="8" fill="#FFF3E0" stroke="#FFB74D" stroke-width="2"/>
+  <foreignObject x="540" y="285" width="220" height="90">
+    <div xmlns="http://www.w3.org/1999/xhtml" style="width:100%;height:100%;padding:8px;box-sizing:border-box;display:flex;flex-direction:column;align-items:center;justify-content:center;font:15px/1.3 'Noto Sans SC',sans-serif;text-align:center;word-wrap:break-word;">
+      <span style="font-weight:700;font-size:18px;color:#BF360C;">fluent-bit</span>
+      <span style="font-size:12px;color:#8d6e63;">heap overflow</span>
+    </div>
+  </foreignObject>
+
+  <!-- Row 3 (centered) -->
+  <rect x="300" y="390" width="220" height="90" rx="8" fill="#FFF3E0" stroke="#FFB74D" stroke-width="2"/>
+  <foreignObject x="300" y="390" width="220" height="90">
+    <div xmlns="http://www.w3.org/1999/xhtml" style="width:100%;height:100%;padding:8px;box-sizing:border-box;display:flex;flex-direction:column;align-items:center;justify-content:center;font:15px/1.3 'Noto Sans SC',sans-serif;text-align:center;word-wrap:break-word;">
+      <span style="font-weight:700;font-size:18px;color:#BF360C;">junrar</span>
+      <span style="font-size:12px;color:#8d6e63;">path traversal</span>
+    </div>
+  </foreignObject>
+
+  <!-- Workflow: find-vuln → poc-verify -->
+  <rect x="60" y="510" width="700" height="80" rx="10" fill="#ECEFF1" stroke="#90A4AE" stroke-width="2"/>
+  <foreignObject x="60" y="510" width="700" height="80">
+    <div xmlns="http://www.w3.org/1999/xhtml" style="width:100%;height:100%;padding:10px 16px;box-sizing:border-box;display:flex;align-items:center;justify-content:center;font:16px/1.3 'Noto Sans SC',sans-serif;color:#1f2328;text-align:center;">
+      <span style="font-weight:600;">Two-step flow:</span>
+      <span style="margin:0 8px;padding:4px 12px;background:#37474F;color:#fff;border-radius:6px;font-size:14px;">find-vuln locates the flaw</span>
+      <span style="font-size:20px;color:#90A4AE;">→</span>
+      <span style="margin:0 8px;padding:4px 12px;background:#E65100;color:#fff;border-radius:6px;font-size:14px;">poc-verify triggers an ASAN crash</span>
+    </div>
+  </foreignObject>
+
+  <!-- Right column: Web exploit techniques -->
+  <text x="1180" y="155" text-anchor="middle" font-size="22" font-weight="700" fill="#6A1B9A" font-family="'Noto Sans SC',sans-serif">Web exploitation &middot; advanced attack techniques</text>
+
+  <!-- Technique cards -->
+  <rect x="840" y="180" width="680" height="70" rx="8" fill="#F3E5F5" stroke="#AB47BC" stroke-width="2"/>
+  <foreignObject x="840" y="180" width="680" height="70">
+    <div xmlns="http://www.w3.org/1999/xhtml" style="width:100%;height:100%;padding:8px 16px;box-sizing:border-box;display:flex;flex-direction:column;justify-content:center;font:16px/1.3 'Noto Sans SC',sans-serif;text-align:center;word-wrap:break-word;">
+      <span style="font-weight:600;color:#4A148C;">House of Apple2</span>
+      <span style="font-size:13px;color:#7b6777;">glibc 2.36+ tcache safe-linking bypass</span>
+    </div>
+  </foreignObject>
+
+  <rect x="840" y="265" width="680" height="70" rx="8" fill="#F3E5F5" stroke="#AB47BC" stroke-width="2"/>
+  <foreignObject x="840" y="265" width="680" height="70">
+    <div xmlns="http://www.w3.org/1999/xhtml" style="width:100%;height:100%;padding:8px 16px;box-sizing:border-box;display:flex;flex-direction:column;justify-content:center;font:16px/1.3 'Noto Sans SC',sans-serif;text-align:center;word-wrap:break-word;">
+      <span style="font-weight:600;color:#4A148C;">ECDSA nonce reuse</span>
+      <span style="font-size:13px;color:#7b6777;">Two JWT signatures reuse a nonce to recover the private key</span>
+    </div>
+  </foreignObject>
+
+  <rect x="840" y="350" width="680" height="70" rx="8" fill="#F3E5F5" stroke="#AB47BC" stroke-width="2"/>
+  <foreignObject x="840" y="350" width="680" height="70">
+    <div xmlns="http://www.w3.org/1999/xhtml" style="width:100%;height:100%;padding:8px 16px;box-sizing:border-box;display:flex;flex-direction:column;justify-content:center;font:16px/1.3 'Noto Sans SC',sans-serif;text-align:center;word-wrap:break-word;">
+      <span style="font-weight:600;color:#4A148C;">SAML signature wrapping</span>
+      <span style="font-size:13px;color:#7b6777;">Exploiting XPath selector discrepancies</span>
+    </div>
+  </foreignObject>
+
+  <rect x="840" y="435" width="680" height="70" rx="8" fill="#F3E5F5" stroke="#AB47BC" stroke-width="2"/>
+  <foreignObject x="840" y="435" width="680" height="70">
+    <div xmlns="http://www.w3.org/1999/xhtml" style="width:100%;height:100%;padding:8px 16px;box-sizing:border-box;display:flex;flex-direction:column;justify-content:center;font:16px/1.3 'Noto Sans SC',sans-serif;text-align:center;word-wrap:break-word;">
+      <span style="font-weight:600;color:#4A148C;">Deserialization gadget chain</span>
+      <span style="font-size:13px;color:#7b6777;">Java/.NET deserialization RCE</span>
+    </div>
+  </foreignObject>
+
+  <!-- Bottom callout -->
+  <rect x="80" y="640" width="1440" height="200" rx="10" fill="#fafafa" stroke="#e0e0e0" stroke-width="1"/>
+  <text x="100" y="670" font-size="14" font-weight="600" fill="#1f2328" font-family="'Noto Sans SC',sans-serif">Design points</text>
+
+  <circle cx="120" cy="700" r="5" fill="#E65100"/>
+  <text x="138" y="705" font-size="15" fill="#1f2328" font-family="'Noto Sans SC',sans-serif">All hard difficulty: none of the whitebox tasks is easy &mdash; a genuine test of source-audit ability</text>
+
+  <circle cx="120" cy="730" r="5" fill="#E65100"/>
+  <text x="138" y="735" font-size="15" fill="#1f2328" font-family="'Noto Sans SC',sans-serif">Gated flow: find-vuln must clear a scoring threshold before poc-verify unlocks, mirroring real pentest pacing</text>
+
+  <circle cx="120" cy="760" r="5" fill="#6A1B9A"/>
+  <text x="138" y="765" font-size="15" fill="#1f2328" font-family="'Noto Sans SC',sans-serif">5 vulnerability classes covered: memory corruption, sandbox escape, path traversal, crypto flaws, deserialization</text>
+
+  <circle cx="120" cy="790" r="5" fill="#6A1B9A"/>
+  <text x="138" y="795" font-size="15" fill="#1f2328" font-family="'Noto Sans SC',sans-serif">Real upstream projects: not synthetic bugs &mdash; the model must read real codebases like a security researcher</text>
+</svg>
+</body>
+</html>

@@ -1,0 +1,63 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1120 360" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif">
+  <rect width="1120" height="360" fill="#ffffff"/>
+
+  <!-- ===================== LEFT: scale per track ===================== -->
+  <text x="28" y="40" font-size="18" font-weight="700" fill="#0f172a">Scale per track</text>
+
+  <!-- Code -->
+  <text x="28" y="80" font-size="13.5" font-weight="600" fill="#334155">Code</text>
+  <rect x="28" y="90" width="199" height="26" rx="13" fill="#4F46E5"/>
+  <text x="241" y="111" font-size="20" font-weight="800" fill="#4F46E5">80</text>
+  <text x="271" y="110" font-size="12.5" fill="#94a3b8">· 18 categories</text>
+
+  <!-- Web -->
+  <text x="28" y="170" font-size="13.5" font-weight="600" fill="#334155">Web</text>
+  <rect x="28" y="180" width="139" height="26" rx="13" fill="#0E7490"/>
+  <text x="181" y="201" font-size="20" font-weight="800" fill="#0E7490">56</text>
+  <text x="223" y="200" font-size="12.5" fill="#94a3b8">· 6 families</text>
+
+  <!-- Office -->
+  <text x="28" y="260" font-size="13.5" font-weight="600" fill="#334155">Office</text>
+  <rect x="28" y="270" width="74" height="26" rx="13" fill="#15803D"/>
+  <text x="116" y="291" font-size="20" font-weight="800" fill="#15803D">30</text>
+  <text x="158" y="290" font-size="12.5" fill="#94a3b8">· 6 scenes</text>
+
+  <!-- divider -->
+  <line x1="582" y1="24" x2="582" y2="336" stroke="#eef0f4" stroke-width="2"/>
+
+  <!-- ===================== RIGHT: difficulty mix ===================== -->
+  <text x="620" y="40" font-size="18" font-weight="700" fill="#0f172a">Difficulty mix <tspan font-size="13" font-weight="500" fill="#94a3b8">· Web &amp; Office</tspan></text>
+
+  <!-- Web: L2 9, L3 28, L4 19  (scale 7.857 px/task) -->
+  <text x="620" y="86" font-size="13" font-weight="600" fill="#334155">Web · 56</text>
+  <g>
+    <rect x="620"   y="96" width="68.7" height="26" rx="5" fill="#c7d2fe"/>
+    <rect x="690.7" y="96" width="218"  height="26" rx="5" fill="#818cf8"/>
+    <rect x="910.7" y="96" width="147.3" height="26" rx="5" fill="#4f46e5"/>
+    <text x="654"   y="113" font-size="12" font-weight="700" fill="#312e81" text-anchor="middle">9</text>
+    <text x="799"   y="113" font-size="12" font-weight="700" fill="#ffffff" text-anchor="middle">28</text>
+    <text x="984"   y="113" font-size="12" font-weight="700" fill="#ffffff" text-anchor="middle">19</text>
+  </g>
+
+  <!-- Office: L2 5, L3 10, L4 10, L5 5 -->
+  <text x="620" y="166" font-size="13" font-weight="600" fill="#334155">Office · 30</text>
+  <g>
+    <rect x="620"   y="176" width="37.3" height="26" rx="5" fill="#c7d2fe"/>
+    <rect x="659.3" y="176" width="76.6" height="26" rx="5" fill="#818cf8"/>
+    <rect x="737.9" y="176" width="76.6" height="26" rx="5" fill="#4f46e5"/>
+    <rect x="816.5" y="176" width="37.3" height="26" rx="5" fill="#312e81"/>
+    <text x="638"   y="193" font-size="12" font-weight="700" fill="#312e81" text-anchor="middle">5</text>
+    <text x="697"   y="193" font-size="12" font-weight="700" fill="#ffffff" text-anchor="middle">10</text>
+    <text x="776"   y="193" font-size="12" font-weight="700" fill="#ffffff" text-anchor="middle">10</text>
+    <text x="835"   y="193" font-size="12" font-weight="700" fill="#ffffff" text-anchor="middle">5</text>
+  </g>
+
+  <!-- legend -->
+  <g font-size="12.5" fill="#475569">
+    <rect x="620" y="250" width="15" height="15" rx="4" fill="#c7d2fe"/><text x="641" y="262">L2</text>
+    <rect x="690" y="250" width="15" height="15" rx="4" fill="#818cf8"/><text x="711" y="262">L3</text>
+    <rect x="760" y="250" width="15" height="15" rx="4" fill="#4f46e5"/><text x="781" y="262">L4</text>
+    <rect x="830" y="250" width="15" height="15" rx="4" fill="#312e81"/><text x="851" y="262">L5</text>
+    <text x="900" y="262" fill="#94a3b8" font-size="11.5">harder →</text>
+  </g>
+</svg>
