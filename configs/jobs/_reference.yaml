@@ -1,0 +1,103 @@
+# Job config reference (v3 schema)
+#
+# A job YAML is a *pure composition* of model + harness + dataset, plus
+# optional per-job overrides. The runner deep-merges:
+#
+#   configs/bench/_default.yaml + <dataset_id>.yaml — harbor-runtime invariants
+#   configs/harnesses/<family>/<version>.yaml — harness identity + default params/env
+#   configs/models/<model>.yaml               — model identity + default inference
+#   configs/jobs/<job>.yaml                   — composition + overrides (this file)
+#
+# into a single harbor runtime config (written to `.workspace/data/generated/jobs/`).
+#
+# All keys below are optional unless marked REQUIRED.
+
+# REQUIRED — model slug, must match a file under configs/models/.
+model: <model-slug>
+
+# REQUIRED — canonical harness slug: <family>/<version>.
+harness: codebuddy-code/2.103.4
+
+# REQUIRED — dataset path (relative to repo root).
+dataset: datasets/<dataset-version>/tasks
+
+# REQUIRED — harness execution backend (where the harness/sandbox runs).
+harness_backend: local  # local
+
+# REQUIRED — model connection mode. No implicit proxy selection is performed:
+#   direct      — harness talks directly to model.backend_url_env
+#   local_proxy — local backend only; host proxy handles protocol bridge / extra_body
+model_connection: local_proxy
+
+# OPTIONAL — explicit results dir. Defaults to `<bench.jobs_dir>/<job_slug>`.
+# Normally omitted: Harbor auto-creates timestamped run dirs under the default.
+# Do not put timestamps in this value; that's Harbor's job.
+# jobs_dir: results/my-experiment
+
+# OPTIONAL — suffix appended to the default results base: `<bench.jobs_dir>-<suffix>`
+# (instead of the default per-slug subdir `<bench.jobs_dir>/<job_slug>`). Ignored
+# when jobs_dir is set explicitly.
+# jobs_dir_suffix: ablation-a
+
+# OPTIONAL — override the agent / verifier container user for this job.
+# Defaults come from configs/bench/::agent_user / ::verifier_user.
+# agent_user: root
+# verifier_user: root
+
+# OPTIONAL — extra hosts added to the agent-phase network allowlist. Kept as
+# ALLOWLIST (never downgraded to public), merged by Harbor. Under local_proxy +
+# egress control the container reaches the model only via host.docker.internal,
+# so that host must be listed or the egress sidecar drops it. Must be a list.
+# extra_allowed_hosts:
+#   - host.docker.internal
+
+# OPTIONAL — number of attempts per task. Defaults to configs/bench/::n_attempts.
+# n_attempts: 3
+
+# OPTIONAL — timeout multiplier. Defaults to configs/bench/::timeout_multiplier.
+# timeout_multiplier: 1.5
+
+# OPTIONAL — task_selection: run only a subset of the dataset instead of all
+# tasks. When omitted (or mode: all) every task runs. A selection routes the run
+# through the sharded executor so the subset is passed to Harbor as ``-i <task>``
+# includes; the resolved subset is recorded in the manifest.
+#
+#   mode: all                       # default — run everything
+#   mode: first  + count: 5         # first N tasks (sorted by slug)
+#   mode: last   + count: 5         # last N tasks (sorted by slug)
+#   mode: index  + indices: [0, 4]  # by 0-based position
+#   mode: random + count: 5         # random N (deterministic per seed)
+#                  seed: 0           #   optional, defaults to 0
+#   mode: name   + names: [task-a]  # explicit task slugs
+#
+# task_selection:
+#   mode: first
+#   count: 5
+
+# OPTIONAL — post-pipeline LLM judge override. Deep-merged onto
+# configs/bench/::llm_judge.
+# llm_judge_override:
+#   enabled: true
+#   api_base: <LLM_JUDGE_API_BASE>
+#   api_key_env: <LLM_JUDGE_API_KEY>
+#   model: <judge-model-id>
+
+# OPTIONAL — partial overlays. Deep-merged onto bench/harness/model layers.
+# orchestrator_override:
+#   n_concurrent_trials: 4
+# environment_override:
+#   force_build: false
+# model_params_override:
+#   max_output_tokens: 8192
+#   extra_body:
+#     chat_template_kwargs:
+#       enable_thinking: true
+# harness_params_override:
+#   CBC_MAX_TURNS: 50             # override the harness default turn budget
+# env_override:
+#   SOME_HARNESS_INTERNAL_FLAG: "1"
+# Context window / compaction — override configs/bench/ defaults for this job:
+# context_window: 131072          # e.g. a model that only supports 128k
+# context_compact_pct: 90
+# (Disabled tools are not a job knob — they live in the harness settings preset
+#  configs/harnesses/<family>/presets/settings.json `permissions.deny`.)

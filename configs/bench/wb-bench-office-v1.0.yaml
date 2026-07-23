@@ -1,0 +1,22 @@
+# Per-benchmark bench config for wb-bench-office-v1.0 (50 Office tasks).
+
+n_attempts: 3
+timeout_multiplier: 2.0
+
+# Office verifiers may need root-owned staging paths. Agent still runs as dev
+# from _default.yaml so harness CLIs do not run as root.
+verifier_user: "root"
+
+context_window: 200000
+context_compact_pct: 92
+
+verifier:
+  import_path: "workbuddy_bench.judge:CompositeVerifier"
+
+llm_judge:
+  enabled: false
+  # Office's rubric judge runs inside CompositeVerifier as a verifier-side step.
+  # Keep disabled by default; jobs that enable it should inherit mode=in_container
+  # so the post-run host_side whitebox judge is not run as a second judge.
+  mode: in_container
+  model: <model-slug>

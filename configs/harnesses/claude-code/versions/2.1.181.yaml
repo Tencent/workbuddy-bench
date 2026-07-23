@@ -1,0 +1,18 @@
+harness:
+  params:
+    CLAUDE_CODE_VERSION: "2.1.181"
+  settings_file: configs/harnesses/claude-code/presets/settings/v2_1.json
+  env:
+    # Default thinking depth = max for all cc runs (claude reads
+    # CLAUDE_CODE_EFFORT_LEVEL: low|medium|high|xhigh|max). The per-model proxy
+    # injection (configs/models/* extra_body → reasoning_effort) overrides what
+    # actually reaches an OpenAI backend; this env is the cc-CLI-side default.
+    CLAUDE_CODE_EFFORT_LEVEL: "max"
+    # Telemetry / auto-update / non-essential traffic off (auditable in manifest;
+    # cc_agent also sets the disable-traffic one in run() env).
+    CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC: "1"
+    DISABLE_AUTOUPDATER: "1"
+    DISABLE_TELEMETRY: "1"
+    DISABLE_UPDATES: "1"
+    # Strip the "Generated with Claude Code" attribution from agent git commits.
+    CLAUDE_CODE_ATTRIBUTION_HEADER: "0"

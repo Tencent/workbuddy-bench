@@ -1,0 +1,13 @@
+{
+  "alwaysThinkingEnabled": true,
+  "autoUpdates": false,
+  "autoCompactEnabled": true,
+  "includeCoAuthoredBy": false,
+  "promptSuggestionEnabled": false,
+  "enableAllProjectMcpServers": false,
+  "cleanupPeriodDays": 3650,
+  "permissions": {
+    "defaultMode": "bypassPermissions",
+    "deny": ["WebSearch", "AskUserQuestion", "EnterPlanMode", "ExitPlanMode"]
+  }
+}

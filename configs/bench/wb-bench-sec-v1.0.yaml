@@ -1,0 +1,34 @@
+# Per-benchmark bench config for wb-bench-sec-v1.0 (60 security tasks).
+#
+# Deep-merged ON TOP of configs/bench/_default.yaml by
+# workbuddy_bench.runner.bench_config.load_bench. Selected automatically when a
+# job declares ``dataset: datasets/wb-bench-sec-v1.0/tasks``.
+#
+# Scoring is task-native: each task ships tests/scoring.py (or test_outputs.py)
+# driven by tests/test.sh, which writes a numeric reward.json directly
+# (PoC verification / YARA matching / ground-truth comparison). The workbuddy
+# CompositeVerifier LLM judge and diff_capture are NOT used, so llm_judge stays
+# disabled and no judge model slug is required.
+
+n_attempts: 3
+timeout_multiplier: 2.0
+
+# sec tasks bake their own challenge environment (Dockerfile builds the target
+# binary/service) and the verifier often needs root-owned staging paths. Agent
+# rollout still inherits the non-root default user from _default.yaml.
+verifier_user: "root"
+
+context_window: 200000
+context_compact_pct: 92
+
+# task-native verifier: tests/test.sh runs the task's own scorer and emits
+# reward.txt/reward.json. We intentionally leave verifier.import_path UNSET so
+# Harbor's VerifierFactory falls back to its built-in harbor.verifier.verifier:
+# Verifier, which uploads tests/, runs the discovered test.sh, and parses the
+# reward file. workbuddy's CompositeVerifier must NOT be used here: it requires a
+# [verifier] composite contract (schema/engine) in dataset.toml that task-native
+# sec deliberately omits, so routing sec through it raises VerifierContractError.
+
+# No LLM judge for sec — scoring is fully programmatic.
+llm_judge:
+  enabled: false

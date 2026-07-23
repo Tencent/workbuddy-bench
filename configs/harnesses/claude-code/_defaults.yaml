@@ -1,0 +1,18 @@
+harness:
+  name: claude-code
+  import_path: "workbuddy_bench.agents.cc_agent:CcAgent"
+  protocol: anthropic
+  params:
+    # Claude Code agentic-turn budget (≈ loose upper bound; one turn ≥ one model call).
+    CLAUDE_CODE_MAX_TURNS: 256
+  # No models_file: unlike cbc (which writes ~/.codebuddy/models.json), the claude
+  # CLI reads its model/endpoint from ANTHROPIC_BASE_URL / ANTHROPIC_API_KEY /
+  # ANTHROPIC_MODEL env, which cc_agent.run() sets. So there is no models preset.
+  mount:
+    name: claude-code
+    path: /opt/claude-code
+    dockerfile: configs/harnesses/claude-code/docker/Dockerfile
+    context: configs/harnesses/claude-code/docker
+    build:
+      args:
+        MOUNT_PATH: /opt/claude-code

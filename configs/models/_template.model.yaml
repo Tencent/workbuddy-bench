@@ -1,0 +1,87 @@
+# Model identity template (v3 schema).
+#
+# How to use:
+#   cp configs/models/_template.model.yaml \
+#      configs/models/<model-slug>.yaml
+#   then edit values below.
+#
+# Slug convention: short kebab-case identifier. Jobs reference this slug via
+# `model: <slug>`.
+#
+# This file describes the model only — backend connection + inference
+# defaults. Harness-specific knobs belong in configs/harnesses/.
+#
+# Credentials live in `.env`; this file only names the env vars to read.
+#
+# The runner skips files matching `_template.*.yaml`.
+
+model:
+  # REQUIRED — backend model id sent in API requests (provider-specific).
+  name: <backend-model-id>
+
+  # REQUIRED — wire protocols the backend service speaks, in priority order.
+  # The FIRST element is the primary (used for direct-mode forwarding and
+  # validation). A multi-protocol gateway lists every protocol it accepts so a
+  # harness whose protocol is in the list routes via same-protocol passthrough
+  # instead of conversion.
+  #   openai     — backend accepts OpenAI Chat Completions (/v1/chat/completions)
+  #   anthropic  — backend accepts Anthropic Messages (/v1/messages)
+  # e.g. [openai]            single-protocol OpenAI backend
+  #      [openai, anthropic] gateway speaking both; primary = openai
+  protocols: [openai]
+
+  # REQUIRED — env-var name that holds the backend base URL.
+  # Convention: <PROVIDER>_BASE_URL. Whatever name you put here MUST exist in
+  # your .env (or shell) — see .env.example for the pattern.
+  backend_url_env: <PROVIDER_BASE_URL>
+
+  # REQUIRED — env-var name that holds the API key. Use a unique name per
+  # backend so credentials do not bleed across models.
+  # Convention: <PROVIDER>_API_KEY.
+  backend_key_env: <PROVIDER_API_KEY>
+
+  # OPTIONAL — custom HTTP headers injected into every upstream backend request
+  # (literal values only). Only takes effect under model_connection: local_proxy
+  # (the proxy adds them; direct mode does not). Reserved headers
+  # (host/content-length/authorization/x-api-key) are ignored so a misconfigured
+  # header can't break auth or transport framing; the backend key's Authorization
+  # is always injected from backend_key_env.
+  # backend_headers:
+  #   X-Region: cn-north
+  #   X-Tenant-Id: team-42
+
+  # OPTIONAL — backend-quirk workarounds for OpenAI-compatible backends.
+  # Both default off and only take effect under model_connection: local_proxy
+  # (the proxy applies them; direct / AGS modes ignore them). Leave unset unless
+  # a specific backend needs them.
+  #
+  #   reasoning_passback — some backends only honor cross-turn thinking passback
+  #     when the prior assistant message carries `reasoning_content`, but cbc
+  #     flattens all thinking to `reasoning`. When true, the proxy copies
+  #     `reasoning` -> `reasoning_content` on outgoing messages so passback works.
+  #   dedup_reasoning — for backends that duplicate thinking across multiple
+  #     reasoning keys; when true, the proxy de-duplicates it.
+  # reasoning_passback: false
+  # dedup_reasoning: false
+
+  # OPTIONAL — per-model concurrency cap. Bounds simultaneous in-flight requests
+  # to this backend (e.g. a rate-limited or capacity-constrained service). Only
+  # applies under model_connection: local_proxy — the proxy holds a semaphore of
+  # this size per backend. Unset = no cap (proxy uses a default keepalive pool).
+  # max_concurrent: 8
+
+  # OPTIONAL — model's PHYSICAL context-window upper bound (tokens). If set, the
+  # bench/job context_window must not exceed it (fail-fast). Leave unset if the
+  # model has no hard cap you want enforced.
+  # context_window: 262144
+
+  # OPTIONAL — default inference params. Per-job override:
+  # `model_params_override` (deep-merged into this block).
+  params:
+    # max_output_tokens: 16384
+    # temperature: 0.0
+    # thinking_enabled: false
+    # extra_body:                       # provider-specific extras
+    #   chat_template_kwargs:           # NOTE: extra_body is injected only by
+    #     enable_thinking: false        # the local proxy -> requires
+    #                                   # model_connection: local_proxy

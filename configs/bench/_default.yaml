@@ -1,0 +1,40 @@
+# Shared bench base: bench-wide infra deep-merged UNDER each
+# configs/bench/<dataset_id>.yaml, then under a job YAML's overrides.
+# Semantic keys below are repeated per-benchmark; kept here as fallbacks.
+
+jobs_dir: results
+
+# Orchestrator settings are top-level (Harbor v0.13.1); per-job override via
+# a job YAML's orchestrator_override.
+n_concurrent_trials: 8
+quiet: false
+
+environment:
+  type: docker
+  import_path: workbuddy_bench.runner.docker_environment:WorkBuddyDockerEnvironment
+  force_build: true
+  delete: false
+
+# Exec user for the agent rollout / verifier. Non-root `dev` so every harness
+# runs in the same environment (Claude Code refuses root). The user is created
+# at install() time (see ensure_agent_user), so it need not exist in the image.
+# Per-job override via agent_user / verifier_user; set "" / null for root.
+agent_user: dev
+verifier_user: dev
+
+# ── Per-benchmark semantic fallbacks (each <dataset_id>.yaml repeats these) ──
+n_attempts: 1
+timeout_multiplier: 2.5
+
+# Context window + compaction. context_window is the auto-compact trigger (token);
+# must not exceed a model.yaml physical limit. context_compact_pct only applies to
+# cbc route A (< 2.103.4): trigger = window × pct; route B uses the bare window.
+context_window: 200000
+context_compact_pct: 92
+
+# Layer-3 LLM judge (optional). mode host_side: post-run judge over the result
+# dir; in_container: the dataset's verifier runs the judge inside the container.
+llm_judge:
+  enabled: false
+  mode: host_side
+  model: <model-slug>

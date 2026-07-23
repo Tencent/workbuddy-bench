@@ -1,0 +1,59 @@
+# Harness identity template (v3 schema).
+#
+# How to use:
+#   mkdir -p configs/harnesses/<family>
+#   cp configs/harnesses/_template.harness.yaml \
+#      configs/harnesses/<family>/<version>.yaml
+#   then edit values below. Put shared defaults in
+#   configs/harnesses/<family>/_defaults.yaml when multiple versions share them.
+#
+# Canonical slug convention: `<family>/<version>` (e.g. `codebuddy-code/2.103.4`).
+#
+# The runner skips files matching `_template.*.yaml`.
+
+harness:
+  # REQUIRED — short identifier surfaced in logs, fingerprints and audits.
+  name: <harness-name>
+
+  # REQUIRED — Python import path of the agent wrapper class.
+  # Example:
+  #   workbuddy_bench.agents.cbc_agent:CbcAgent
+  import_path: "workbuddy_bench.agents.<module>:<Class>"
+
+  # REQUIRED — wire protocol the harness speaks to the model endpoint.
+  #   openai     — harness speaks OpenAI Chat Completions
+  #   anthropic  — harness speaks Anthropic Messages
+  # If this differs from the model's protocol, the job must explicitly use
+  # model_connection: local_proxy; run.sh does not auto-enable the proxy.
+  protocol: openai
+
+  # OPTIONAL — harness params (NOT model inference params).
+  # These are forwarded to the wrapper as `harness_params`. Per-job override:
+  # `harness_params_override` (deep-merged).
+  params:
+    # version: "1.0.0"       # harness CLI / SDK version pin (recommended)
+    # CBC_MAX_TURNS: 100     # harness-internal iteration budget
+
+  # OPTIONAL — deterministic config presets written into the container by the
+  # agent (e.g. cbc settings.json / models.json). Disabled tools live in the
+  # settings preset's permissions.deny, not a param.
+  # settings_file: configs/harnesses/<family>/presets/settings.json
+  # models_file: configs/harnesses/<family>/presets/models.json
+
+  # OPTIONAL — split-mount delivery: the harness CLI is mounted into the
+  # container from a prebuilt image instead of installed at runtime.
+  # mount:
+  #   name: <mount-name>
+  #   path: /opt/<harness>
+  #   dockerfile: configs/harnesses/<family>/docker/Dockerfile
+  #   context: configs/harnesses/<family>/docker
+  #   images:
+  #     local: <local-image-ref>
+  #   build:
+  #     args:
+  #       MOUNT_PATH: /opt/<harness>
+
+  # OPTIONAL — harness-internal env vars (NOT credentials, NOT model params).
+  # Forwarded to harbor's `agent.env`. Per-job override: `env_override`.
+  env:
+    # SOME_HARNESS_INTERNAL_FLAG: "1"

@@ -1,0 +1,62 @@
+# === Python ===
+__pycache__/
+*.py[cod]
+*.egg-info/
+dist/
+build/
+.ruff_cache/
+
+# === Testing ===
+.pytest_cache/
+.coverage
+htmlcov/
+
+# === Virtualenv ===
+.venv/
+
+# === Environment / secrets ===
+.env
+.env.*
+!.env.example
+*.bak
+
+# === OS / IDE ===
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+*.sw[op]
+
+# === Logs ===
+nohup.out
+
+# === Local scratch / WIP ===
+.workspace/
+scripts/local/
+scripts/logs/
+# top-level scratch dir only; dataset tests/ trees stay tracked
+/tests
+
+# === Machine-generated eval outputs ===
+/jobs/
+/results/
+
+# === Dataset payload — not shipped in git; downloaded from HuggingFace ===
+# The four subsets live as .tar.gz archives on HuggingFace (see datasets/README.md
+# and scripts/dataset/fetch-dataset.sh). Track only the pointer README. Bundle
+# archives land in dist/ (already ignored above).
+/datasets/*
+!/datasets/README.md
+
+# === Config churn — ship only templates/reference ===
+configs/models/**
+!configs/models/_template.model.yaml
+configs/jobs/*
+!configs/jobs/_reference.yaml
+!configs/jobs/_template.job.yaml
+
+# === Editor/agent local state — keep skills, drop the rest ===
+.claude/*
+!.claude/skills
+.agents/*
+!.agents/skills

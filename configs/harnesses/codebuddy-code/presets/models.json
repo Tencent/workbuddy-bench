@@ -1,0 +1,12 @@
+{
+  "id": "${MODEL_ID}",
+  "name": "${MODEL_ID}",
+  "vendor": "OpenAI",
+  "url": "${CBC_BASE_URL}",
+  "apiKey": "${CBC_API_KEY}",
+  "maxInputTokens": "${CONTEXT_WINDOW}",
+  "maxOutputTokens": "${MAX_OUTPUT_TOKENS}",
+  "supportsToolCall": true,
+  "supportsImages": false,
+  "supportsReasoning": true
+}

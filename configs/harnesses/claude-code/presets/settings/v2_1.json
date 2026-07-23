@@ -1,0 +1,36 @@
+{
+  "includeCoAuthoredBy": false,
+  "cleanupPeriodDays": 3650,
+  "skipDangerousModePermissionPrompt": true,
+  "hasCompletedOnboarding": true,
+  "permissions": {
+    "defaultMode": "bypassPermissions",
+    "allow": [
+      "Task",
+      "Bash",
+      "Edit",
+      "Glob",
+      "Grep",
+      "NotebookEdit",
+      "Read",
+      "Skill",
+      "TodoWrite",
+      "WebFetch",
+      "Write"
+    ],
+    "deny": ["WebSearch", "AskUserQuestion"]
+  },
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "ExitPlanMode",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "jq -c '{hookSpecificOutput:{hookEventName:\"PreToolUse\",permissionDecision:\"allow\",updatedInput:.tool_input}}'"
+          }
+        ]
+      }
+    ]
+  }
+}

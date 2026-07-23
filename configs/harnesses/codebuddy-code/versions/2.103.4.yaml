@@ -1,0 +1,17 @@
+# CodeBuddy Code 2.103.4. Version + preset mapping only; _defaults.yaml + loader
+# derive the mount image tag and build args. See CONFIG.md for the
+# version-to-preset mapping.
+#
+# Compaction: route B (absolute window via CODEBUDDY_AUTO_COMPACT_WINDOW; cbc_agent
+# omits maxInputTokens for >= 2.103.4). Tools: ComputerUse + WaitForMcpServers
+# exist (Workflow does NOT — that arrives in 2.105), so v2_103.json denies those
+# two. The env block hard-gates them off as belt-and-suspenders (deny already
+# removes them) and disables session-title generation (saves an extra LLM call).
+harness:
+  params:
+    CBC_VERSION: "2.103.4"
+  settings_file: configs/harnesses/codebuddy-code/presets/settings/v2_103.json
+  env:
+    CODEBUDDY_COMPUTER_USE_ENABLED: "0"
+    CODEBUDDY_WAIT_FOR_MCP_SERVERS_ENABLED: "0"
+    CODEBUDDY_CODE_DISABLE_SESSION_TITLE_REFRESH: "1"

@@ -1,0 +1,99 @@
+# Job composition template (v3 schema).
+#
+# How to use:
+#   cp configs/jobs/_template.job.yaml configs/jobs/<job-slug>.yaml
+#   then edit the REQUIRED fields and any overrides you need.
+#
+# Slug convention: `{model}-{harness-short}-{dataset-or-purpose}`.
+# Pass it to scripts/run.sh via `--job`.
+#
+# Do not put timestamps in the filename; that's a run-instance concept
+# (Harbor auto-creates timestamped dirs). The filename is a reusable
+# experiment identifier.
+#
+# A job is a *pure composition* of model + harness + dataset plus optional
+# overrides; the runner deep-merges the bench/harness/model layers under it. See
+# configs/jobs/_reference.yaml for the full field-by-field schema.
+#
+# The runner skips files matching `_template.*.yaml`.
+
+# REQUIRED — model slug; must match a configs/models/<slug>.yaml file
+# (excluding `_template.*`).
+model: <model-slug>
+
+# REQUIRED — canonical harness slug: <family>/<version>, e.g.
+# codebuddy-code/2.103.4.
+harness: <harness-family>/<version>
+
+# REQUIRED — dataset directory (relative to repo root). scripts/run.sh
+# reads this value as the only dataset source.
+dataset: datasets/<dataset-version>/tasks
+
+# REQUIRED — harness execution backend (where the harness/sandbox runs).
+harness_backend: local  # local
+
+# REQUIRED — explicit model connection mode. The runner never auto-enables proxy.
+#   local_proxy — RECOMMENDED default; host proxy owns param injection, request
+#                 logging/interception, and protocol bridge (Anthropic <-> OpenAI).
+#   direct      — harness talks directly to model.backend_url_env (simpler, but
+#                 no injection/logging/conversion; extra_body models fail fast).
+model_connection: local_proxy
+
+# OPTIONAL — explicit results dir. Defaults to `<bench.jobs_dir>/<job-slug>`.
+# Normally omitted — Harbor timestamps run dirs automatically.
+# jobs_dir: results/my-experiment
+
+# OPTIONAL — suffix appended to the default results base instead of the
+# per-slug subdir: `<bench.jobs_dir>-<suffix>`. Ignored if jobs_dir is set.
+# jobs_dir_suffix: ablation-a
+
+# OPTIONAL — override the agent / verifier container user for this job.
+# Default comes from configs/bench/::agent_user / ::verifier_user.
+# agent_user: root
+# verifier_user: root
+
+# OPTIONAL — extra hosts added to the agent-phase network allowlist (list).
+# Needed when local_proxy + egress control means the container reaches the
+# model only via host.docker.internal — that host must be allowlisted.
+# extra_allowed_hosts:
+#   - host.docker.internal
+
+# OPTIONAL — attempts per task; defaults to configs/bench/::n_attempts.
+# n_attempts: 3
+
+# OPTIONAL — task timeout multiplier; defaults to configs/bench/::timeout_multiplier.
+# timeout_multiplier: 1.5
+
+# OPTIONAL — capture the full request/response of every model call (local_proxy
+# only). After the run, the proxy log is split by trial into
+# results/<slug>/<ts>/<trial>/agent/requests.jsonl. Default off.
+# record_full_io: true
+
+# OPTIONAL — task subset, resolved into manifest.selected_tasks. Omit or use
+# mode: all to run every task under dataset:.
+# task_selection:
+#   mode: name
+#   names: [add-health-endpoint]
+#
+# OPTIONAL — post-pipeline LLM judge override. Deep-merged onto
+# configs/bench/::llm_judge.
+# llm_judge_override:
+#   enabled: true
+#   api_base: <LLM_JUDGE_API_BASE>
+#   api_key_env: <LLM_JUDGE_API_KEY>
+#   model: <judge-model-id>
+#
+# OPTIONAL — partial overlays deep-merged onto the bench / harness / model
+# layers (orchestrator_override, environment_override, model_params_override,
+# harness_params_override, env_override, context_window / context_compact_pct).
+# The most common one:
+#
+# model_params_override:
+#   max_output_tokens: 8192
+#   extra_body:
+#     chat_template_kwargs:
+#       enable_thinking: true
+#
+# See configs/jobs/_reference.yaml for every overlay block and its fields.
+# (Disabled tools live in the harness settings preset's permissions.deny,
+#  not here — configs/harnesses/<family>/presets/settings.json.)

@@ -1,0 +1,29 @@
+# Per-benchmark bench config for the wb-bench-code-v1.0 dataset (80 tasks).
+#
+# Deep-merged ON TOP of configs/bench/_default.yaml by
+# workbuddy_bench.runner.bench_config.load_bench. Selected automatically when a
+# job declares ``dataset: datasets/wb-bench-code-v1.0/tasks`` (id derived
+# from the dataset's dataset.toml). The semantic keys are written in full here so
+# this benchmark's runtime is self-describing; tune any of them independently of
+# other benchmarks. (Bench-wide infra lives in _default.yaml.)
+#
+# Grading runs through workbuddy_bench.judge:CompositeVerifier. Dataset behavior
+# is resolved from dataset.toml + shared/verifier/plugin.py; tests/test.sh is
+# kept only as a Harbor format stub.
+
+n_attempts: 3
+timeout_multiplier: 2.0
+
+# Context window + compaction (cbc_agent translates these into env). A job may
+# still override per-run via top-level context_window / context_compact_pct.
+context_window: 200000
+context_compact_pct: 92
+
+verifier:
+  import_path: "workbuddy_bench.judge:CompositeVerifier"
+
+# Layer-3 LLM judge — optional post-run pipeline. Enable via a job's
+# llm_judge_override, or flip enabled here to make it the benchmark default.
+llm_judge:
+  enabled: false
+  model: <model-slug>

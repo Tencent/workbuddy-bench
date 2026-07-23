@@ -1,0 +1,14 @@
+# CodeBuddy Code 2.93.5 (legacy compaction mechanism). Only the version +
+# preset mapping are declared here; _defaults.yaml + loader derive the mount
+# image tag and build args. See CONFIG.md for the version-to-preset mapping.
+#
+# Compaction: route A (window×pct via maxInputTokens). 2.93.5 has NO
+# CODEBUDDY_AUTO_COMPACT_WINDOW env and compaction is hard-dependent on
+# maxInputTokens, so cbc_agent writes the window there for this version.
+# Tools: no Workflow / ComputerUse / WaitForMcpServers exist in 2.93.5, so the
+# deny list (legacy.json) and env stay minimal — denying / gating a tool that
+# does not exist would be misleading.
+harness:
+  params:
+    CBC_VERSION: "2.93.5"
+  settings_file: configs/harnesses/codebuddy-code/presets/settings/legacy.json

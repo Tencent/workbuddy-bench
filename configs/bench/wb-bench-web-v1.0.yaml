@@ -1,0 +1,35 @@
+# Per-benchmark bench config for wb-bench-web-v1.0 (70 Web tasks).
+#
+# Deep-merged ON TOP of configs/bench/_default.yaml by
+# workbuddy_bench.runner.bench_config.load_bench. Selected automatically when a
+# job declares ``dataset: datasets/wb-bench-web-v1.0/tasks``.
+
+n_attempts: 3
+timeout_multiplier: 2.0
+
+# v1.0 uses fixed item-level judge dispatch and penalty-based scoring. The
+# in-container verifier still uses /app as its scratch/runtime mirror
+# (/app/www, /app/submission, /app/.eval-results.json). An empty verifier_user
+# means prepare_tasks will not inject a verifier user into task.toml, so Harbor
+# keeps the container default user (root) for verifier execution. Agent rollout
+# continues to inherit the bench default non-root user.
+verifier_user: "root"
+
+# Large enough for the Web rubrics and screenshot-backed in-container judge.
+context_window: 200000
+context_compact_pct: 92
+
+# Shared defaults for the in-container Web VLM judge. Endpoint, token, and model
+# are intentionally not pinned here; prepare_job derives the unified
+# WORKBUDDY_VERIFIER_LLM_* route from llm_judge + model_connection when
+# llm_judge.enabled is true.
+verifier:
+  import_path: workbuddy_bench.judge:CompositeVerifier
+  env:
+    WEB_BENCH_LLM_JUDGE_MODE: "full"
+    WEB_BENCH_LLM_TIMEOUT_SEC: "1200"
+
+llm_judge:
+  enabled: true
+  mode: in_container
+  model: kimi-k2.7-think

@@ -1,0 +1,37 @@
+# CodeBuddy Code CLI harness defaults shared by all CodeBuddy Code versions.
+
+harness:
+  name: cbc-agent
+  import_path: "workbuddy_bench.agents.cbc_agent:CbcAgent"
+  protocol: openai
+  params:
+    # cbc agentic-turn budget (≈ loose upper bound; one turn ≥ one model call).
+    # 256 is a conservative cap so hard tasks can't thrash indefinitely.
+    CBC_MAX_TURNS: 256
+    # Disabled tools live in each version's settings preset `permissions.deny`.
+    # The deny list is version-specific (new tools appear over releases), so the
+    # settings_file is chosen per version rather than here.
+  # Deterministic cbc config presets (the actual files written into ~/.codebuddy/
+  # inside the container). Edit these to change the preset; cbc_agent loads them
+  # and overlays dynamic items.
+  #   settings/<group>.json — behavioural config; cbc_agent overlays
+  #     alwaysThinkingEnabled when the model's thinking_enabled is set. The deny
+  #     list differs by version, so each versions/<v>.yaml sets `settings_file`
+  #     to its group file. There is no shared default here on purpose: a version
+  #     that forgets to map would otherwise silently inherit the wrong deny list.
+  #   models.json — static model fields only (vendor/supports*/maxOutputTokens);
+  #     cbc_agent fills id/name/url/apiKey per run. Shared across all versions
+  #     (no version-specific differences), so it stays here as the default.
+  models_file: configs/harnesses/codebuddy-code/presets/models.json
+  # Split-mount skeleton shared by all versions. A <version>.yaml only sets the
+  # version param (params.CBC_VERSION); the loader derives mount.images.local
+  # (= name:version) and build.args.CBC_VERSION from it. MOUNT_PATH is constant
+  # so it lives here.
+  mount:
+    name: codebuddy-code
+    path: /opt/codebuddy-code
+    dockerfile: configs/harnesses/codebuddy-code/docker/Dockerfile
+    context: configs/harnesses/codebuddy-code/docker
+    build:
+      args:
+        MOUNT_PATH: /opt/codebuddy-code

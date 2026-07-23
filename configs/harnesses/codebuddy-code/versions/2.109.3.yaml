@@ -1,0 +1,19 @@
+# CodeBuddy Code 2.109.3. Version + preset mapping only; _defaults.yaml + loader
+# derive the mount image tag and build args. See CONFIG.md for the
+# version-to-preset mapping.
+#
+# Compaction: route B (absolute window via CODEBUDDY_AUTO_COMPACT_WINDOW; cbc_agent
+# omits maxInputTokens for >= 2.103.4). Tools: Workflow + ComputerUse +
+# WaitForMcpServers + EnterPlanMode + ExitPlanMode all exist, so v2_109.json
+# denies them. PlanMode is denied because it can put headless benchmark rollouts
+# into an interactive approval flow. The env block hard-gates ComputerUse /
+# WaitForMcpServers off (belt-and-suspenders) and disables session-title
+# generation.
+harness:
+  params:
+    CBC_VERSION: "2.109.3"
+  settings_file: configs/harnesses/codebuddy-code/presets/settings/v2_109.json
+  env:
+    CODEBUDDY_COMPUTER_USE_ENABLED: "0"
+    CODEBUDDY_WAIT_FOR_MCP_SERVERS_ENABLED: "0"
+    CODEBUDDY_CODE_DISABLE_SESSION_TITLE_REFRESH: "1"
