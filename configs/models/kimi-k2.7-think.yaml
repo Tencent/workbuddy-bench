@@ -1,0 +1,19 @@
+# Judge model for the Web benchmark's in-container VLM/LLM rubric judge.
+#
+# The web bench (configs/bench/wb-bench-web-v1.0.yaml) pins llm_judge.model to
+# this slug by default. Ship this file so resolve_manifest no longer fails with
+# "llm_judge.model='kimi-k2.7-think' does not resolve to a model config".
+#
+# Fill the two env vars in your .env (or shell) with a Moonshot / Kimi backend
+# that serves an OpenAI-compatible Chat Completions endpoint. The judge needs a
+# vision-capable model because Web rubrics use vlm items.
+#
+# Credentials live in .env; this file only names the env vars to read.
+model:
+  name: kimi-k2.7-think
+  protocols: [openai]
+  backend_url_env: KIMI_BASE_URL
+  backend_key_env: KIMI_API_KEY
+  params:
+    max_output_tokens: 16384
+    temperature: 0.0

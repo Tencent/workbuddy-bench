@@ -51,6 +51,10 @@ scripts/logs/
 # === Config churn — ship only templates/reference ===
 configs/models/**
 !configs/models/_template.model.yaml
+# exception: the Web benchmark pins llm_judge.model to this slug by default, so
+# ship a placeholder (env-only) file so a clean clone resolves & runs without a
+# "does not resolve to a model config" error. Real credentials still come from .env.
+!configs/models/kimi-k2.7-think.yaml
 configs/jobs/*
 !configs/jobs/_reference.yaml
 !configs/jobs/_template.job.yaml
