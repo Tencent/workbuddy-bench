@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Office · Dataset — Tencent WorkBuddy Bench</title>
+  <link rel="icon" type="image/png" href="static/img/wb-icon.png?v=6">
+  <link rel="stylesheet" href="wbds-detail.css?v=20">
+  <link rel="stylesheet" href="wbds-chrome.css?v=6">
+  <script>(function(){try{var t=localStorage.getItem('cbTheme');var d=(t==='dark'||(t==null&&window.matchMedia&&window.matchMedia('(prefers-color-scheme: dark)').matches));document.documentElement.setAttribute('data-theme',d?'dark':'light');}catch(e){}})();</script>
+  <style>
+    /* ---- left sticky table-of-contents (ported from code.html) ---- */
+    .office-page .detail-wrap{max-width:1120px;display:grid;grid-template-columns:212px minmax(0,1fr);gap:44px;align-items:start;width:100%;margin:0 auto}
+    /* pin the cross-page subset bar to the sitewide 860px grid — .office-page
+       overrides --content-max to 1120 for its own layout, which would otherwise
+       shift the bar relative to overview/code/web/security */
+    .office-page .ov-bar-inner{max-width:860px;margin:0 auto}
+    .detail-main{min-width:0}
+    .toc{position:sticky;top:calc(var(--topbar-h) + 22px);align-self:start;max-height:calc(100vh - var(--topbar-h) - 44px);overflow-y:auto;padding-top:56px}
+    .toc-head{font-family:var(--wb-font-mono);font-size:10px;font-weight:600;letter-spacing:.09em;text-transform:uppercase;color:var(--wb-text-tertiary);padding:0 0 10px 11px}
+    .toc-nav{display:flex;flex-direction:column;gap:1px;border-left:1px solid var(--wb-border-subtle)}
+    .toc-nav a{display:block;padding:6px 12px;margin-left:-1px;border-left:2px solid transparent;font-size:12.5px;line-height:1.4;color:var(--wb-text-secondary);transition:color .16s ease,border-color .16s ease,background .16s ease}
+    .toc-nav a:hover{color:var(--wb-text-heading)}
+    .toc-nav a.toc-sub{padding-left:24px;font-size:12px;color:var(--wb-text-tertiary)}
+    .toc-nav a.is-active{color:var(--wb-brand-primary);border-left-color:var(--wb-brand-primary);font-weight:600}
+    .toc-nav a.toc-sub.is-active{color:var(--wb-brand-primary)}
+    /* offset anchors so headings don't hide under the sticky topbar */
+    .detail-sec[id],.detail-hero[id],.hl-sub[id]{scroll-margin-top:calc(var(--topbar-h) + 20px)}
+    @media(max-width:960px){
+      .office-page .detail-wrap{display:block;max-width:var(--content-max)}
+      .toc{display:none}
+    }
+
+    /* ---- overview principle-card icons ---- */
+    #overview .principle-card{position:relative;overflow:hidden;min-height:198px;border-color:rgba(var(--pc-accent-rgb),.22);background:linear-gradient(145deg,rgba(var(--pc-accent-rgb),.075),transparent 44%),var(--wb-surface-1);transition:transform .18s ease,box-shadow .18s ease}
+    #overview .principle-card::before{content:"";position:absolute;inset:0 0 auto;height:3px;border-radius:var(--wb-radius-lg) var(--wb-radius-lg) 0 0;background:var(--pc-accent)}
+    #overview .principle-card:hover{transform:translateY(-2px);box-shadow:0 9px 24px rgba(15,23,42,.09)}
+    #overview .principle-card p{color:#666}
+    #overview .pc-files{--pc-accent:#209b7e;--pc-accent-rgb:32,155,126}
+    #overview .pc-workflow{--pc-accent:#5277d4;--pc-accent-rgb:82,119,212}
+    #overview .pc-audit{--pc-accent:#b97827;--pc-accent-rgb:185,120,39}
+    .pc-head{display:flex;align-items:center;gap:11px;margin:3px 0 15px}
+    .pc-head .pc-kicker{margin-bottom:0;background:rgba(var(--pc-accent-rgb),.12);color:var(--pc-accent)}
+    .pc-icon{display:grid;place-items:center;flex:0 0 auto;width:42px;height:42px;border:1px solid rgba(var(--pc-accent-rgb),.24);border-radius:12px;background:rgba(var(--pc-accent-rgb),.1);color:var(--pc-accent)}
+    .pc-icon svg{display:block;width:25px;height:25px}
+    [data-theme="dark"] #overview .principle-card{border-color:rgba(var(--pc-accent-rgb),.32);background:linear-gradient(145deg,rgba(var(--pc-accent-rgb),.12),transparent 48%),var(--wb-surface-1)}
+    [data-theme="dark"] #overview .principle-card:hover{box-shadow:0 10px 26px rgba(0,0,0,.24)}
+    [data-theme="dark"] #overview .principle-card p{color:var(--wb-text-secondary)}
+    [data-theme="dark"] #overview .pc-files{--pc-accent:#45d9b5;--pc-accent-rgb:69,217,181}
+    [data-theme="dark"] #overview .pc-workflow{--pc-accent:#8facff;--pc-accent-rgb:143,172,255}
+    [data-theme="dark"] #overview .pc-audit{--pc-accent:#efb66c;--pc-accent-rgb:239,182,108}
+
+    /* ---- bilingual captions under embedded figures ---- */
+    .office-figcap{margin-top:8px;padding:9px 12px;border-left:2px solid rgba(40,184,148,.55);border-radius:0 8px 8px 0;background:var(--wb-surface-section);font-size:11.5px;line-height:1.55;color:var(--wb-text-secondary)}
+    .office-figcap b{display:inline-flex;align-items:center;margin-right:5px;padding:1px 6px;border-radius:999px;background:rgba(40,184,148,.11);color:var(--wb-brand-primary);font-family:var(--wb-font-mono);font-size:9.5px;font-weight:700;letter-spacing:.04em;text-transform:uppercase}
+
+    /* ---- dark-mode: integrate embedded figures with the page surface ---- */
+    [data-theme="dark"] .office-figure{background:var(--wb-surface-1);padding:12px;border:1px solid var(--wb-border-subtle);border-radius:var(--wb-radius-lg);box-shadow:0 12px 32px rgba(0,0,0,.24)}
+    [data-theme="dark"] .office-figure iframe{border-radius:calc(var(--wb-radius-lg) - 4px)}
+  </style>
+</head>
+<body class="lang-zh office-page">
+  <nav class="topbar">
+    <div class="bar-inner">
+      <a class="topbar__brand" href="index.html" aria-label="Tencent WorkBuddy Bench home">
+        <img class="theme-logo--light" src="static/img/wb-bench.png?v=2" alt="Tencent WorkBuddy Bench">
+        <img class="theme-logo--dark" src="static/img/wb-bench-light.png?v=2" alt="Tencent WorkBuddy Bench">
+      </a>
+      <div class="topbar__nav">
+        <a href="index.html#leaderboard"><span class="en">Leaderboard</span><span class="zh">排行榜</span></a>
+        <a class="is-current" href="overview.html"><span class="en">Overview</span><span class="zh">概览</span></a>
+        <a href="report/main.pdf"><span class="en">Paper</span><span class="zh">论文</span></a>
+        <a href="https://github.com/Tencent/workbuddy-bench"><span class="en">Code</span><span class="zh">代码</span></a>
+        <a href="https://huggingface.co/datasets/tencent/workbuddy-bench"><span class="en">Dataset</span><span class="zh">数据集</span></a>
+        <a href="https://github.com/Tencent/workbuddy-bench/tree/main/.agents/skills"><span class="en">Skill Bundle</span><span class="zh">技能包</span></a>
+      </div>
+      <div class="topbar__controls">
+        <div class="seg lang-toggle">
+          <button data-lang-btn="zh">中文</button>
+          <button data-lang-btn="en">EN</button>
+        </div>
+        <button class="theme-toggle" id="themeToggle" aria-label="Toggle theme" title="Light / Dark">
+          <svg class="ic-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+          <svg class="ic-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/></svg>
+        </button>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Cross-page bar: Overview + jump between the four subset detail pages -->
+  <div class="ov-bar">
+    <div class="ov-bar-inner">
+      <a href="overview.html"><span class="en">Overview</span><span class="zh">总览</span></a>
+      <span class="sep"></span>
+      <a href="code.html">Code</a>
+      <a href="web.html">Web</a>
+      <a class="is-current" href="office.html">Office</a>
+      <a href="security.html">Security</a>
+    </div>
+  </div>
+
+  <div class="detail-wrap">
+
+    <aside class="toc" id="toc" aria-label="On this page">
+      <div class="toc-head"><span class="en">On this page</span><span class="zh">本页目录</span></div>
+      <nav class="toc-nav">
+        <a href="#leaderboard"><span class="en">Leaderboard</span><span class="zh">排行榜</span></a>
+        <a href="#overview"><span class="en">Overview</span><span class="zh">概览</span></a>
+        <a href="#task-shape"><span class="en">Task shape</span><span class="zh">任务形态</span></a>
+        <a href="#scenes"><span class="en">Scenes</span><span class="zh">场景分布</span></a>
+        <a href="#verification"><span class="en">Verification</span><span class="zh">评估方式</span></a>
+        <a href="#interpretation"><span class="en">How to read</span><span class="zh">阅读口径</span></a>
+      </nav>
+    </aside>
+
+    <div class="detail-main">
+    <header class="detail-hero">
+      <div class="eyebrow">Office workflows</div>
+      <h1>Office <span class="ver">50 tasks</span></h1>
+      <p class="tagline">
+        <span class="en">Can an agent turn a messy workspace into a usable, verifiable deliverable?</span>
+        <span class="zh">Agent 能不能把一组杂乱的办公文件，整理成可用、可核查的交付物？</span>
+      </p>
+    </header>
+
+    <!-- LEADERBOARD -->
+    <section class="detail-sec" id="leaderboard">
+      <h2><span class="en">Leaderboard</span><span class="zh">排行榜</span></h2>
+      <p><span class="en">Compare the overall score, deterministic Rule checks, and evidence-grounded LLM Judge score.</span><span class="zh">对比总分、确定性的 Rule 检查得分，以及基于证据的 LLM Judge 得分。</span></p>
+      <div id="lb-office"></div>
+      <p class="office-figcap" role="note">
+        <span class="en"><b>Note</b> Model settings: reasoning effort defaults to high, and each model runs with its provider-default inference hyperparameters.<br>Harness settings: the context window is unified at 200k with a unified auto-compaction threshold; the WebSearch and AskUserQuestion tools are disabled.<br>Evaluation is pinned to specific harness builds &mdash; codebuddy-code:2.109.3 and claude-code:2.1.187; metrics may shift as harness versions evolve.<br>The HY (Hunyuan) endpoint in this evaluation is served first-party by its provider; the other models are accessed through third-party serving endpoints, whose parameter configuration and request handling may affect metrics.</span>
+        <span class="zh"><b>备注</b> 模型设置：reasoning effort 默认为 high，各模型使用其默认推理超参。<br>harness 设置：上下文窗口统一为 200k，自动压缩阈值统一；禁用 WebSearch 与 AskUserQuestion 工具。<br>评测固定在特定 harness 构建上：codebuddy-code:2.109.3 与 claude-code:2.1.187；随 harness 版本演进，指标可能变化。<br>本次评测中 HY（混元）端点由其提供方第一方部署；其余模型通过第三方推理端点接入，第三方的参数配置与请求处理可能影响指标。</span>
+      </p>
+    </section>
+
+    <!-- OVERVIEW -->
+    <section class="detail-sec" id="overview">
+      <h2><span class="en">Overview</span><span class="zh">概览</span></h2>
+      <div class="en">
+        <p>Office evaluates whether an agent can complete everyday workflows inside an <b>offline workspace</b>. The agent reads spreadsheets, PDFs, documents, JSON exports, Markdown notes, file trees and local state, then reconciles, edits, archives, migrates, summarizes or updates them into a usable deliverable.</p>
+        <p>Reliable execution depends on clear grounding: each claim traces to a source, file changes are accounted for, state and reports agree, and the final artifact is useful to the next person.</p>
+      </div>
+      <div class="zh">
+        <p>Office 考察 Agent 能否在一个<b>离线 workspace</b> 里完成日常办公工作流。Agent 需要读取 Excel、PDF、文档、JSON 导出、Markdown 说明、目录结构和本地状态，再完成对账、编辑、归档、迁移、汇总或状态更新，最终交付可用的产物。</p>
+        <p>可靠执行需要清楚的依据：每个结论都能追溯到来源，文件改动有据可查，状态和报告保持一致，交付物也能让下一个人直接使用。</p>
+      </div>
+
+      <div class="principle-grid">
+        <article class="principle-card pc-files">
+          <div class="pc-head">
+            <span class="pc-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M13 3H6.5A1.5 1.5 0 0 0 5 4.5v11A1.5 1.5 0 0 0 6.5 17H15a1.5 1.5 0 0 0 1.5-1.5V6.5Z"/><path d="M13 3v3.5h3.5M8 10h5.5M8 13h4"/><path d="M8 20h9.5a1.5 1.5 0 0 0 1.5-1.5V9"/></svg></span>
+            <div class="pc-kicker"><span class="en">Multiple file types</span><span class="zh">多种文件</span></div>
+          </div>
+          <h3><span class="en">The input is a workspace.</span><span class="zh">输入是一整个 workspace。</span></h3>
+          <p><span class="en">Files, folders, tables, documents, exports, instructions and local state all matter.</span><span class="zh">文件、目录、表格、文档、导出记录、任务说明和本地状态都可能是线索。</span></p>
+        </article>
+        <article class="principle-card pc-workflow">
+          <div class="pc-head">
+            <span class="pc-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="5" cy="6" r="2"/><circle cx="19" cy="12" r="2"/><circle cx="5" cy="18" r="2"/><path d="M7 6h4a3 3 0 0 1 3 3v0a3 3 0 0 0 3 3M7 18h4a3 3 0 0 0 3-3v0a3 3 0 0 1 3-3"/><path d="m10 4 2 2-2 2M10 16l2 2-2 2"/></svg></span>
+            <div class="pc-kicker"><span class="en">Workflow-oriented</span><span class="zh">工作流</span></div>
+          </div>
+          <h3><span class="en">Finish the full workflow.</span><span class="zh">Agent 要把流程走完。</span></h3>
+          <p><span class="en">Completion includes the expected files, state changes and handoff material.</span><span class="zh">完成任务需要留下该生成的文件、该更新的状态和该交接的材料。</span></p>
+        </article>
+        <article class="principle-card pc-audit">
+          <div class="pc-head">
+            <span class="pc-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3H6.5A1.5 1.5 0 0 0 5 4.5v15A1.5 1.5 0 0 0 6.5 21h10a1.5 1.5 0 0 0 1.5-1.5V7Z"/><path d="M14 3v4h4M8 11h4M8 15h3"/><circle cx="15.5" cy="14.5" r="2.5"/><path d="m17.3 16.3 2.2 2.2"/></svg></span>
+            <div class="pc-kicker"><span class="en">Auditable</span><span class="zh">可审计</span></div>
+          </div>
+          <h3><span class="en">The deliverable can be verified.</span><span class="zh">交付结果可核查。</span></h3>
+          <p><span class="en">The verifier looks at files, state, evidence, structure and reader-facing quality.</span><span class="zh">Verifier 会检查文件、状态、证据链、结构，以及最终内容对读者是否有用。</span></p>
+        </article>
+      </div>
+    </section>
+
+    <!-- TASK SHAPE -->
+    <section class="detail-sec" id="task-shape">
+      <h2><span class="en">What one Office task looks like</span><span class="zh">一道 Office 任务长什么样</span></h2>
+      <p><span class="en">A typical task is a small work packet. The agent reads the workspace, links evidence across files, makes the requested changes, and leaves behind artifacts that can be checked after the run.</span><span class="zh">一道典型任务就是一个小型工作包。Agent 需要读完 workspace，跨文件串起证据，按要求完成修改或生成，并留下可供检查的产物。</span></p>
+
+      <figure class="office-figure office-figure--hero">
+        <iframe class="en" src="static/figures/office/hero_invoice_archive_en.html?v=20260716a" title="WorkBuddyBench-Office workflow hero" loading="lazy" scrolling="no"></iframe>
+        <iframe class="zh" src="static/figures/office/hero_invoice_archive_zh.html?v=20260716a" title="WorkBuddyBench-Office 工作流主图" loading="lazy" scrolling="no"></iframe>
+      </figure>
+
+      <div class="flow-chips">
+        <span class="chip alt"><span class="en">request</span><span class="zh">请求</span></span>
+        <span class="flow-arrow">→</span>
+        <span class="chip alt">workspace</span>
+        <span class="flow-arrow">→</span>
+        <span class="chip alt"><span class="en">workflow</span><span class="zh">工作流</span></span>
+        <span class="flow-arrow">→</span>
+        <span class="chip alt"><span class="en">deliverables</span><span class="zh">交付物</span></span>
+        <span class="flow-arrow">→</span>
+        <span class="chip alt"><span class="en">checks</span><span class="zh">检查</span></span>
+      </div>
+    </section>
+
+    <!-- SCENES -->
+    <section class="detail-sec" id="scenes">
+      <h2><span class="en">Distribution-informed scene coverage</span><span class="zh">分布对齐的场景覆盖</span></h2>
+      <div class="en">
+        <p>Office distributes 50 tasks across six common work scenes. The scene groups are distribution-informed and describe benchmark coverage — they do not estimate production request traffic. Select a scene to compare its relative reference weight and task count, then explore representative tasks.</p>
+      </div>
+      <div class="zh">
+        <p>Office 的 50 个任务覆盖六类常见办公场景。场景分组为分布对齐的基准覆盖描述，并非对线上请求流量的估计。选择任一场景，即可对照其相对参考权重和任务数量，并查看代表任务。</p>
+      </div>
+
+      <figure class="office-figure office-figure--scene">
+        <iframe class="en" src="static/figures/office/homepage_scene_coverage_en.html?v=20260716a" title="WorkBuddyBench-Office scene coverage" loading="lazy" scrolling="no"></iframe>
+        <iframe class="zh" src="static/figures/office/homepage_scene_coverage_zh.html?v=20260716a" title="WorkBuddyBench-Office 场景覆盖" loading="lazy" scrolling="no"></iframe>
+      </figure>
+      <p class="office-figcap" role="note">
+        <span class="en"><b>Note</b> The two distributions use the same scene order. Gray compares each scene's relative coverage share in the distribution-informed reference; green compares Office task counts, normalized to the largest scene in each distribution. Selecting either row highlights both and moves the arrow from the Office row to its representative tasks.</span>
+        <span class="zh"><b>备注</b> 两组分布采用相同的场景顺序。灰色比较各场景在分布对齐参考中的相对覆盖占比，绿色比较各场景的 Office 任务数量；进度条分别按各自分布中的最大值归一化。点击任一行会同步高亮两处分布，并由 Office 任务行的箭头指向右侧代表任务。</span>
+      </p>
+
+    </section>
+
+    <!-- VERIFICATION -->
+    <section class="detail-sec" id="verification">
+      <h2><span class="en">Layered verification</span><span class="zh">分层验证</span></h2>
+      <p><span class="en"><b>Rules verify concrete artifacts; LLM Judge evaluates evidence-grounded quality.</b> Rules cover required files, parseability, schemas, extracted content, workspace changes, source binding and safety boundaries. LLM Judge evaluates semantic qualities such as a useful handoff and reasoning that stays consistent with the evidence.</span><span class="zh"><b>Rule 核对具体文件和结果，LLM Judge 评估有证据支撑的质量。</b> Rule 检查文件是否存在、能否解析、schema 和抽取内容是否正确、workspace 是否按要求变化、来源是否清楚、安全边界是否守住。LLM Judge 评估交接说明是否有用、理由是否和证据一致。</span></p>
+
+      <figure class="office-figure office-figure--verification">
+        <iframe class="en" src="static/figures/office/homepage_verification_coverage_en.html?v=20260716a" title="WorkBuddyBench-Office layered verification" loading="lazy" scrolling="no"></iframe>
+        <iframe class="zh" src="static/figures/office/homepage_verification_coverage_zh.html?v=20260716a" title="WorkBuddyBench-Office 分层验证" loading="lazy" scrolling="no"></iframe>
+      </figure>
+
+      <div class="principle-grid two-col">
+        <article class="principle-card rule-card">
+          <div class="pc-kicker"><span class="en">Deterministic layer</span><span class="zh">确定性层</span></div>
+          <h3><span class="en">Did the files and state actually change correctly?</span><span class="zh">文件和状态到底改对了吗？</span></h3>
+          <p><span class="en">Scripts check output contracts, schemas, parsed values, file diffs, state changes and evidence links.</span><span class="zh">脚本会检查输出契约、schema、解析值、文件差分、状态变化和证据链接。</span></p>
+        </article>
+        <article class="principle-card judge-card">
+          <div class="pc-kicker"><span class="en">Judge layer</span><span class="zh">Judge 层</span></div>
+          <h3><span class="en">Would a person trust and use the handoff?</span><span class="zh">这个交付物别人能接着用吗？</span></h3>
+          <p><span class="en">Rubrics look at policy fit, exception handling, reasoning, reader usefulness and consistency with the submitted evidence.</span><span class="zh">Rubric 会看任务口径、异常处理、推理依据、读者可用性，以及内容是否和提交证据一致。</span></p>
+        </article>
+      </div>
+    </section>
+
+    <!-- INTERPRETATION -->
+    <section class="detail-sec" id="interpretation">
+      <h2><span class="en">How to read Office</span><span class="zh">如何理解 Office</span></h2>
+      <div class="en">
+        <p>An Office score answers one question: <b>did the agent finish the work in a way that can be verified?</b> Grading uses the artifacts left in the offline workspace &mdash; files, state changes, evidence links and handoff material. The three views below clarify that scope.</p>
+      </div>
+      <div class="zh">
+        <p>Office 的分数回答一个问题：<b>Agent 有没有把工作做完，并留下可核查的结果？</b>评分依据是离线 workspace 中最终留下的文件、状态变化、证据链接和交接材料。下面三个角度说明这项分数覆盖的范围。</p>
+      </div>
+      <div class="reading-grid">
+        <article class="reading-card">
+          <h3><span class="en">Completed workflows</span><span class="zh">完整工作流</span></h3>
+          <p><span class="en">The score reflects completed files, state changes, reports and handoff artifacts.</span><span class="zh">分数反映文件、状态变化、报告和交接产物是否完整交付。</span></p>
+        </article>
+        <article class="reading-card">
+          <h3><span class="en">Offline and reproducible</span><span class="zh">离线且可复现</span></h3>
+          <p><span class="en">Tasks run in reproducible workspaces that resemble business systems while remaining independent of live services and private accounts.</span><span class="zh">任务在可复现的 workspace 中运行，保留业务系统的工作形态，同时独立于真实服务和私人账号。</span></p>
+        </article>
+        <article class="reading-card">
+          <h3><span class="en">Multi-layer verification</span><span class="zh">多层核查</span></h3>
+          <p><span class="en">Checks cover file contracts, content, state, source links, safety boundaries and handoff quality.</span><span class="zh">核查覆盖文件契约、内容、状态、来源链接、安全边界和交接质量。</span></p>
+        </article>
+      </div>
+    </section>
+
+    </div><!-- /.detail-main -->
+  </div>
+  <footer class="site-footer">
+    <div class="site-footer__inner">
+      <p class="site-footer__byline">Tencent Youtu Lab · Keen &amp; Yunding Security Lab · WorkBuddy</p>
+    </div>
+  </footer>
+  <script src="lang.js?v=3"></script>
+  <script src="roster.js?v=12"></script>
+  <script src="data.js?v=22"></script>
+  <script src="subset-lb.js?v=6"></script>
+  <script>renderSubsetLB("WorkBuddyBench-Office", "lb-office");</script>
+  <script>(function(){
+    function resizeFrame(frame){
+      try{
+        var doc=frame.contentDocument||frame.contentWindow.document;
+        if(!doc||!doc.body)return;
+        var isScene=!!frame.closest('.office-figure--scene');
+        var content=isScene?doc.querySelector('.wrap'):null;
+        var h;
+        if(content){
+          h=Math.ceil(content.getBoundingClientRect().height)+8;
+        }else{
+          var html=doc.documentElement;
+          h=Math.max(doc.body.scrollHeight,html.scrollHeight,doc.body.offsetHeight,html.offsetHeight);
+        }
+        if(h>0)frame.style.height=(h+2)+'px';
+      }catch(e){}
+    }
+    function watchFrame(frame){
+      try{
+        if(frame._officeResizeObserver||!frame.closest('.office-figure--scene'))return;
+        var doc=frame.contentDocument||frame.contentWindow.document;
+        var content=doc&&doc.querySelector('.wrap');
+        var Observer=frame.contentWindow.ResizeObserver||window.ResizeObserver;
+        if(!content||!Observer)return;
+        frame._officeResizeObserver=new Observer(function(){resizeFrame(frame);});
+        frame._officeResizeObserver.observe(content);
+      }catch(e){}
+    }
+    function syncTheme(frame){
+      try{
+        var doc=frame.contentDocument||frame.contentWindow.document;
+        if(!doc||!doc.documentElement)return;
+        doc.documentElement.setAttribute('data-theme',document.documentElement.getAttribute('data-theme')||'light');
+      }catch(e){}
+    }
+    function syncFrame(frame){
+      syncTheme(frame);
+      resizeFrame(frame);
+      watchFrame(frame);
+    }
+    function allFrames(){return [].slice.call(document.querySelectorAll('.office-figure iframe'));}
+    function resizeAll(){allFrames().forEach(syncFrame);}
+    allFrames().forEach(function(frame){
+      frame.addEventListener('load',function(){syncFrame(frame);});
+    });
+    new MutationObserver(function(){
+      allFrames().forEach(syncTheme);
+      requestAnimationFrame(resizeAll);
+    }).observe(document.documentElement,{attributes:true,attributeFilter:['data-theme']});
+    window.addEventListener('resize',resizeAll);
+    window.addEventListener('load',resizeAll);
+    resizeAll();
+    setTimeout(resizeAll,800);
+  })();</script>
+  <script src="site.js?v=1"></script>
+</body>
+</html>

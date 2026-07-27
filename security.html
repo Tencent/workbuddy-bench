@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>WorkBuddyBench-Security · Dataset — Tencent WorkBuddy Bench</title>
+  <link rel="icon" type="image/png" href="static/img/wb-icon.png?v=6">
+  <link rel="stylesheet" href="wbds-detail.css?v=17">
+  <link rel="stylesheet" href="wbds-chrome.css?v=6">
+  <script>(function(){try{var t=localStorage.getItem('cbTheme');var d=(t==='dark'||(t==null&&window.matchMedia&&window.matchMedia('(prefers-color-scheme: dark)').matches));document.documentElement.setAttribute('data-theme',d?'dark':'light');}catch(e){}})();</script>
+  <style>
+    .hl-sub{font-size:14.5px;font-weight:600;color:var(--wb-text-heading);margin:26px 0 8px;display:flex;align-items:center;gap:9px}
+    .hl-sub .n{flex-shrink:0;display:inline-grid;place-items:center;width:22px;height:22px;border-radius:var(--wb-radius-pill);background:var(--wb-brand-primary);color:#fff;font-family:var(--wb-font-mono);font-size:11px;font-weight:700}
+
+    /* ---- interactive HTML poster figures (ported from office.html's office-figure pattern) ---- */
+    /* these posters render on a white canvas, so give them the same "paper figure" card treatment
+       office.html uses for its white-background figures, incl. the dark-mode white-card rule. */
+    .sec-figure{width:100%;margin:22px auto 4px;border:1px solid var(--wb-border-subtle);border-radius:var(--wb-radius-lg);background:#fff;padding:14px;box-shadow:var(--wb-shadow-card);overflow:visible;box-sizing:border-box}
+    .sec-figure iframe{display:block;width:100%;height:400px;border:0;border-radius:calc(var(--wb-radius-lg) - 6px);background:#fff}
+    [data-theme="dark"] .sec-figure{box-shadow:0 14px 32px rgba(0,0,0,.5);border-color:rgba(255,255,255,.14)}
+    .sec-figure figcaption{color:var(--wb-text-tertiary);font-size:12.5px;margin-top:11px;text-align:center}
+
+    /* ---- left sticky table-of-contents (ported from code.html / office.html) ---- */
+    .detail-wrap{max-width:1120px;display:grid;grid-template-columns:212px minmax(0,1fr);gap:44px;align-items:start}
+    .detail-main{min-width:0}
+    .toc{position:sticky;top:calc(var(--topbar-h) + 22px);align-self:start;max-height:calc(100vh - var(--topbar-h) - 44px);overflow-y:auto;padding-top:56px}
+    .toc-head{font-family:var(--wb-font-mono);font-size:10px;font-weight:600;letter-spacing:.09em;text-transform:uppercase;color:var(--wb-text-tertiary);padding:0 0 10px 11px}
+    .toc-nav{display:flex;flex-direction:column;gap:1px;border-left:1px solid var(--wb-border-subtle)}
+    .toc-nav a{display:block;padding:6px 12px;margin-left:-1px;border-left:2px solid transparent;font-size:12.5px;line-height:1.4;color:var(--wb-text-secondary);transition:color .16s ease,border-color .16s ease,background .16s ease}
+    .toc-nav a:hover{color:var(--wb-text-heading)}
+    .toc-nav a.toc-sub{padding-left:24px;font-size:12px;color:var(--wb-text-tertiary)}
+    .toc-nav a.is-active{color:var(--wb-brand-primary);border-left-color:var(--wb-brand-primary);font-weight:600}
+    .toc-nav a.toc-sub.is-active{color:var(--wb-brand-primary)}
+    /* offset anchors so headings don't hide under the sticky topbar */
+    .detail-sec[id],.detail-hero[id],.hl-sub[id]{scroll-margin-top:calc(var(--topbar-h) + 20px)}
+    @media(max-width:960px){
+      .detail-wrap{display:block;max-width:var(--content-max)}
+      .toc{display:none}
+    }
+  </style>
+</head>
+<body class="lang-zh">
+  <nav class="topbar">
+    <div class="bar-inner">
+      <a class="topbar__brand" href="index.html" aria-label="Tencent WorkBuddy Bench home">
+        <img class="theme-logo--light" src="static/img/wb-bench.png?v=2" alt="Tencent WorkBuddy Bench">
+        <img class="theme-logo--dark" src="static/img/wb-bench-light.png?v=2" alt="Tencent WorkBuddy Bench">
+      </a>
+      <div class="topbar__nav">
+        <a href="index.html#leaderboard"><span class="en">Leaderboard</span><span class="zh">排行榜</span></a>
+        <a class="is-current" href="overview.html"><span class="en">Overview</span><span class="zh">概览</span></a>
+        <a href="report/main.pdf"><span class="en">Paper</span><span class="zh">论文</span></a>
+        <a href="https://github.com/Tencent/workbuddy-bench"><span class="en">Code</span><span class="zh">代码</span></a>
+        <a href="https://huggingface.co/datasets/tencent/workbuddy-bench"><span class="en">Dataset</span><span class="zh">数据集</span></a>
+        <a href="https://github.com/Tencent/workbuddy-bench/tree/main/.agents/skills"><span class="en">Skill Bundle</span><span class="zh">技能包</span></a>
+      </div>
+      <div class="topbar__controls">
+        <div class="seg lang-toggle">
+          <button data-lang-btn="zh">中文</button>
+          <button data-lang-btn="en">EN</button>
+        </div>
+        <button class="theme-toggle" id="themeToggle" aria-label="Toggle theme" title="Light / Dark">
+          <svg class="ic-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+          <svg class="ic-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/></svg>
+        </button>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Cross-page bar: Overview + jump between the four subset detail pages -->
+  <div class="ov-bar">
+    <div class="ov-bar-inner">
+      <a href="overview.html"><span class="en">Overview</span><span class="zh">总览</span></a>
+      <span class="sep"></span>
+      <a href="code.html">Code</a>
+      <a href="web.html">Web</a>
+      <a href="office.html">Office</a>
+      <a class="is-current" href="security.html">Security</a>
+    </div>
+  </div>
+
+  <div class="detail-wrap">
+
+    <aside class="toc" id="toc" aria-label="On this page">
+      <div class="toc-head"><span class="en">On this page</span><span class="zh">本页目录</span></div>
+      <nav class="toc-nav">
+        <a href="#leaderboard"><span class="en">Leaderboard</span><span class="zh">排行榜</span></a>
+        <a href="#overview"><span class="en">Overview</span><span class="zh">概览</span></a>
+        <a href="#highlights"><span class="en">Highlights</span><span class="zh">核心亮点</span></a>
+        <a class="toc-sub" href="#red-blue-stack"><span class="en">Red+blue dual stack</span><span class="zh">红蓝双栈</span></a>
+        <a class="toc-sub" href="#programmatic-verification"><span class="en">Programmatic verification</span><span class="zh">程序化验证</span></a>
+        <a class="toc-sub" href="#real-cve"><span class="en">Real CVE reproduction</span><span class="zh">真实 CVE 复现</span></a>
+        <a class="toc-sub" href="#agent-security-frontier"><span class="en">Agent-security frontier</span><span class="zh">Agent 安全前沿</span></a>
+        <a class="toc-sub" href="#anti-cheat"><span class="en">Anti-cheat</span><span class="zh">反作弊</span></a>
+        <a href="#scoring"><span class="en">Scoring</span><span class="zh">评测口径</span></a>
+      </nav>
+    </aside>
+
+    <div class="detail-main">
+    <header class="detail-hero">
+      <div class="eyebrow">Security</div>
+      <h1>Security <span class="ver">60 tasks</span></h1>
+      <p class="tagline">
+        <span class="en">Can an agent work across a security team&rsquo;s spectrum &mdash; find and safely reproduce real vulnerabilities, analyze malware, run security operations, and probe agent attack surfaces?</span>
+        <span class="zh">Agent 能否胜任安全团队的完整工作流程？评测项目包括挖掘并安全复现真实漏洞、分析恶意软件、执行安全运营、评估 Agent 自身攻击面。</span>
+      </p>
+    </header>
+
+    <!-- LEADERBOARD -->
+    <section class="detail-sec" id="leaderboard">
+      <h2><span class="en">Leaderboard</span><span class="zh">排行榜</span></h2>
+      <p><span class="en">Seven models scored on the CodeBuddy Code harness, averaged over 3 runs in think mode; Score is 0&ndash;100, higher is better.</span><span class="zh">七个模型在 CodeBuddy Code 评测框架上评测、取 3 次运行平均(think 模式);分数 0&ndash;100,越高越好。</span></p>
+      <div id="lb-security"></div>
+      <p role="note" style="margin:12px 2px 0;font-size:12px;line-height:1.6;color:var(--wb-text-tertiary)">
+        <span class="en">Model settings: reasoning effort defaults to high, and each model runs with its provider-default inference hyperparameters.</span><span class="zh">模型设置：reasoning effort 默认为 high，各模型使用其默认推理超参。</span><br>
+        <span class="en">Harness settings: the context window is unified at 200k with a unified auto-compaction threshold; the WebSearch and AskUserQuestion tools are disabled.</span><span class="zh">harness 设置：上下文窗口统一为 200k，自动压缩阈值统一；禁用 WebSearch 与 AskUserQuestion 工具。</span><br>
+        <span class="en">Evaluation is pinned to a specific harness build &mdash; codebuddy-code:2.109.3; metrics may shift as harness versions evolve.</span><span class="zh">评测固定在特定 harness 构建上：codebuddy-code:2.109.3；随 harness 版本演进，指标可能变化。</span><br>
+        <span class="en">The HY (Hunyuan) endpoint in this evaluation is served first-party by its provider; the other models are accessed through third-party serving endpoints, whose parameter configuration and request handling may affect metrics.</span><span class="zh">本次评测中 HY（混元）端点由其提供方第一方部署；其余模型通过第三方推理端点接入，第三方的参数配置与请求处理可能影响指标。</span>
+      </p>
+    </section>
+
+    <!-- OVERVIEW -->
+    <section class="detail-sec" id="overview">
+      <h2><span class="en">Overview</span><span class="zh">概览</span></h2>
+      <div class="en">
+        <p>The suite spans four scenarios &mdash; <b>code</b>, <b>web</b>, <b>office</b> and <b>security</b>. The security subset asks a broader question than a standard bug-fix task: can an agent work across the <b>full spectrum of a security team</b> inside a <b>real codebase</b> &mdash; <b>locate</b> vulnerable code across modules and <b>safely reproduce</b> the issue in a sandboxed environment, <b>analyze malware</b>, <b>run security operations</b>, and <b>probe an agent&rsquo;s own attack surface</b>?</p>
+        <p>The suite spans <b>60 tasks across 6 domains</b>, covering both <b>red-team and blue-team</b> work: <b>32</b> vulnerability discovery &amp; exploitation tasks, <b>14</b> malware analysis tasks, <b>8</b> security-operations (SOC) tasks, and <b>6</b> agent-security tasks. Difficulty skews hard, matching the shape of real security work, where hard problems outnumber easy ones.</p>
+        <p>Each task is scored by a <b>deterministic per-task <code>scoring.py</code></b> &mdash; locating vulnerable code, verifying ASAN-anchored PoCs, diffing malware analysis against IOC ground truth, checking YARA rules under a zero-false-positive constraint, and scoring SOC reports on macro-F1 and Kendall-tau &mdash; and is anchored to real vulnerabilities rewritten into natural-language, role-played requirements. Like the other subsets, security tasks are <b>not present in public training corpora</b>, resisting contamination, and ship in the same self-contained task-directory format so they drop straight into the same evaluation harness. Reproduction runs strictly inside sandboxed environments.</p>
+      </div>
+      <div class="zh">
+        <p>本套件覆盖四个场景：<b>代码(code)</b>、<b>网页(web)</b>、<b>办公(office)</b> 与 <b>安全(security)</b>。安全子集提出的问题比普通 bug-fix 更广：Agent 能否胜任安全团队的完整工作流程——跨模块定位漏洞代码并在沙箱中安全复现、分析恶意软件、执行安全运营、评估 Agent 自身攻击面？</p>
+        <p>套件覆盖 <b>6 域共 60 题</b>,同时覆盖<b>红队与蓝队</b>工作:<b>32</b> 道漏洞挖掘与利用任务、<b>14</b> 道恶意软件分析任务、<b>8</b> 道安全运营(SOC)任务、<b>6</b> 道 Agent 安全任务。难度分布偏向高难,贴近真实安全工作中难题多于易题的分布。</p>
+        <p>每道题都由<b>确定性的每题 <code>scoring.py</code></b> 评分：定位漏洞代码、验证 ASAN 锚定的 PoC、将恶意软件分析与 IOC ground truth 比对、在零误报约束下检查 YARA 规则、按分类准确率（macro-F1）与排序一致性（Kendall-tau）为 SOC 报告打分，并锚定真实漏洞,再改写成自然语言、带角色扮演的需求。与其他子集一样,安全任务<b>不进入公开训练语料</b>,以此抵抗污染,并以相同的自包含任务目录格式交付,可直接接入同一评测框架;复现过程严格在沙箱环境内进行。</p>
+      </div>
+    </section>
+
+    <!-- HIGHLIGHTS -->
+    <section class="detail-sec" id="highlights">
+      <h2><span class="en">What makes Security different</span><span class="zh">Security 的核心亮点</span></h2>
+      <p><span class="en">Security is built to score like a real security team works &mdash; broad domain coverage across both attack and defense, deterministic programmatic scoring instead of an LLM judge, real CVE reproduction, agent-security assessment, and hardened defenses against gaming.</span><span class="zh">Security 的设计目标是让评测像真实安全团队的工作方式一样运转，攻防两侧的广泛领域覆盖、用确定性程序化评分取代 LLM 裁判、真实 CVE 复现、Agent 安全评估,以及针对刷分的加固防线。</span></p>
+
+      <!-- ===== 1. RED+BLUE DUAL STACK ===== -->
+      <div class="hl-sub" id="red-blue-stack"><span class="n">1</span><span class="en">Red+blue dual stack &mdash; 6 domains, 60 tasks</span><span class="zh">红蓝双栈：6 域,60 题</span></div>
+      <p><span class="en">One suite covers both the attack side and the defense side. <b>32</b> vulnerability discovery &amp; exploitation tasks map to red-team and security-researcher work; <b>14</b> malware analysis tasks map to anti-virus / reverse-engineering work; <b>8</b> security-operations tasks map to SOC analyst and detection-engineer work; <b>6</b> agent-security tasks map to AI red-teaming. Within the discovery &amp; exploitation block, red-team work spans whitebox source-audit, blackbox binary-exploitation, and web-exploitation tasks &mdash; which combine with malware analysis, security operations, and agent security to complete the <b>6</b> domains shown below. The red-team side (discovery &amp; exploitation plus agent security) accounts for <b>38</b> tasks and the blue-team side (malware analysis plus security operations) for <b>22</b>. Difficulty skews hard, matching how real security work is mostly hard problems, not easy ones.</span><span class="zh">一个评测集同时覆盖攻击侧与防御侧。<b>32</b> 道漏洞挖掘与利用任务对应红队和安全研究员职能,<b>14</b> 道恶意软件分析任务对应反病毒 / 逆向工程职能,<b>8</b> 道安全运营任务对应 SOC 分析师和检测工程师职能,<b>6</b> 道 Agent 安全任务对应 AI 安全红队。漏洞挖掘与利用板块的红队工作细分为白盒源码审计、黑盒二进制利用与 Web 利用任务，与恶意软件分析、安全运营、Agent 安全共同构成下图所示的 <b>6</b> 个领域。红队侧(漏洞挖掘与利用加 Agent 安全)合计 <b>38</b> 题,蓝队侧(恶意软件分析加安全运营)合计 <b>22</b> 题。难度分布偏向高难,贴近真实安全工作中难题多于易题的分布。</span></p>
+      <figure class="sec-figure">
+        <iframe class="en" src="static/figures/sec/poster-fig1-domains_en.html" loading="lazy" title="6 domains, 60 tasks, red+blue dual stack"></iframe>
+        <iframe class="zh" src="static/figures/sec/poster-fig1-domains_zh.html" loading="lazy" title="6 域 60 题，红蓝双栈"></iframe>
+        <figcaption><span class="en">Figure. 6 security domains across 60 tasks &mdash; red-team and blue-team coverage in one suite.</span><span class="zh">图. 60 题覆盖 6 大安全领域：红蓝双栈覆盖于同一评测集。</span></figcaption>
+      </figure>
+
+      <!-- ===== 2. PROGRAMMATIC VERIFICATION ===== -->
+      <div class="hl-sub" id="programmatic-verification"><span class="n">2</span><span class="en">Zero LLM judge &mdash; programmatic verification</span><span class="zh">零 LLM 裁判：程序化验证</span></div>
+      <p><span class="en">Every task ships its own <code>scoring.py</code>, executed inside an isolated Docker container and writing a numeric <code>reward.json</code> directly. Exploitation tasks score on PoC / flag verification, malware-analysis tasks diff against IOC ground truth, YARA tasks check rule match-rate under a zero-false-positive constraint, and SOC tasks score analyst reports with macro-F1 and Kendall-tau. The same task and the same output score identically on repeat runs &mdash; results are deterministic and reproducible, with no LLM-judge bias or randomness in the loop.</span><span class="zh">每道任务自带 <code>scoring.py</code>,在 Docker 隔离容器内执行后直接写入数值型 <code>reward.json</code>。漏洞利用任务跑 PoC 验证 flag,恶意软件任务比对 IOC 与 ground truth,YARA 任务检查规则匹配率并要求零误报,SOC 任务用分类准确率与排序一致性评估分析报告。同一任务、同一输出重复运行分数一致,结果确定且可复现,评测链路中不存在 LLM 裁判带来的模型偏差与随机性。</span></p>
+      <figure class="sec-figure">
+        <iframe class="en" src="static/figures/sec/poster-fig2-scoring_en.html" loading="lazy" title="Zero LLM judge, programmatic scoring pipeline"></iframe>
+        <iframe class="zh" src="static/figures/sec/poster-fig2-scoring_zh.html" loading="lazy" title="零 LLM 裁判，程序化验证"></iframe>
+        <figcaption><span class="en">Figure. Per-task scoring.py runs in an isolated Docker container and emits a numeric reward.json &mdash; no LLM judge in the loop.</span><span class="zh">图. 每题 scoring.py 在隔离 Docker 容器内运行,直接产出数值型 reward.json，评测链路中没有 LLM 裁判。</span></figcaption>
+      </figure>
+
+      <!-- ===== 3. REAL CVE REPRODUCTION ===== -->
+      <div class="hl-sub" id="real-cve"><span class="n">3</span><span class="en">Real CVE reproduction</span><span class="zh">真实 CVE 复现</span></div>
+      <p><span class="en">Whitebox audit tasks reproduce real CVEs directly in widely-deployed open-source projects &mdash; <b>binutils, curl, nginx, vim, jq, fluent-bit</b> and other widely-deployed upstream projects. The model has to read source like a security researcher, trace the data flow, and construct a minimal PoC input that triggers an ASAN crash. Each task follows a two-step <code>find-vuln</code> &rarr; <code>poc-verify</code> gate: the first step must clear a threshold before the second unlocks, mirroring the pacing of a real penetration test. A further set of web-exploitation tasks cover advanced techniques &mdash; House of Apple2 and ECDSA nonce reuse.</span><span class="zh">白盒审计任务直接复现真实开源项目的 CVE,覆盖 <b>binutils、curl、nginx、vim、jq、fluent-bit</b> 等广泛部署的上游项目。模型需要像安全研究员一样阅读源码、追踪数据流,并构造出能触发 ASAN 崩溃的最小 PoC 输入。每道题采用 <code>find-vuln</code> 到 <code>poc-verify</code> 的两步门控结构:第一步须先过门槛才能解锁第二步,模拟真实渗透测试的节奏。另有一组 Web 利用任务覆盖 House of Apple2、ECDSA nonce 重用等高阶攻击技术。</span></p>
+      <figure class="sec-figure">
+        <iframe class="en" src="static/figures/sec/poster-fig3-real-cve_en.html" loading="lazy" title="Real CVE reproduction across binutils, curl, nginx, vim, jq, fluent-bit"></iframe>
+        <iframe class="zh" src="static/figures/sec/poster-fig3-real-cve_zh.html" loading="lazy" title="真实 CVE 复现"></iframe>
+        <figcaption><span class="en">Figure. Whitebox CVE-reproduction tasks across binutils, curl, nginx, vim, jq, fluent-bit, plus web-exploitation tasks.</span><span class="zh">图. 白盒 CVE 复现任务覆盖 binutils、curl、nginx、vim、jq、fluent-bit,另有 Web 利用任务。</span></figcaption>
+      </figure>
+
+      <!-- ===== 4. AGENT-SECURITY FRONTIER ===== -->
+      <div class="hl-sub" id="agent-security-frontier"><span class="n">4</span><span class="en">Agent-security frontier</span><span class="zh">Agent 安全前沿</span></div>
+      <p><span class="en"><b>6</b> agent-security tasks evaluate the attack surface an AI agent exposes once it holds tool-calling permissions, across six attack vectors: <b>A2A (agent-to-agent) injection</b>, <b>ReAct chain hijacking</b>, <b>multimodal prompt-chain injection</b>, <b>tool-schema confusion</b>, <b>summarize-tool exfiltration</b>, and <b>delayed triggers</b>. Tasks require the model to produce a structured findings report &mdash; whether it resisted the injection, whether it detected the tool misuse, whether it caught the data leak, a description of the attack chain, and a CVSS severity score. This mirrors the security-assessment work an AI-safety team does before an agent ships.</span><span class="zh"><b>6</b> 道 Agent 安全任务评估 AI 智能体在获得工具调用权限后所面临的攻击面,覆盖六种攻击向量:<b>A2A(Agent-to-Agent)注入</b>、<b>ReAct 思维链劫持</b>、<b>多模态 prompt-chain 跨模态注入</b>、<b>工具 schema 混淆绕过</b>、<b>summarize 工具外泄</b>、<b>时延触发器</b>。任务要求模型输出结构化 findings 报告:是否抵抗注入、是否检测到工具误用、是否发现数据泄露、攻击链描述,以及 CVSS 严重度评分。对应 AI 安全团队在 Agent 上线前所做的安全评估工作。</span></p>
+      <figure class="sec-figure">
+        <iframe class="en" src="static/figures/sec/poster-fig4-agent-sec_en.html" loading="lazy" title="Agent-security frontier: six attack vectors"></iframe>
+        <iframe class="zh" src="static/figures/sec/poster-fig4-agent-sec_zh.html" loading="lazy" title="Agent 安全前沿"></iframe>
+        <figcaption><span class="en">Figure. 6 agent-security tasks across six attack vectors &mdash; A2A injection, ReAct hijacking, multimodal prompt-chain, tool-schema confusion, summarize-tool exfiltration, delayed triggers.</span><span class="zh">图. 6 道 Agent 安全任务覆盖六种攻击向量：A2A 注入、ReAct 劫持、多模态 prompt-chain、工具 schema 混淆、summarize 工具外泄、时延触发器。</span></figcaption>
+      </figure>
+
+      <!-- ===== 5. FIVE-LAYER ANTI-CHEAT ===== -->
+      <div class="hl-sub" id="anti-cheat"><span class="n">5</span><span class="en">Five-layer anti-cheat</span><span class="zh">五层反作弊</span></div>
+      <p><span class="en">Tasks are hardened with multiple anti-cheat layers so a score reflects genuine analysis rather than hard-coding or brute-force. A <b>banned-literal scan</b> blocks hard-coded answers; a <b>renamed-input test</b> checks whether an extractor actually parses binary structure rather than relying on a filename; an <b>overlay / tamper test</b> checks immunity to trailer tampering on a sample; an <b>encoding-dependence test</b> makes sure a detection rule is anchored to encoded bytes rather than plaintext; and <b>low-weight decoy fields</b> suppress brute-force scoring. The five layers close off cheating paths across input, code and output, so the score genuinely reflects a model&rsquo;s security-analysis ability.</span><span class="zh">任务内置多层反作弊机制,确保评测反映真实分析能力而非硬编码或穷举策略。<b>禁用字面量扫描</b>拦截硬编码答案,<b>重命名输入测试</b>验证提取器是否真的从二进制结构解析、而非依赖文件名,<b>覆盖层 / 篡改测试</b>验证对样本尾部篡改的免疫力,<b>编码依赖测试</b>确保检测规则锚定编码字节而非明文,<b>低权重诱饵字段</b>压制穷举刷分。五层机制从输入、代码、输出三个维度封堵作弊路径,让分数真正反映模型的安全分析能力。</span></p>
+      <figure class="sec-figure">
+        <iframe class="en" src="static/figures/sec/poster-fig5-anticheat_en.html" loading="lazy" title="Five-layer anti-cheat infrastructure"></iframe>
+        <iframe class="zh" src="static/figures/sec/poster-fig5-anticheat_zh.html" loading="lazy" title="五层反作弊基础设施"></iframe>
+        <figcaption><span class="en">Figure. Five anti-cheat layers across input, code and output &mdash; banned-literal scan, renamed input, overlay / tamper, encoding-dependence, decoy fields.</span><span class="zh">图. 覆盖输入、代码、输出三个维度的五层反作弊机制：禁用字面量扫描、重命名输入、覆盖层篡改、编码依赖、诱饵字段。</span></figcaption>
+      </figure>
+    </section>
+
+    <!-- SCORING -->
+    <section class="detail-sec" id="scoring">
+      <h2><span class="en">Scoring</span><span class="zh">评测口径</span></h2>
+      <div class="en">
+        <p>Every task is scored by a per-task <code>scoring.py</code> running inside an isolated Docker container &mdash; there is <b>no LLM judge</b> in the loop. Exploitation tasks are scored on PoC / flag verification, malware-analysis tasks on IOC ground truth, YARA tasks on match-rate plus a zero-false-positive constraint, and SOC tasks on macro-F1 and Kendall-tau; results are deterministic and repeat exactly on re-scoring.</p>
+        <p>The numbers on the <a href="index.html#leaderboard">leaderboard</a> come from the <b>CodeBuddy Code</b> harness, averaged over 3 runs to reduce variance.</p>
+        <p>Some models declined a small number of security-flavored tasks; a refused task scores 0. Across the 3-run protocol, GPT-5.5 recorded 2 refusals under CodeBuddy Code.</p>
+      </div>
+      <div class="zh">
+        <p>每道任务都由每题独立的 <code>scoring.py</code> 在隔离 Docker 容器内评分，评测链路中<b>没有 LLM 裁判</b>。漏洞利用任务按 PoC / flag 验证评分,恶意软件任务按 IOC ground truth 评分,YARA 任务按匹配率加零误报约束评分,SOC 任务按分类准确率与排序一致性评分;结果具备确定性,重复评分完全一致。</p>
+        <p>排行榜上的数字来自 <b>CodeBuddy Code</b> 评测框架,取 <b>3 次运行的平均值</b>以降低方差。</p>
+        <p>部分模型对少量安全类任务选择拒答;拒答任务计 0 分。按 3 次运行合计,GPT-5.5 在 CodeBuddy Code 下拒答 2 次。</p>
+      </div>
+      <p class="callout"><span class="en"><b>Scope.</b> The leaderboard covers seven models scored on the CodeBuddy Code harness, 3 runs averaged in think mode.</span><span class="zh"><b>范围。</b>榜单覆盖七个模型,在 CodeBuddy Code 评测框架上评测,取 3 次运行平均(think 模式)。</span></p>
+    </section>
+
+    </div><!-- /.detail-main -->
+  </div>
+  <footer class="site-footer">
+    <div class="site-footer__inner">
+      <p class="site-footer__byline">Tencent Youtu Lab · Keen &amp; Yunding Security Lab · WorkBuddy</p>
+    </div>
+  </footer>
+  <script src="lang.js?v=3"></script>
+  <script src="roster.js?v=12"></script>
+  <script src="data.js?v=22"></script>
+  <script src="subset-lb.js?v=6"></script>
+  <script>
+    renderSubsetLB("WorkBuddyBench-Security","lb-security",{scoreKey:"scores"});
+  </script>
+  <script src="site.js?v=1"></script>
+  <script>(function(){
+    function resizeFrame(frame){
+      try{
+        var doc=frame.contentDocument||frame.contentWindow.document;
+        if(!doc||!doc.body)return;
+        var html=doc.documentElement;
+        var h=Math.max(doc.body.scrollHeight,html.scrollHeight,doc.body.offsetHeight,html.offsetHeight);
+        if(h>0)frame.style.height=(h+2)+'px';
+      }catch(e){}
+    }
+    function resizeAll(){[].slice.call(document.querySelectorAll('.sec-figure iframe')).forEach(resizeFrame);}
+    [].slice.call(document.querySelectorAll('.sec-figure iframe')).forEach(function(frame){
+      frame.addEventListener('load',function(){resizeFrame(frame);});
+    });
+    window.addEventListener('resize',resizeAll);
+    window.addEventListener('load',resizeAll);
+    setTimeout(resizeAll,800);
+  })();</script>
+</body>
+</html>

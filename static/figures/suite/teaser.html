@@ -1,0 +1,558 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>WorkBuddy Bench — Teaser Pipeline Figure</title>
+<style>
+  :root{
+    --teal:#28B894;
+    --teal-deep:#147C63;
+    --teal-tint:#E6F7F1;
+    --teal-line:#BFE9DA;
+    --ink:#1A1A1A;
+    --ink-soft:#5B5B58;
+    --ink-mute:#8A8A86;
+    --line:#E2E0DA;
+    --line-soft:#EEECE7;
+    --surface:#FCFCFB;
+    --zone-bg:#FBFBFA;
+
+    --web:#2A78D6;
+    --web-deep:#184F95;
+    --web-tint:#EAF2FE;
+
+    --office:#B06B00;
+    --office-deep:#7A4B00;
+    --office-tint:#FFF4E2;
+
+    --sec-red:#E65100;
+    --sec-blue:#1565C0;
+    --sec-tint:#F3F4F5;
+    --sec-line:#C7CDD2;
+    --sec-deep:#37474F;
+
+    /* role colors — match code.html bubble-list */
+    --dev:#3B82F6;
+    --algo:#16A34A;
+    --pm:#D97706;
+    --qa:#DC2626;
+    --ops:#7C3AED;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;background:#ffffff;}
+  body{
+    width:1340px;height:600px;
+    font-family:'Source Sans Pro','Helvetica Neue',Helvetica,Arial,sans-serif;
+    color:var(--ink);
+    -webkit-font-smoothing:antialiased;
+  }
+  .canvas{
+    width:1340px;height:600px;
+    padding:30px 40px 26px 40px;
+    display:flex;flex-direction:column;
+    background:#ffffff;
+  }
+
+  /* ---------- bare mode (embedding: paper figure / site) — hides the title header ---------- */
+  [data-bare] .hdr{display:none;}
+  /* bare embed: zero side padding so the zone boxes reach the canvas edges —
+     the host page aligns the iframe box with its own grid (1260x514 content) */
+  [data-bare] body{width:1260px;height:514px;}
+  [data-bare] .canvas{width:1260px;height:514px;padding:8px 0 16px;}
+  html[data-bare], [data-bare] body, [data-bare] .canvas{background:transparent;}
+
+  /* ---------- dark theme (site embed; parent page syncs data-theme onto <html>) ---------- */
+  [data-theme="dark"]{
+    --teal-tint:#0E2B23; --teal-line:#1F5C4A; --teal-deep:#3ECFA4;
+    --ink:#ECECEA; --ink-soft:#B7B6B2; --ink-mute:#8B8B88;
+    --line:#3A3D44; --line-soft:#2A2D33;
+    --surface:#191B20; --zone-bg:#16181D;
+    --web-tint:#13233A; --web-deep:#7FB1F5;
+    --office-tint:#2A2012; --office-deep:#E5A84C;
+    --sec-tint:#1C2126; --sec-line:#434B53; --sec-deep:#B7C4CC;
+  }
+  html[data-theme="dark"], [data-theme="dark"] body, [data-theme="dark"] .canvas{background:transparent;}
+  [data-theme="dark"] .zone .eyebrow .num{color:#15171C;}
+  [data-theme="dark"] .src-chip,
+  [data-theme="dark"] .pb-txt,
+  [data-theme="dark"] .fmt-chip,
+  [data-theme="dark"] .rb-box,
+  [data-theme="dark"] .lane.alt{background:#1E2127;}
+  [data-theme="dark"] .zone-b .zcard{background:var(--zone-bg);border-color:var(--line);}
+  [data-theme="dark"] .pb-av{border-color:#1E2127;}
+  [data-theme="dark"] .rb-row .dot{box-shadow:0 0 0 2px #1E2127, 0 0 0 3px var(--sec-line);}
+  [data-theme="dark"] .sub-code .ic,[data-theme="dark"] .sub-code .tag,
+  [data-theme="dark"] .sub-web .ic,[data-theme="dark"] .sub-web .tag,
+  [data-theme="dark"] .sub-office .ic,[data-theme="dark"] .sub-office .tag,
+  [data-theme="dark"] .sub-sec .ic,[data-theme="dark"] .sub-sec .tag{background:#22262C;}
+  [data-theme="dark"] .sub-web{border-color:#25436B;}
+  [data-theme="dark"] .sub-web .ic{border-color:#25436B;}
+  [data-theme="dark"] .sub-office{border-color:#5C4415;}
+  [data-theme="dark"] .sub-office .ic{border-color:#5C4415;}
+  [data-theme="dark"] .lane.primary{background:#ECECEA;border-color:#ECECEA;}
+  [data-theme="dark"] .lane.primary .t1{color:#6B6B68;}
+  [data-theme="dark"] .lane.primary .t2{color:#15171C;}
+  [data-theme="dark"] .sec-divider svg,[data-theme="dark"] .flow3 .farrow{color:#5A5D63;}
+  [data-theme="dark"] .lb-bar-track{background:#2A2D33;}
+  /* ---------- header ---------- */
+  .hdr{
+    display:flex;align-items:center;
+    height:38px;flex:0 0 38px;
+    margin-bottom:16px;
+  }
+  .hdr img{width:27px;height:27px;margin-right:9px;display:block;}
+  .hdr .title{font-size:18.5px;font-weight:800;letter-spacing:-0.2px;color:var(--ink);line-height:1.1;}
+  .hdr .title .accent{color:var(--teal-deep);}
+  .hdr .sub{font-size:10.8px;color:var(--ink-mute);margin-top:3px;font-weight:500;}
+  .hdr .spacer{flex:1;}
+  .hdr .tag{
+    font-size:9px;font-weight:700;letter-spacing:0.09em;color:var(--ink-mute);
+    text-transform:uppercase;border:1px solid var(--line);border-radius:20px;
+    padding:4px 10px;white-space:nowrap;
+  }
+
+  /* ---------- zone row ---------- */
+  .zonerow{
+    flex:1;
+    display:flex;
+    align-items:stretch;
+    gap:0;
+  }
+  .zone{display:flex;flex-direction:column;}
+  .zone .eyebrow{
+    display:flex;align-items:baseline;gap:7px;
+    margin-bottom:9px;flex:0 0 auto;
+  }
+  .zone .eyebrow .num{
+    font-size:11px;font-weight:800;color:#fff;background:var(--ink);
+    width:19px;height:19px;border-radius:50%;
+    display:inline-flex;align-items:center;justify-content:center;
+    position:relative;top:-1px;
+  }
+  .zone .eyebrow .lbl{font-size:12.5px;font-weight:800;letter-spacing:0.06em;color:var(--ink);text-transform:uppercase;}
+  .zone .eyebrow .lbl2{font-size:10px;font-weight:600;color:var(--ink-mute);text-transform:none;letter-spacing:0;}
+  .zone .zcard{
+    flex:1;background:var(--zone-bg);border:1px solid var(--line);border-radius:12px;
+    padding:16px 17px;display:flex;flex-direction:column;
+  }
+
+  .zarrow{
+    flex:0 0 46px;display:flex;align-items:center;justify-content:center;
+    align-self:center;
+  }
+  .zarrow svg{width:30px;height:20px;overflow:visible;}
+
+  .ic{stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;}
+
+  .sec-divider{flex:0 0 auto;display:flex;align-items:center;gap:8px;margin:11px 0;}
+  .sec-divider .ln{flex:1;height:1px;background:var(--line);}
+  .sec-divider svg{width:12px;height:12px;color:#C9C6BF;flex:0 0 auto;}
+
+  /* ============ ZONE A : CONSTRUCTION ============ */
+  .zone-a{width:350px;}
+
+  .src-chips{display:flex;gap:6px;}
+  .src-chip{
+    flex:1;background:#fff;border:1px solid var(--line);border-radius:8px;
+    padding:7px 3px;text-align:center;
+  }
+  .src-chip svg{width:14px;height:14px;color:var(--teal-deep);margin-bottom:4px;}
+  .src-chip .t{font-size:8.8px;font-weight:700;color:var(--ink);line-height:1.2;display:block;}
+  .src-note{
+    margin-top:8px;display:flex;align-items:flex-start;gap:6px;
+    background:var(--line-soft);border-radius:7px;padding:7px 9px;
+  }
+  .src-note svg{width:12px;height:12px;color:var(--ink-mute);flex:0 0 auto;margin-top:1px;}
+  .src-note .t{font-size:9.4px;color:var(--ink-soft);line-height:1.35;}
+  .src-note .t b{color:var(--ink);font-weight:700;font-style:normal;}
+  .src-note .t i{font-style:italic;color:var(--ink-soft);}
+
+  .real-note{
+    margin-top:8px;display:flex;align-items:flex-start;gap:7px;
+    background:var(--teal-tint);border:1px solid var(--teal-line);border-radius:7px;padding:7px 9px;
+  }
+  .real-note svg{width:13px;height:13px;color:var(--teal-deep);flex:0 0 auto;margin-top:1px;}
+  .real-note .t{font-size:9.4px;color:var(--ink-soft);line-height:1.35;}
+  .real-note .t b{color:var(--teal-deep);font-weight:700;}
+
+  .role-lbl{font-size:10.3px;font-weight:700;color:var(--teal-deep);margin-bottom:9px;display:flex;align-items:center;gap:6px;}
+  .role-lbl svg{width:13px;height:13px;flex:0 0 auto;}
+
+  /* whole-suite persona strip — uniform role-played "ask" bubbles */
+  .psuite{flex:1;display:flex;flex-direction:column;gap:9px;padding:2px 0 0;}
+  .pb{flex:1;min-width:0;display:flex;gap:9px;align-items:center;}
+  .pb-av{width:28px;height:28px;border-radius:50%;flex:0 0 auto;overflow:hidden;border:2px solid #fff;box-shadow:0 0 0 1px var(--bc);}
+  .pb-av img{width:100%;height:100%;object-fit:cover;display:block;}
+  .pb-av.badge{display:flex;align-items:center;justify-content:center;background:var(--sec-tint);box-shadow:0 0 0 1px var(--sec-line);}
+  .pb-av.badge svg{width:13px;height:13px;color:var(--sec-deep);}
+  .pb-txt{flex:1;min-width:0;background:#fff;border:1px solid var(--line);border-left:3px solid var(--bc);border-radius:3px 9px 9px 9px;padding:7px 10px;}
+  .pb-role{font-size:8.7px;font-weight:800;color:var(--bc);display:block;line-height:1.1;margin-bottom:3px;letter-spacing:0.01em;}
+  .pb-q{font-size:9.4px;color:var(--ink-soft);line-height:1.32;display:block;}
+  .pb.code{--bc:var(--teal-deep);}
+  .pb.sec{--bc:var(--sec-deep);}
+  .pb.office{--bc:var(--office-deep);}
+
+  /* ============ ZONE B : THE BENCHMARK (hero) ============ */
+  .zone-b{width:452px;}
+  .zone-b .zcard{background:#fff;border-color:#E7E5E0;}
+  .bench-cap{font-size:11.5px;font-weight:700;color:var(--ink);text-align:center;margin-bottom:9px;flex:0 0 auto;}
+  .bench-cap span{color:var(--ink-mute);font-weight:500;}
+
+  .fmt-motif{
+    flex:0 0 auto;display:flex;align-items:center;gap:6px;
+    background:var(--zone-bg);border:1px solid var(--line-soft);border-radius:8px;
+    padding:6px 9px;margin-bottom:12px;
+  }
+  .fmt-motif .lbl{
+    font-size:8.6px;font-weight:800;color:var(--ink-mute);text-transform:uppercase;letter-spacing:0.04em;
+    display:flex;align-items:center;gap:4px;flex:0 0 auto;white-space:nowrap;
+  }
+  .fmt-motif .lbl svg{width:11px;height:11px;color:var(--teal-deep);}
+  .fmt-motif .chiprow{display:flex;gap:5px;flex:1;justify-content:space-between;}
+  .fmt-motif .fchip{
+    flex:0 0 auto;background:#fff;border:1px solid var(--line);border-radius:5px;
+    padding:3px 7px;text-align:center;font-size:8px;font-weight:700;color:var(--ink-soft);
+    font-family:'SFMono-Regular',Menlo,Consolas,monospace;white-space:nowrap;
+  }
+
+  .bench-grid-wrap{flex:1;display:flex;align-items:stretch;}
+  .bench-grid{width:100%;display:flex;gap:12px;align-items:stretch;}
+  .sub-card{
+    flex:1;min-width:0;
+    border-radius:11px;padding:16px 9px;
+    display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;
+    border:1px solid var(--line);border-top-width:5px;
+  }
+  .sub-card .ic{
+    width:36px;height:36px;border-radius:9px;
+    display:flex;align-items:center;justify-content:center;margin-bottom:12px;
+  }
+  .sub-card .ic svg{width:19px;height:19px;margin:0;border:none;background:transparent;border-radius:0;}
+  .sub-card .name{font-size:13.5px;font-weight:800;margin-bottom:1px;}
+  .sub-card .ver{font-size:9.6px;font-weight:600;opacity:0.62;margin-bottom:9px;letter-spacing:0.02em;}
+  .sub-card .count{font-size:27px;font-weight:800;line-height:1;margin-bottom:13px;letter-spacing:-0.4px;}
+  .sub-card .count small{font-size:13px;font-weight:700;opacity:0.6;}
+  .sub-card .tag{
+    font-size:9.4px;font-weight:700;text-transform:uppercase;letter-spacing:0.05em;
+    padding:3.5px 10px;border-radius:20px;
+  }
+  .sub-card .desc{font-size:9.6px;font-weight:600;line-height:1.35;margin-top:14px;opacity:0.78;}
+  .sub-code{background:var(--teal-tint);border-color:var(--teal-line);border-top-color:var(--teal-deep);}
+  .sub-code .ic{background:#fff;color:var(--teal-deep);border:1px solid var(--teal-line);}
+  .sub-code .name,.sub-code .count{color:var(--teal-deep);}
+  .sub-code .tag{background:#fff;color:var(--teal-deep);}
+
+  .sub-web{background:var(--web-tint);border-color:#CFE0FA;border-top-color:var(--web);}
+  .sub-web .ic{background:#fff;color:var(--web-deep);border:1px solid #CFE0FA;}
+  .sub-web .name,.sub-web .count{color:var(--web-deep);}
+  .sub-web .tag{background:#fff;color:var(--web-deep);}
+
+  .sub-office{background:var(--office-tint);border-color:#F3DBAE;border-top-color:var(--office);}
+  .sub-office .ic{background:#fff;color:var(--office-deep);border:1px solid #F3DBAE;}
+  .sub-office .name,.sub-office .count{color:var(--office-deep);}
+  .sub-office .tag{background:#fff;color:var(--office-deep);}
+
+  .sub-sec{background:var(--sec-tint);border-color:var(--sec-line);border-top-color:var(--sec-deep);}
+  .sub-sec .ic{background:#fff;color:var(--sec-deep);border:1px solid var(--sec-line);}
+  .sub-sec .name,.sub-sec .count{color:var(--sec-deep);}
+  .sub-sec .tag{background:#fff;color:var(--sec-deep);}
+  .rb-box{width:100%;margin-top:9px;display:flex;flex-direction:column;gap:5px;background:#fff;border:1px solid var(--sec-line);border-radius:6px;padding:6px 7px;}
+  .rb-row{display:flex;align-items:center;gap:5px;}
+  .rb-row .dot{width:7.5px;height:7.5px;border-radius:50%;flex:0 0 auto;box-shadow:0 0 0 2px #fff, 0 0 0 3px var(--sec-line);}
+  .rb-row .dot.r{background:var(--sec-red);}
+  .rb-row .dot.b{background:var(--sec-blue);}
+  .rb-row .rb-txt{display:flex;flex-direction:column;gap:0;text-align:left;line-height:1.12;white-space:nowrap;}
+  .rb-row .rb-lbl{font-size:8px;font-weight:800;color:var(--sec-deep);letter-spacing:0.005em;}
+  .rb-row .rb-meta{font-size:7.6px;font-weight:600;color:var(--ink-soft);letter-spacing:0;}
+  .rb-row .rb-n{font-weight:800;font-size:10px;}
+  .rb-row.rb-r .rb-n{color:var(--sec-red);}
+  .rb-row.rb-b .rb-n{color:var(--sec-blue);}
+
+  /* ============ ZONE C : EVALUATION ============ */
+  .zone-c{width:366px;}
+
+  .harness-block{flex:0 0 auto;display:flex;flex-direction:column;justify-content:flex-start;}
+  .harness-lanes{display:flex;gap:10px;}
+  .lane{flex:1;border-radius:8px;padding:8px 8px 7px;text-align:center;border:1px solid var(--line);}
+  .lane.primary{background:var(--ink);border-color:var(--ink);}
+  .lane.primary .t1{color:#C9C7C2;}
+  .lane.primary .t2{color:#fff;}
+  .lane.alt{background:#fff;}
+  .lane.alt .t1{color:var(--ink-mute);}
+  .lane.alt .t2{color:var(--ink);}
+  .lane .t1{font-size:8.4px;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;}
+  .lane .t2{font-size:11.3px;font-weight:800;margin-top:2px;}
+  .converge{height:20px;position:relative;margin:2px 0 0;}
+  .converge svg{width:100%;height:100%;display:block;}
+
+  .flow3{display:flex;align-items:center;justify-content:space-between;margin-top:2px;}
+  .flow3 .fstep{display:flex;flex-direction:column;align-items:center;gap:5px;flex:0 0 auto;width:76px;}
+  .flow3 .fic{
+    width:30px;height:30px;border-radius:8px;background:var(--teal-tint);color:var(--teal-deep);
+    display:flex;align-items:center;justify-content:center;
+  }
+  .flow3 .fic svg{width:15px;height:15px;}
+  .flow3 .ft{font-size:9.7px;font-weight:700;color:var(--ink);text-align:center;line-height:1.2;}
+  .flow3 .farrow{flex:1;display:flex;align-items:center;justify-content:center;color:#C9C6BF;margin-top:-18px;}
+  .flow3 .farrow svg{width:18px;height:10px;}
+
+  .c-spacer{flex:1;}
+  .score-cap{
+    flex:0 0 auto;display:grid;grid-template-columns:1fr 1fr;gap:6px 10px;
+    background:var(--zone-bg);border:1px solid var(--line-soft);border-radius:8px;
+    padding:9px 11px;
+  }
+  .score-cap .sc{display:flex;align-items:baseline;gap:5px;font-size:9.1px;line-height:1.25;color:var(--ink-soft);}
+  .score-cap .sc .k{font-weight:800;color:var(--ink);flex:0 0 auto;}
+  .score-cap .sc .k::before{content:"";display:inline-block;width:6px;height:6px;border-radius:2px;background:var(--kc);margin-right:5px;vertical-align:middle;}
+  .score-cap .sc.k-code{--kc:var(--teal-deep);}
+  .score-cap .sc.k-web{--kc:var(--web);}
+  .score-cap .sc.k-office{--kc:var(--office);}
+  .score-cap .sc.k-sec{--kc:var(--sec-deep);}
+  .lb-wrap{flex:0 0 auto;padding-right:10px;box-sizing:border-box;}
+  .lb-title{
+    font-size:8.8px;font-weight:800;color:var(--ink-mute);text-transform:uppercase;letter-spacing:0.03em;
+    padding-bottom:7px;border-bottom:1px solid var(--line);margin-bottom:8px;
+  }
+  .lb-leaders{display:grid;grid-template-columns:1fr 1fr;gap:7px 8px;}
+  .ldr{
+    display:flex;align-items:center;justify-content:space-between;gap:6px;min-width:0;
+    padding:6px 8px;border-radius:6px;background:var(--zone-bg);border:1px solid var(--line-soft);
+    border-left:3px solid var(--kc);
+  }
+  .ldr-code{--kc:var(--teal-deep);}
+  .ldr-web{--kc:var(--web);}
+  .ldr-office{--kc:var(--office);}
+  .ldr-sec{--kc:var(--sec-deep);}
+  .ldr-txt{display:flex;flex-direction:column;gap:1px;min-width:0;}
+  .ldr-k{font-size:7.8px;font-weight:800;text-transform:uppercase;letter-spacing:0.03em;color:var(--ink-mute);}
+  .ldr-m{font-size:9.4px;font-weight:700;color:var(--ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+  .ldr-s{font-size:13px;font-weight:800;color:var(--ink);font-variant-numeric:tabular-nums;flex:0 0 auto;}
+  .lb-bar-row{display:flex;align-items:center;justify-content:flex-end;gap:6px;}
+  .lb-bar-track{width:26px;height:5px;background:#EDEBE6;border-radius:3px;overflow:hidden;flex:0 0 auto;}
+  .lb-bar-fill{height:100%;background:var(--teal);border-radius:3px;}
+  .lb-foot{
+    margin-top:10px;font-size:9.3px;color:var(--ink-mute);line-height:1.4;
+    padding-top:9px;border-top:1px dashed var(--line);
+  }
+  .lb-foot b{color:var(--ink-soft);font-weight:700;}
+
+</style>
+</head>
+<body>
+<div class="canvas">
+
+  <script>if(location.hash==='#bare')document.documentElement.setAttribute('data-bare','');</script>
+  <div class="hdr">
+    <img src="../../img/wb-icon.png" alt="logo">
+    <div>
+      <div class="title">Tencent <span class="accent">WorkBuddy</span> Bench</div>
+      <div class="sub">Grounded in real usage &middot; contamination&#8209;resistant &middot; open</div>
+    </div>
+    <div class="spacer"></div>
+    <div class="tag">Technical Report · Fig. 1</div>
+  </div>
+
+  <div class="zonerow">
+
+    <!-- ================= ZONE A — CONSTRUCTION ================= -->
+    <div class="zone zone-a">
+      <div class="eyebrow"><span class="num">1</span><span class="lbl">Construction</span><span class="lbl2">— from real work to a task</span></div>
+      <div class="zcard">
+
+        <div class="src-chips">
+          <div class="src-chip">
+            <svg class="ic" viewBox="0 0 24 24"><line x1="12" y1="1" x2="12" y2="8"/><circle cx="12" cy="12" r="4"/><line x1="12" y1="16" x2="12" y2="23"/></svg>
+            <span class="t">Real commit</span>
+          </div>
+          <div class="src-chip">
+            <svg class="ic" viewBox="0 0 24 24"><circle cx="6" cy="6" r="3"/><circle cx="18" cy="18" r="3"/><path d="M6 9v6a3 3 0 0 0 3 3h3"/><path d="M18 9V7a2 2 0 0 0-2-2h-4"/></svg>
+            <span class="t">Pull request</span>
+          </div>
+          <div class="src-chip">
+            <svg class="ic" viewBox="0 0 24 24"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/><line x1="2" y1="13" x2="22" y2="13"/></svg>
+            <span class="t">Business scenario</span>
+          </div>
+          <div class="src-chip">
+            <svg class="ic" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+            <span class="t">Security case</span>
+          </div>
+        </div>
+        <div class="src-note">
+          <svg class="ic" viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+          <span class="t"><b>Sourced from real repositories, tickets &amp; vulnerability reports</b> — <i>root cause &amp; original fix withheld from the agent</i></span>
+        </div>
+
+        <div class="real-note">
+          <svg class="ic" viewBox="0 0 24 24"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+          <span class="t"><b>Grounded in real&#8209;usage analysis</b> — task mix matched to production scenario &amp; query&#8209;intent distributions; <i>no raw prompts, sessions or logs shipped</i></span>
+        </div>
+
+        <div class="sec-divider"><div class="ln"></div><svg class="ic" viewBox="0 0 24 24"><polyline points="19 12 12 19 5 12"/><line x1="12" y1="19" x2="12" y2="5"/></svg><div class="ln"></div></div>
+
+        <div class="role-lbl">
+          <svg class="ic" viewBox="0 0 24 24"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>
+          reverse&#8209;engineered into colloquial, role&#8209;played asks — every subset
+        </div>
+        <div class="psuite">
+          <div class="pb code">
+            <span class="pb-av"><img src="../../img/Role%20Developer.png" alt="developer"></span>
+            <div class="pb-txt"><span class="pb-role">Developer &middot; Code</span><span class="pb-q">&ldquo;Don&rsquo;t let cleanup leak exceptions at exit.&rdquo;</span></div>
+          </div>
+          <div class="pb sec">
+            <span class="pb-av badge" title="security researcher"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2 L20 5.2 V11 C20 16.4 16.6 20.7 12 22 C7.4 20.7 4 16.4 4 11 V5.2 Z"/></svg></span>
+            <div class="pb-txt"><span class="pb-role">Security researcher &middot; Security</span><span class="pb-q">&ldquo;Locate the flaw, then reproduce it safely with a verified PoC.&rdquo;</span></div>
+          </div>
+          <div class="pb office">
+            <span class="pb-av"><img src="../../img/Role%20PM.png" alt="pm"></span>
+            <div class="pb-txt"><span class="pb-role">PM &middot; Office</span><span class="pb-q">&ldquo;Reconcile these sheets and flag the mismatches.&rdquo;</span></div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <div class="zarrow">
+      <svg viewBox="0 0 30 20"><path d="M0 10 H26" stroke="#B7B4AD" stroke-width="2.4" fill="none"/><path d="M21 3 L30 10 L21 17 Z" fill="#B7B4AD"/></svg>
+    </div>
+
+    <!-- ================= ZONE B — THE BENCHMARK ================= -->
+    <div class="zone zone-b">
+      <div class="eyebrow"><span class="num">2</span><span class="lbl">The Benchmark</span><span class="lbl2">— four real&#8209;work tracks</span></div>
+      <div class="zcard">
+        <div class="bench-cap">One suite, <span>four independent tracks</span></div>
+        <div class="fmt-motif">
+          <span class="lbl"><svg class="ic" viewBox="0 0 24 24"><path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V7z"/></svg>tasks/&lt;id&gt;/</span>
+          <span class="chiprow">
+            <span class="fchip">instruction.md</span>
+            <span class="fchip">task.toml</span>
+            <span class="fchip">environment/</span>
+            <span class="fchip">tests/</span>
+          </span>
+        </div>
+        <div class="bench-grid-wrap">
+        <div class="bench-grid">
+
+          <div class="sub-card sub-code">
+            <span class="ic"><svg class="ic" viewBox="0 0 24 24"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg></span>
+            <div class="name">Code</div>
+            <div class="count">80</div>
+            <div class="tag">Repo&#8209;scale</div>
+            <div class="desc">modify &amp; fix inside real repos</div>
+          </div>
+
+          <div class="sub-card sub-web">
+            <span class="ic"><svg class="ic" viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg></span>
+            <div class="name">Web</div>
+            <div class="count">70</div>
+            <div class="tag">Interactive</div>
+            <div class="desc">build &amp; verify interactive UI</div>
+          </div>
+
+          <div class="sub-card sub-office">
+            <span class="ic"><svg class="ic" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg></span>
+            <div class="name">Office</div>
+            <div class="count">50</div>
+            <div class="tag">Workflow</div>
+            <div class="desc">spreadsheets, docs &amp; data flows</div>
+          </div>
+
+          <div class="sub-card sub-sec">
+            <span class="ic"><svg class="ic" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></span>
+            <div class="name">Security</div>
+            <div class="count">60</div>
+            <div class="tag">Red + blue</div>
+            <div class="rb-box">
+              <div class="rb-row rb-r"><span class="dot r"></span><span class="rb-txt"><span class="rb-lbl">Red&#8209;team</span><span class="rb-meta"><span class="rb-n">38</span> attack</span></span></div>
+              <div class="rb-row rb-b"><span class="dot b"></span><span class="rb-txt"><span class="rb-lbl">Blue&#8209;team</span><span class="rb-meta"><span class="rb-n">22</span> defense</span></span></div>
+            </div>
+            <div class="desc">find, reproduce &amp; analyze</div>
+          </div>
+
+        </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="zarrow">
+      <svg viewBox="0 0 30 20"><path d="M0 10 H26" stroke="#B7B4AD" stroke-width="2.4" fill="none"/><path d="M21 3 L30 10 L21 17 Z" fill="#B7B4AD"/></svg>
+    </div>
+
+    <!-- ================= ZONE C — EVALUATION ================= -->
+    <div class="zone zone-c">
+      <div class="eyebrow"><span class="num">3</span><span class="lbl">Evaluation</span><span class="lbl2">— dual harness</span></div>
+      <div class="zcard">
+
+        <div class="harness-block">
+        <div class="harness-lanes">
+          <div class="lane primary"><div class="t1">Primary</div><div class="t2">CodeBuddy Code</div></div>
+          <div class="lane alt"><div class="t1">Alternate</div><div class="t2">Claude Code</div></div>
+        </div>
+        <div class="converge">
+          <svg viewBox="0 0 340 20" preserveAspectRatio="none">
+            <path d="M85,0 C85,12 170,4 170,20" fill="none" stroke="#D8D6D0" stroke-width="2"/>
+            <path d="M255,0 C255,12 170,4 170,20" fill="none" stroke="#D8D6D0" stroke-width="2"/>
+          </svg>
+        </div>
+
+        <div class="flow3">
+          <div class="fstep">
+            <span class="fic"><svg class="ic" viewBox="0 0 24 24"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg></span>
+            <span class="ft">Isolated sandbox</span>
+          </div>
+          <div class="farrow"><svg viewBox="0 0 18 10"><path d="M0 5 H12" stroke="currentColor" stroke-width="2" fill="none"/><path d="M9 1 L15 5 L9 9 Z" fill="currentColor"/></svg></div>
+          <div class="fstep">
+            <span class="fic"><svg class="ic" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></span>
+            <span class="ft">Hidden tests</span>
+          </div>
+          <div class="farrow"><svg viewBox="0 0 18 10"><path d="M0 5 H12" stroke="currentColor" stroke-width="2" fill="none"/><path d="M9 1 L15 5 L9 9 Z" fill="currentColor"/></svg></div>
+          <div class="fstep">
+            <span class="fic"><svg class="ic" viewBox="0 0 24 24"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg></span>
+            <span class="ft">Numeric reward<br><span style="font-weight:500;color:var(--ink-mute);font-size:9px;">0–1</span></span>
+          </div>
+        </div>
+        </div>
+
+        <div class="c-spacer" style="flex:1;"></div>
+
+        <div class="score-cap">
+          <span class="sc k-code"><span class="k">Code</span>hidden&#8209;test reward</span>
+          <span class="sc k-web"><span class="k">Web</span>weighted rule / VLM / judge</span>
+          <span class="sc k-office"><span class="k">Office</span>rule + LLM&#8209;judge blend</span>
+          <span class="sc k-sec"><span class="k">Security</span>programmatic scoring</span>
+        </div>
+
+        <div class="c-spacer" style="flex:1;"></div>
+
+        <div class="sec-divider"><div class="ln"></div><svg class="ic" viewBox="0 0 24 24"><polyline points="19 12 12 19 5 12"/><line x1="12" y1="19" x2="12" y2="5"/></svg><div class="ln"></div></div>
+
+        <div class="lb-wrap">
+        <div class="lb-title">Current leader &middot; per track</div>
+        <div class="lb-leaders">
+          <div class="ldr ldr-code">
+            <div class="ldr-txt"><span class="ldr-k">Code</span><span class="ldr-m">Claude Opus 4.8</span></div>
+            <span class="ldr-s">74.4</span>
+          </div>
+          <div class="ldr ldr-web">
+            <div class="ldr-txt"><span class="ldr-k">Web</span><span class="ldr-m">Claude Opus 4.8</span></div>
+            <span class="ldr-s">68.1</span>
+          </div>
+          <div class="ldr ldr-office">
+            <div class="ldr-txt"><span class="ldr-k">Office</span><span class="ldr-m">Claude Opus 4.8</span></div>
+            <span class="ldr-s">82.4</span>
+          </div>
+          <div class="ldr ldr-sec">
+            <div class="ldr-txt"><span class="ldr-k">Security</span><span class="ldr-m">GLM&#8209;5.2</span></div>
+            <span class="ldr-s">76.3</span>
+          </div>
+        </div>
+        <div class="lb-foot">Top score per track, CodeBuddy Code harness. Tracks use different metrics — scores are <b>not comparable across tracks</b>.</div>
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+</div>
+</body>
+</html>

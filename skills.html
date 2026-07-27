@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Skill Bundle — Tencent WorkBuddy Bench</title>
+  <link rel="icon" type="image/png" href="static/img/wb-icon.png?v=6">
+  <link rel="stylesheet" href="wbds-detail.css?v=17">
+  <link rel="stylesheet" href="wbds-chrome.css?v=6">
+  <script>(function(){try{var t=localStorage.getItem('cbTheme');var d=(t==='dark'||(t==null&&window.matchMedia&&window.matchMedia('(prefers-color-scheme: dark)').matches));document.documentElement.setAttribute('data-theme',d?'dark':'light');}catch(e){}})();</script>
+</head>
+<body class="lang-zh">
+  <nav class="topbar">
+    <div class="bar-inner">
+      <a class="topbar__brand" href="index.html" aria-label="Tencent WorkBuddy Bench home">
+        <img class="theme-logo--light" src="static/img/wb-bench.png?v=2" alt="Tencent WorkBuddy Bench">
+        <img class="theme-logo--dark" src="static/img/wb-bench-light.png?v=2" alt="Tencent WorkBuddy Bench">
+      </a>
+      <div class="topbar__nav">
+        <a href="index.html#leaderboard"><span class="en">Leaderboard</span><span class="zh">排行榜</span></a>
+        <a href="overview.html"><span class="en">Overview</span><span class="zh">概览</span></a>
+        <a href="report/main.pdf"><span class="en">Paper</span><span class="zh">论文</span></a>
+        <a href="https://github.com/Tencent/workbuddy-bench"><span class="en">Code</span><span class="zh">代码</span></a>
+        <a href="https://huggingface.co/datasets/tencent/workbuddy-bench"><span class="en">Dataset</span><span class="zh">数据集</span></a>
+        <a class="is-current" href="https://github.com/Tencent/workbuddy-bench/tree/main/.agents/skills"><span class="en">Skill Bundle</span><span class="zh">技能包</span></a>
+      </div>
+      <div class="topbar__controls">
+        <div class="seg lang-toggle">
+          <button data-lang-btn="zh">中文</button>
+          <button data-lang-btn="en">EN</button>
+        </div>
+        <button class="theme-toggle" id="themeToggle" aria-label="Toggle theme" title="Light / Dark">
+          <svg class="ic-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+          <svg class="ic-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/></svg>
+        </button>
+      </div>
+    </div>
+  </nav>
+  <div class="detail-wrap">
+
+    <header class="detail-hero">
+      <div class="eyebrow">Skill Bundle</div>
+      <h1>Skill Bundle <span class="ver">Coming soon</span></h1>
+      <p class="tagline">
+        <span class="en">A drop-in skill for evaluating models on the benchmark and inspecting agent trajectories &mdash; locally, on your own machine.</span>
+        <span class="zh">一个即插即用的技能包,用于在本基准上评测模型并检视 Agent 轨迹，全部在你自己的机器上本地运行。</span>
+      </p>
+    </header>
+
+    <!-- PLACEHOLDER NOTICE -->
+    <section class="detail-sec">
+      <p class="callout"><span class="en">This page is a placeholder. The Skill Bundle is not published yet &mdash; it will be released here soon. Check back for the download and setup instructions.</span><span class="zh">本页为占位页。技能包尚未发布，即将在此上线。请稍后回来查看下载与安装说明。</span></p>
+    </section>
+
+    <!-- WHAT IT DOES -->
+    <section class="detail-sec">
+      <h2><span class="en">What it does</span><span class="zh">能做什么</span></h2>
+      <p><span class="en">The Skill Bundle is a Claude Code / agent skill you install locally. Once available, it will let you pull benchmark tasks, run evaluations against your own model endpoint, and replay what the agent did step-by-step &mdash; without any hosted service. The capabilities below describe the intended feature set.</span><span class="zh">技能包是一个安装在本地的 Claude Code / Agent 技能。上线后,它将让你拉取基准任务、针对你自己的模型端点运行评测,并逐步回放 Agent 的操作，无需任何托管服务。以下能力为计划中的功能集。</span></p>
+      <div class="chips">
+        <span class="chip"><span class="en">run tasks locally</span><span class="zh">本地运行任务</span></span>
+        <span class="chip"><span class="en">drive CodeBuddy Code / Claude Code harnesses</span><span class="zh">驱动 CodeBuddy Code / Claude Code harness</span></span>
+        <span class="chip"><span class="en">replay &amp; inspect trajectories step-by-step</span><span class="zh">逐步回放与检视轨迹</span></span>
+        <span class="chip"><span class="en">per-task pass/fail &amp; reward breakdown</span><span class="zh">按任务的通过/失败与 reward 拆解</span></span>
+        <span class="chip"><span class="en">diff gold.patch vs agent patch</span><span class="zh">对比 gold.patch 与 Agent 补丁</span></span>
+        <span class="chip"><span class="en">export reports</span><span class="zh">导出报告</span></span>
+      </div>
+    </section>
+
+  </div>
+  <footer class="site-footer">
+    <div class="site-footer__inner">
+      <p class="site-footer__byline">Tencent Youtu Lab · Keen &amp; Yunding Security Lab · WorkBuddy</p>
+    </div>
+  </footer>
+  <script src="site.js?v=1"></script>
+  <script src="lang.js?v=3"></script>
+</body>
+</html>

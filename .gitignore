@@ -1,0 +1,47 @@
+# gh-pages branch — publishes ONLY the static site (html/js/css, static/, report/).
+# Everything below lives on the main branch or is local dev state; it must never
+# be committed here. Without this file, checking out gh-pages in the main working
+# tree exposes .env and local configs as untracked — a `git add -A` would leak them.
+
+# === Secrets / env ===
+.env
+.env.*
+
+# === Python / tooling ===
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+.pytest_cache/
+.ruff_cache/
+build/
+
+# === OS / IDE ===
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+*.sw[op]
+
+# === Logs / scratch ===
+*.log
+nohup.out
+
+# === WorkBuddy Bench project trees (belong to main, not the published site) ===
+/configs/
+/datasets/
+/dist/
+/results/
+/scripts/
+/src/
+/tests/
+/docs/
+/.workspace/
+/.agents/
+/.claude/
+/pyproject.toml
+/uv.lock
+/LICENSE
+/README.md
+/README.zh.md
+/.env.example

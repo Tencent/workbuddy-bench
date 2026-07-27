@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>亮点3：真实CVE复现</title>
+<style>
+html, body {
+  margin: 0; padding: 0; box-sizing: border-box;
+  width: 100%; overflow: hidden;
+  background: #ffffff;
+  font-family: 'Noto Sans SC', 'PingFang SC', 'Microsoft Yahei', system-ui, sans-serif;
+}
+svg { display: block; width: 100%; height: auto; }
+</style>
+</head>
+<body>
+<svg viewBox="0 0 1600 900" width="1600" height="900" xmlns="http://www.w3.org/2000/svg">
+  <!-- Title -->
+  <text x="800" y="65" text-anchor="middle" font-size="40" font-weight="900" fill="#1f2328" font-family="'Noto Sans SC',sans-serif">真实 CVE 复现</text>
+  <text x="800" y="100" text-anchor="middle" font-size="18" fill="#59636e" font-family="'Noto Sans SC',sans-serif">白盒任务直接对接开源项目真实漏洞，Web 利用覆盖高阶攻击技术</text>
+
+  <!-- Left column: whitebox projects -->
+  <text x="400" y="155" text-anchor="middle" font-size="22" font-weight="700" fill="#E65100" font-family="'Noto Sans SC',sans-serif">白盒审计 · 真实开源项目 CVE</text>
+
+  <!-- Project cards grid: 3 cols, last row centered -->
+  <!-- Row 1 -->
+  <rect x="60" y="180" width="220" height="90" rx="8" fill="#FFF3E0" stroke="#FFB74D" stroke-width="2"/>
+  <foreignObject x="60" y="180" width="220" height="90">
+    <div xmlns="http://www.w3.org/1999/xhtml" style="width:100%;height:100%;padding:8px;box-sizing:border-box;display:flex;flex-direction:column;align-items:center;justify-content:center;font:15px/1.3 'Noto Sans SC',sans-serif;text-align:center;word-wrap:break-word;">
+      <span style="font-weight:700;font-size:18px;color:#BF360C;">binutils</span>
+      <span style="font-size:12px;color:#8d6e63;">OOB 写 · CWE-787</span>
+    </div>
+  </foreignObject>
+
+  <rect x="300" y="180" width="220" height="90" rx="8" fill="#FFF3E0" stroke="#FFB74D" stroke-width="2"/>
+  <foreignObject x="300" y="180" width="220" height="90">
+    <div xmlns="http://www.w3.org/1999/xhtml" style="width:100%;height:100%;padding:8px;box-sizing:border-box;display:flex;flex-direction:column;align-items:center;justify-content:center;font:15px/1.3 'Noto Sans SC',sans-serif;text-align:center;word-wrap:break-word;">
+      <span style="font-weight:700;font-size:18px;color:#BF360C;">curl</span>
+      <span style="font-size:12px;color:#8d6e63;">TFTP 堆溢出</span>
+    </div>
+  </foreignObject>
+
+  <rect x="540" y="180" width="220" height="90" rx="8" fill="#FFF3E0" stroke="#FFB74D" stroke-width="2"/>
+  <foreignObject x="540" y="180" width="220" height="90">
+    <div xmlns="http://www.w3.org/1999/xhtml" style="width:100%;height:100%;padding:8px;box-sizing:border-box;display:flex;flex-direction:column;align-items:center;justify-content:center;font:15px/1.3 'Noto Sans SC',sans-serif;text-align:center;word-wrap:break-word;">
+      <span style="font-weight:700;font-size:18px;color:#BF360C;">nginx</span>
+      <span style="font-size:12px;color:#8d6e63;">rewrite 堆溢出</span>
+    </div>
+  </foreignObject>
+
+  <!-- Row 2 -->
+  <rect x="60" y="285" width="220" height="90" rx="8" fill="#FFF3E0" stroke="#FFB74D" stroke-width="2"/>
+  <foreignObject x="60" y="285" width="220" height="90">
+    <div xmlns="http://www.w3.org/1999/xhtml" style="width:100%;height:100%;padding:8px;box-sizing:border-box;display:flex;flex-direction:column;align-items:center;justify-content:center;font:15px/1.3 'Noto Sans SC',sans-serif;text-align:center;word-wrap:break-word;">
+      <span style="font-weight:700;font-size:18px;color:#BF360C;">vim</span>
+      <span style="font-size:12px;color:#8d6e63;">modeline 沙箱逃逸</span>
+    </div>
+  </foreignObject>
+
+  <rect x="300" y="285" width="220" height="90" rx="8" fill="#FFF3E0" stroke="#FFB74D" stroke-width="2"/>
+  <foreignObject x="300" y="285" width="220" height="90">
+    <div xmlns="http://www.w3.org/1999/xhtml" style="width:100%;height:100%;padding:8px;box-sizing:border-box;display:flex;flex-direction:column;align-items:center;justify-content:center;font:15px/1.3 'Noto Sans SC',sans-serif;text-align:center;word-wrap:break-word;">
+      <span style="font-weight:700;font-size:18px;color:#BF360C;">jq</span>
+      <span style="font-size:12px;color:#8d6e63;">JSON 解析器堆溢出</span>
+    </div>
+  </foreignObject>
+
+  <rect x="540" y="285" width="220" height="90" rx="8" fill="#FFF3E0" stroke="#FFB74D" stroke-width="2"/>
+  <foreignObject x="540" y="285" width="220" height="90">
+    <div xmlns="http://www.w3.org/1999/xhtml" style="width:100%;height:100%;padding:8px;box-sizing:border-box;display:flex;flex-direction:column;align-items:center;justify-content:center;font:15px/1.3 'Noto Sans SC',sans-serif;text-align:center;word-wrap:break-word;">
+      <span style="font-weight:700;font-size:18px;color:#BF360C;">fluent-bit</span>
+      <span style="font-size:12px;color:#8d6e63;">堆溢出</span>
+    </div>
+  </foreignObject>
+
+  <!-- Row 3 (centered) -->
+  <rect x="300" y="390" width="220" height="90" rx="8" fill="#FFF3E0" stroke="#FFB74D" stroke-width="2"/>
+  <foreignObject x="300" y="390" width="220" height="90">
+    <div xmlns="http://www.w3.org/1999/xhtml" style="width:100%;height:100%;padding:8px;box-sizing:border-box;display:flex;flex-direction:column;align-items:center;justify-content:center;font:15px/1.3 'Noto Sans SC',sans-serif;text-align:center;word-wrap:break-word;">
+      <span style="font-weight:700;font-size:18px;color:#BF360C;">junrar</span>
+      <span style="font-size:12px;color:#8d6e63;">路径穿越</span>
+    </div>
+  </foreignObject>
+
+  <!-- Workflow: find-vuln → poc-verify -->
+  <rect x="60" y="510" width="700" height="80" rx="10" fill="#ECEFF1" stroke="#90A4AE" stroke-width="2"/>
+  <foreignObject x="60" y="510" width="700" height="80">
+    <div xmlns="http://www.w3.org/1999/xhtml" style="width:100%;height:100%;padding:10px 16px;box-sizing:border-box;display:flex;align-items:center;justify-content:center;font:16px/1.3 'Noto Sans SC',sans-serif;color:#1f2328;text-align:center;">
+      <span style="font-weight:600;">两步流：</span>
+      <span style="margin:0 8px;padding:4px 12px;background:#37474F;color:#fff;border-radius:6px;font-size:14px;">find-vuln 定位漏洞</span>
+      <span style="font-size:20px;color:#90A4AE;">→</span>
+      <span style="margin:0 8px;padding:4px 12px;background:#E65100;color:#fff;border-radius:6px;font-size:14px;">poc-verify 触发 ASAN 崩溃</span>
+    </div>
+  </foreignObject>
+
+  <!-- Right column: Web exploit techniques -->
+  <text x="1180" y="155" text-anchor="middle" font-size="22" font-weight="700" fill="#6A1B9A" font-family="'Noto Sans SC',sans-serif">Web 漏洞利用 · 高阶攻击技术</text>
+
+  <!-- Technique cards -->
+  <rect x="840" y="180" width="680" height="70" rx="8" fill="#F3E5F5" stroke="#AB47BC" stroke-width="2"/>
+  <foreignObject x="840" y="180" width="680" height="70">
+    <div xmlns="http://www.w3.org/1999/xhtml" style="width:100%;height:100%;padding:8px 16px;box-sizing:border-box;display:flex;flex-direction:column;justify-content:center;font:16px/1.3 'Noto Sans SC',sans-serif;text-align:center;word-wrap:break-word;">
+      <span style="font-weight:600;color:#4A148C;">House of Apple2</span>
+      <span style="font-size:13px;color:#7b6777;">glibc 2.36+ tcache safe-linking 绕过</span>
+    </div>
+  </foreignObject>
+
+  <rect x="840" y="265" width="680" height="70" rx="8" fill="#F3E5F5" stroke="#AB47BC" stroke-width="2"/>
+  <foreignObject x="840" y="265" width="680" height="70">
+    <div xmlns="http://www.w3.org/1999/xhtml" style="width:100%;height:100%;padding:8px 16px;box-sizing:border-box;display:flex;flex-direction:column;justify-content:center;font:16px/1.3 'Noto Sans SC',sans-serif;text-align:center;word-wrap:break-word;">
+      <span style="font-weight:600;color:#4A148C;">ECDSA Nonce 重用</span>
+      <span style="font-size:13px;color:#7b6777;">两个 JWT 签名复用 nonce 恢复私钥</span>
+    </div>
+  </foreignObject>
+
+  <rect x="840" y="350" width="680" height="70" rx="8" fill="#F3E5F5" stroke="#AB47BC" stroke-width="2"/>
+  <foreignObject x="840" y="350" width="680" height="70">
+    <div xmlns="http://www.w3.org/1999/xhtml" style="width:100%;height:100%;padding:8px 16px;box-sizing:border-box;display:flex;flex-direction:column;justify-content:center;font:16px/1.3 'Noto Sans SC',sans-serif;text-align:center;word-wrap:break-word;">
+      <span style="font-weight:600;color:#4A148C;">SAML 签名包装</span>
+      <span style="font-size:13px;color:#7b6777;">XPath 选择器差异利用</span>
+    </div>
+  </foreignObject>
+
+  <rect x="840" y="435" width="680" height="70" rx="8" fill="#F3E5F5" stroke="#AB47BC" stroke-width="2"/>
+  <foreignObject x="840" y="435" width="680" height="70">
+    <div xmlns="http://www.w3.org/1999/xhtml" style="width:100%;height:100%;padding:8px 16px;box-sizing:border-box;display:flex;flex-direction:column;justify-content:center;font:16px/1.3 'Noto Sans SC',sans-serif;text-align:center;word-wrap:break-word;">
+      <span style="font-weight:600;color:#4A148C;">反序列化 gadget 链</span>
+      <span style="font-size:13px;color:#7b6777;">Java/.NET 反序列化 RCE</span>
+    </div>
+  </foreignObject>
+
+  <!-- Bottom callout -->
+  <rect x="80" y="640" width="1440" height="200" rx="10" fill="#fafafa" stroke="#e0e0e0" stroke-width="1"/>
+  <text x="100" y="670" font-size="14" font-weight="600" fill="#1f2328" font-family="'Noto Sans SC',sans-serif">设计要点</text>
+
+  <circle cx="120" cy="700" r="5" fill="#E65100"/>
+  <text x="138" y="705" font-size="15" fill="#1f2328" font-family="'Noto Sans SC',sans-serif">全部 hard 难度：白盒任务无一道简单题，对模型源码审计能力是真实考验</text>
+
+  <circle cx="120" cy="730" r="5" fill="#E65100"/>
+  <text x="138" y="735" font-size="15" fill="#1f2328" font-family="'Noto Sans SC',sans-serif">门控机制：find-vuln 须过评分门槛才解锁 poc-verify，模拟真实渗透节奏</text>
+
+  <circle cx="120" cy="760" r="5" fill="#6A1B9A"/>
+  <text x="138" y="765" font-size="15" fill="#1f2328" font-family="'Noto Sans SC',sans-serif">覆盖 5 类漏洞模式：内存破坏、沙箱逃逸、路径穿越、密码学缺陷、反序列化</text>
+
+  <circle cx="120" cy="790" r="5" fill="#6A1B9A"/>
+  <text x="138" y="795" font-size="15" fill="#1f2328" font-family="'Noto Sans SC',sans-serif">来自真实上游项目：非合成漏洞，模型需像安全研究员一样理解真实代码库</text>
+</svg>
+</body>
+</html>

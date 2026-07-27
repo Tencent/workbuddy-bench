@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Overview — Tencent WorkBuddy Bench</title>
+  <link rel="icon" type="image/png" href="static/img/wb-icon.png?v=6">
+  <link rel="stylesheet" href="wbds-detail.css?v=17">
+  <link rel="stylesheet" href="wbds-chrome.css?v=6">
+  <script>(function(){try{var t=localStorage.getItem('cbTheme');var d=(t==='dark'||(t==null&&window.matchMedia&&window.matchMedia('(prefers-color-scheme: dark)').matches));document.documentElement.setAttribute('data-theme',d?'dark':'light');}catch(e){}})();</script>
+  <style>
+    /* force a "paper figure" card for white figure exports so dark mode doesn't glare */
+    .detail-fig img.fig-light{background:#fff}
+    [data-theme="dark"] .detail-fig img.fig-light{background:#fff;border-color:rgba(255,255,255,.14);box-shadow:0 14px 32px rgba(0,0,0,.5)}
+    /* live-embedded suite teaser (fixed 1340x546 canvas, scaled to fit) —
+       no card chrome: the teaser bg is transparent and its zone cards sit natively on the page */
+    .teaser-scale{position:relative;width:100%;aspect-ratio:1260/514;overflow:hidden}
+    .teaser-scale iframe{position:absolute;left:0;top:0;width:1260px;height:514px;border:0;background:transparent;transform-origin:0 0}
+    /* overview-only: ONE shared content column for every module (hero tagline,
+       metric cards, teaser figure, figcaption, subset sections) — no per-module
+       max-widths, so all edges align and text wraps at the column edge.
+       The fixed left outline needs ~200px, so on desktop the column is capped
+       at 100vw-400. */
+    @media (min-width:1240px){
+      :root{--content-max:min(1060px, calc(100vw - 400px))}
+      /* keep the cross-page subset bar at the sitewide 860px grid so its
+         items don't shift when navigating between overview and detail pages */
+      .ov-bar-inner{max-width:860px}
+    }
+    /* align the hero tagline to the shared column instead of a narrower
+       reading measure (overrides .detail-hero#top .tagline in wbds-detail.css) */
+    .detail-hero#top .tagline{max-width:none}
+  </style>
+</head>
+<body class="lang-zh">
+  <nav class="topbar">
+    <div class="bar-inner">
+      <a class="topbar__brand" href="index.html" aria-label="Tencent WorkBuddy Bench home">
+        <img class="theme-logo--light" src="static/img/wb-bench.png?v=2" alt="Tencent WorkBuddy Bench">
+        <img class="theme-logo--dark" src="static/img/wb-bench-light.png?v=2" alt="Tencent WorkBuddy Bench">
+      </a>
+      <div class="topbar__nav">
+        <a href="index.html#leaderboard"><span class="en">Leaderboard</span><span class="zh">排行榜</span></a>
+        <a class="is-current" href="overview.html"><span class="en">Overview</span><span class="zh">概览</span></a>
+        <a href="report/main.pdf"><span class="en">Paper</span><span class="zh">论文</span></a>
+        <a href="https://github.com/Tencent/workbuddy-bench"><span class="en">Code</span><span class="zh">代码</span></a>
+        <a href="https://huggingface.co/datasets/tencent/workbuddy-bench"><span class="en">Dataset</span><span class="zh">数据集</span></a>
+        <a href="https://github.com/Tencent/workbuddy-bench/tree/main/.agents/skills"><span class="en">Skill Bundle</span><span class="zh">技能包</span></a>
+      </div>
+      <div class="topbar__controls">
+        <div class="seg lang-toggle">
+          <button data-lang-btn="zh">中文</button>
+          <button data-lang-btn="en">EN</button>
+        </div>
+        <button class="theme-toggle" id="themeToggle" aria-label="Toggle theme" title="Light / Dark">
+          <svg class="ic-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+          <svg class="ic-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/></svg>
+        </button>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Cross-page bar: Overview (current) + jump to each subset's full detail page -->
+  <div class="ov-bar">
+    <div class="ov-bar-inner">
+      <a class="is-current" href="overview.html"><span class="en">Overview</span><span class="zh">总览</span></a>
+      <span class="sep"></span>
+      <a href="code.html">Code</a>
+      <a href="web.html">Web</a>
+      <a href="office.html">Office</a>
+      <a href="security.html">Security</a>
+    </div>
+  </div>
+
+  <!-- On-page outline: jump between sections within this Overview page -->
+  <nav class="ov-outline" aria-label="On this page">
+    <div class="ol-title"><span class="en">On this page</span><span class="zh">本页目录</span></div>
+    <a href="#top" data-ol="top" class="is-current"><span class="en">Overview</span><span class="zh">总览</span></a>
+    <a href="#code" data-ol="code">Code</a>
+    <a href="#web" data-ol="web">Web</a>
+    <a href="#office" data-ol="office">Office</a>
+    <a href="#security" data-ol="security">Security</a>
+  </nav>
+
+  <div class="detail-wrap">
+
+    <header class="detail-hero" id="top">
+      <div class="eyebrow">Subsets</div>
+      <h1><span class="en">Overview</span><span class="zh">总览</span></h1>
+      <p class="tagline">
+        <span class="en">Existing agent benchmarks are either contaminated public sets or closed vendor suites — WorkBuddy Bench evaluates coding agents on real, role-played work across four tracks, openly.</span>
+        <span class="zh">现有 Agent 评测要么是已被污染的公开题库，要么是闭源的厂商套件。WorkBuddy Bench 用四个 track 的真实角色化任务，开放地评测编程 Agent。</span>
+      </p>
+      <p class="tagline tagline-sub">
+        <span class="en">Pick a subset below; the leaderboard and key takeaways live on the <a href="index.html#leaderboard">home page</a>.</span>
+        <span class="zh">下方选择子集查看;排行榜与核心结论见<a href="index.html#leaderboard">首页</a>。</span>
+      </p>
+      <div class="ov-metrics">
+        <a class="ov-metric-card" data-accent="code" href="#code">
+          <span class="omc-top"><span class="omc-dot"></span><span class="omc-name">Code</span></span>
+          <span class="omc-val">80<span class="omc-unit"><span class="en">tasks</span><span class="zh">题</span></span></span>
+          <span class="omc-desc"><span class="en">repo-scale</span><span class="zh">仓库级</span></span>
+        </a>
+        <a class="ov-metric-card" data-accent="web" href="#web">
+          <span class="omc-top"><span class="omc-dot"></span><span class="omc-name">Web</span></span>
+          <span class="omc-val">70<span class="omc-unit"><span class="en">tasks</span><span class="zh">题</span></span></span>
+          <span class="omc-desc"><span class="en">interactive</span><span class="zh">可交互</span></span>
+        </a>
+        <a class="ov-metric-card" data-accent="office" href="#office">
+          <span class="omc-top"><span class="omc-dot"></span><span class="omc-name">Office</span></span>
+          <span class="omc-val">50<span class="omc-unit"><span class="en">tasks</span><span class="zh">题</span></span></span>
+          <span class="omc-desc"><span class="en">workflow</span><span class="zh">工作流</span></span>
+        </a>
+        <a class="ov-metric-card" data-accent="security" href="#security">
+          <span class="omc-top"><span class="omc-dot"></span><span class="omc-name">Security</span></span>
+          <span class="omc-val">60<span class="omc-unit"><span class="en">tasks</span><span class="zh">题</span></span></span>
+          <span class="omc-desc"><span class="en">red+blue security</span><span class="zh">红蓝安全对抗</span></span>
+        </a>
+      </div>
+      <figure class="detail-fig" style="margin-top:22px;background:none;border:0;box-shadow:none;padding:0">
+        <div class="teaser-scale">
+          <iframe id="suite-teaser" src="static/figures/suite/teaser.html#bare" loading="lazy" title="Suite at a glance: construction, four tracks, evaluation"></iframe>
+        </div>
+        <figcaption><span class="en">Figure 1. Suite at a glance — real work is reverse-engineered into role-played tasks (left), packaged as four equally-weighted tracks in one open task format (center), and scored in sandboxes with hidden tests under two agent harnesses (right).</span><span class="zh">图 1. 套件一览：真实工作被逆向改写为角色化任务（左），打包为共享同一开放任务格式的四个等权 track（中），在沙箱加隐藏测试下于两套 Agent harness 上计分（右）。</span></figcaption>
+      </figure>
+      <script>
+        (function(){
+          var f=document.getElementById('suite-teaser');
+          function fit(){var w=f.parentElement.clientWidth;f.style.transform='scale('+(w/1260)+')';}
+          function syncTheme(){
+            try{
+              var t=document.documentElement.getAttribute('data-theme');
+              f.contentDocument.documentElement.setAttribute('data-theme',t||'light');
+            }catch(e){}
+          }
+          f.addEventListener('load',function(){fit();syncTheme();});
+          new MutationObserver(syncTheme).observe(document.documentElement,{attributes:true,attributeFilter:['data-theme']});
+          window.addEventListener('resize',fit);fit();
+        })();
+      </script>
+    </header>
+
+    <!-- CODE -->
+    <section class="detail-sec" id="code">
+      <div class="eyebrow">Subset</div>
+      <h2>Code <span class="ver">80 tasks</span></h2>
+      <p><span class="en">Repository-level software engineering on real open-source backends — the agent is dropped into a project at a baseline commit and must locate &amp; edit code across modules and pass the hidden tests. The suite spans 18 task categories across developer, PM, algo, QA and ops roles; the 80-task open release draws on ~18 real upstream repositories plus clean-room reimplementations and synthetic workspaces.</span><span class="zh">真实开源后端的仓库级软件工程。Agent 被放进某个基线 commit 的项目，需跨模块定位改代码并通过隐藏测试。套件覆盖 18 类任务，横跨开发、PM、算法、QA、运维等角色；80 题开源版本基于约 18 个真实上游仓库，外加洁净室重实现与合成 workspace。</span></p>
+      <ul class="tc-meta"><li><span>Domain</span> repo-level coding task</li><li><span>Lang</span> <span class="en">mainly Python (~90%)</span><span class="zh">以 Python 为主（约 90%）</span></li><li><span>Eval</span> run-level score</li></ul>
+      <a class="tc-more" href="code.html"><span class="en">Full details &amp; leaderboard →</span><span class="zh">完整详情与榜单 →</span></a>
+    </section>
+
+    <!-- WEB -->
+    <section class="detail-sec" id="web">
+      <div class="eyebrow">Subset</div>
+      <h2>Web <span class="ver">70 tasks</span></h2>
+      <p><span class="en">Front-end / GUI work across generation, modification, analysis and quality assurance. The 70 tasks cover page interaction, data visualization, visual design, front-end project analysis, code testing, page implementation and document conversion, scored through rule checks, LLM/VLM judges and agent-judge review.</span><span class="zh">前端 / GUI 工作，覆盖生成、修改、分析与质量保障。70 题涵盖页面交互、数据可视化、视觉设计、前端项目分析、代码测试、页面实现与文档转换，并通过 rule checks、LLM/VLM judges 与 agent-judge review 评分。</span></p>
+      <ul class="tc-meta"><li><span>Domain</span> front-end / GUI</li><li><span>Lang</span> HTML / CSS / JS</li><li><span>Eval</span> rubric-item judges</li></ul>
+      <a class="tc-more" href="web.html"><span class="en">Full details &amp; leaderboard →</span><span class="zh">完整详情与榜单 →</span></a>
+    </section>
+
+    <!-- OFFICE -->
+    <section class="detail-sec" id="office">
+      <div class="eyebrow">Subset</div>
+      <h2>Office <span class="ver">50 tasks</span></h2>
+      <p><span class="en">Office data &amp; file workflows — operate over mixed-format files (xlsx / csv / pdf / docx) to produce the exactly-correct artifact. Difficulty comes from structure, relationships, state and evidence chains, not row count. Scored by a per-task weighted blend of deterministic Rule checks and an evidence-grounded LLM Judge.</span><span class="zh">办公数据 / 文件工作流：在混合格式文件（xlsx / csv / pdf / docx）上操作，产出完全正确的目标产物。难度来自结构、关系、状态与证据链，而非行数。由确定性 Rule 检查与基于证据的 LLM Judge 按任务加权融合打分。</span></p>
+      <ul class="tc-meta"><li><span>Domain</span> office data-ops</li><li><span>Lang</span> xlsx / csv / pdf / docx</li><li><span>Eval</span> rule + LLM-judge blend</li></ul>
+      <a class="tc-more" href="office.html"><span class="en">Full details &amp; leaderboard →</span><span class="zh">完整详情与榜单 →</span></a>
+    </section>
+
+    <!-- SECURITY -->
+    <section class="detail-sec" id="security">
+      <div class="eyebrow">Subset</div>
+      <h2>Security <span class="ver">60 tasks</span></h2>
+      <p><span class="en">Security tasks across a security team&rsquo;s spectrum — can an agent find and safely reproduce real vulnerabilities, analyze malware, run security operations, and probe agent attack surfaces? The leaderboard is live, scored on both harnesses (GLM-5.2 leads at 76.3 / 80.9).</span><span class="zh">覆盖安全团队完整工作流程的安全任务。Agent 能否挖掘并安全复现真实漏洞、分析恶意软件、执行安全运营、评估 Agent 攻击面？榜单已上线，双评测框架计分（GLM-5.2 以 76.3 / 80.9 领先）。</span></p>
+      <ul class="tc-meta"><li><span>Domain</span> security / vuln</li><li><span>Tracks</span> red + blue</li></ul>
+      <a class="tc-more" href="security.html"><span class="en">Full details &amp; leaderboard →</span><span class="zh">完整详情与榜单 →</span></a>
+    </section>
+
+  </div>
+  <footer class="site-footer">
+    <div class="site-footer__inner">
+      <p class="site-footer__byline">Tencent Youtu Lab · Keen &amp; Yunding Security Lab · WorkBuddy</p>
+    </div>
+  </footer>
+  <script src="site.js?v=1"></script>
+  <script>(function(){
+    var links=[].slice.call(document.querySelectorAll('.ov-outline a[data-ol]'));
+    if(!links.length)return;
+    var ids=['top','code','web','office','security'];
+    var secs=ids.map(function(id){return document.getElementById(id);}).filter(Boolean);
+    function setCurrent(id){links.forEach(function(a){a.classList.toggle('is-current',a.getAttribute('data-ol')===id);});}
+    /* a clicked target near the page bottom can be pinned short of the 116px line
+       (not enough page below it), so honor the click until the user scrolls manually */
+    var lock=(location.hash||'').replace('#','');if(ids.indexOf(lock)<0)lock=null;
+    links.forEach(function(a){a.addEventListener('click',function(){lock=a.getAttribute('data-ol');setCurrent(lock);});});
+    ['wheel','touchstart','keydown'].forEach(function(ev){window.addEventListener(ev,function(){lock=null;},{passive:true});});
+    function update(){
+      if(lock){setCurrent(lock);return;}
+      var cur=secs[0]?secs[0].id:'top';
+      secs.forEach(function(s){if(s.getBoundingClientRect().top<=116)cur=s.id;});
+      if(window.innerHeight+window.scrollY>=document.body.scrollHeight-2)cur=secs[secs.length-1].id;
+      setCurrent(cur);
+    }
+    var ticking=false;
+    window.addEventListener('scroll',function(){
+      if(ticking)return;ticking=true;
+      requestAnimationFrame(function(){ticking=false;update();});
+    },{passive:true});
+    window.addEventListener('resize',update);
+    window.addEventListener('load',update);
+    update();
+  })();</script>
+  <script src="lang.js?v=3"></script>
+</body>
+</html>

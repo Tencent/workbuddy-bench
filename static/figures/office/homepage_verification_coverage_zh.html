@@ -1,0 +1,401 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>WB Bench — 分层验证覆盖图</title>
+<script>(function(){var t="";try{if(parent!==window)t=parent.document.documentElement.getAttribute("data-theme")||"";}catch(e){}try{if(!t){var s=localStorage.getItem("cbTheme");t=s||(matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light");}}catch(e){t=t||"light";}document.documentElement.setAttribute("data-theme",t);})();</script>
+<style>
+  :root{
+    --brand:#28B894; --brand-2:#32E6B9; --ink:#000; --body:#242424;
+    --secondary:#808080; --tertiary:#B1B1B1; --page:#FAFAFA; --surface:#fff;
+    --surface-2:#F1F2F4; --surface-3:#E7E8EC; --border:rgba(0,0,0,.08);
+    --border-strong:rgba(0,0,0,.12); --mono:"SF Mono","JetBrains Mono",Menlo,Consolas,monospace;
+    --font:"PingFang SC",-apple-system,"Helvetica Neue",Arial,"Microsoft Yahei",sans-serif;
+    --purple:#6750A4; --purple-2:#9A83E6; --blue:#356D9F; --amber:#9C6B1C; --red:#B84A40;
+    --teal:#22A699; --cyan:#2D9CDB; --orange:#C07A22; --slate:#5F6C7B;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;min-height:0;display:block;background:var(--page);color:var(--body);font-family:var(--font);font-size:13.5px;line-height:20px;-webkit-font-smoothing:antialiased}
+  .wrap{width:min(1120px,calc(100vw - 56px));margin:0 auto;padding:34px 0}
+  .eyebrow{display:inline-flex;align-items:center;height:26px;padding:0 12px;border-radius:9999px;background:rgba(40,184,148,.12);color:var(--brand);font-family:var(--mono);font-size:11px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;margin-bottom:18px}
+  h1{margin:0;color:var(--ink);font-size:30px;line-height:1.14;font-weight:650;letter-spacing:-.025em}
+  .tagline{max-width:790px;margin:14px 0 0;color:var(--secondary);font-size:14px;line-height:1.6}
+  .figure{position:relative;margin-top:24px;border:1px solid var(--border);border-radius:18px;background:linear-gradient(180deg,#fff,#fbfbfb);box-shadow:0 10px 20px rgba(0,0,0,.03);overflow:hidden}
+  .figure:before{content:"";position:absolute;inset:-1px;background:radial-gradient(circle at 14% 7%,rgba(40,184,148,.14),transparent 28%),radial-gradient(circle at 84% 12%,rgba(103,80,164,.12),transparent 25%),radial-gradient(circle at 50% 100%,rgba(50,230,185,.08),transparent 35%);pointer-events:none}
+  .topline{position:relative;z-index:3;display:flex;align-items:center;justify-content:space-between;gap:14px;padding:14px 16px;border-bottom:1px solid var(--border);background:rgba(255,255,255,.72);backdrop-filter:blur(18px)}
+  .case{font-family:var(--mono);font-size:12px;color:var(--secondary)}.case b{color:var(--ink);font-weight:700}
+  .source-note{font-family:var(--mono);font-size:10.5px;color:var(--tertiary);white-space:nowrap}
+  .stage{position:relative;z-index:2;padding:20px;display:grid;gap:16px}
+
+  .metric-map{display:grid;grid-template-columns:.78fr 1.1fr 1.1fr;gap:12px;align-items:stretch}
+  .task-card,.layer-card{position:relative;border:1px solid var(--border);border-radius:15px;background:rgba(255,255,255,.9);box-shadow:0 10px 24px rgba(0,0,0,.025);overflow:hidden}
+  .task-card{display:flex;flex-direction:column;justify-content:space-between;min-height:136px;padding:16px;background:linear-gradient(180deg,#fff,var(--surface-2))}
+  .task-card:before,.layer-card:before{content:"";position:absolute;inset:auto -18% -54px -18%;height:86px;background:radial-gradient(ellipse at center,rgba(40,184,148,.13),transparent 64%);pointer-events:none}.judge-layer:before{background:radial-gradient(ellipse at center,rgba(103,80,164,.14),transparent 64%)}
+  .kicker{position:relative;font-family:var(--mono);font-size:10px;color:var(--tertiary);font-weight:800;letter-spacing:.07em;text-transform:uppercase}
+  .task-card b{position:relative;display:block;margin-top:9px;color:var(--ink);font-size:34px;line-height:1;font-weight:790;letter-spacing:-.045em}.task-card span{position:relative;display:block;margin-top:8px;color:var(--secondary);font-size:13px}.task-card small{position:relative;display:block;margin-top:10px;color:var(--tertiary);font-family:var(--mono);font-size:10px;line-height:1.35}
+  .layer-card{padding:14px 14px 13px;min-height:136px}.layer-head{position:relative;display:flex;align-items:flex-start;justify-content:space-between;gap:10px}.layer-name{display:flex;align-items:center;gap:9px}.layer-dot{width:12px;height:12px;border-radius:99px;background:var(--brand);box-shadow:0 0 0 4px rgba(40,184,148,.12)}.judge-layer .layer-dot{background:var(--purple);box-shadow:0 0 0 4px rgba(103,80,164,.12)}
+  .layer-name h2{margin:0;color:var(--ink);font-size:18px;line-height:1.1;font-weight:750;letter-spacing:-.015em}.layer-name p{margin:4px 0 0;color:var(--secondary);font-size:11.5px;line-height:1.35}.layer-badge{height:22px;border:1px solid var(--border);border-radius:999px;background:var(--surface-2);padding:0 8px;font-family:var(--mono);font-size:9.5px;color:var(--secondary);display:inline-flex;align-items:center;white-space:nowrap}
+  .layer-stats{position:relative;display:grid;grid-template-columns:1.08fr .92fr .92fr;gap:8px;margin-top:13px}.stat{border:1px solid var(--border);border-radius:11px;background:rgba(255,255,255,.78);padding:9px 10px;min-width:0}.stat b{display:block;color:var(--ink);font-size:21px;line-height:1;font-weight:790;letter-spacing:-.035em}.stat span{display:block;margin-top:6px;color:var(--secondary);font-size:10.8px;line-height:1.15}.stat small{display:block;margin-top:3px;color:var(--tertiary);font-family:var(--mono);font-size:9px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+
+  .middle{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+  .panel{position:relative;border:1px solid var(--border);border-radius:16px;background:rgba(255,255,255,.9);box-shadow:0 10px 26px rgba(0,0,0,.032);overflow:hidden}
+  .panel-head{display:flex;align-items:flex-start;justify-content:space-between;gap:14px;padding:16px 16px 0}.panel-title h2{margin:0;color:var(--ink);font-size:17px;line-height:1.22;font-weight:700;letter-spacing:-.015em}.panel-title p{margin:5px 0 0;color:var(--secondary);font-size:12px;line-height:1.4}.badge{display:inline-flex;align-items:center;height:23px;padding:0 8px;border:1px solid var(--border);border-radius:999px;background:var(--surface-2);color:var(--secondary);font-family:var(--mono);font-size:9.7px;white-space:nowrap}.badge.green{background:rgba(40,184,148,.10);border-color:rgba(40,184,148,.2);color:var(--brand)}.badge.purple{background:rgba(103,80,164,.10);border-color:rgba(103,80,164,.2);color:var(--purple)}
+  .interactive{padding:14px 16px 16px}.viz-card{position:relative;display:grid;grid-template-columns:250px 1fr;gap:14px;align-items:center;min-height:330px;border:1px solid var(--border);border-radius:15px;background:linear-gradient(180deg,#fff,var(--surface-2));padding:14px;overflow:hidden}.viz-card:before{content:"";position:absolute;inset:26px auto auto 24px;width:250px;height:250px;border-radius:999px;background:radial-gradient(circle,rgba(40,184,148,.11),transparent 64%);pointer-events:none}.judge-viz:before{background:radial-gradient(circle,rgba(103,80,164,.12),transparent 64%)}.chart-stage{position:relative;display:grid;place-items:center;min-height:270px}.chart-stage svg{position:relative;z-index:2;overflow:visible}.hub{position:absolute;z-index:4;left:50%;top:50%;width:108px;height:108px;border-radius:999px;transform:translate(-50%,-50%);display:grid;place-items:center;text-align:center;background:#fff;border:1px solid var(--border);box-shadow:0 12px 25px rgba(0,0,0,.04);pointer-events:none}.hub b{display:block;color:var(--ink);font-size:24px;line-height:1;font-weight:780;letter-spacing:-.035em}.hub span{display:block;margin-top:6px;color:var(--secondary);font-family:var(--mono);font-size:9.4px;line-height:1.25}.ring-track{fill:none;stroke:#E9ECF0;stroke-width:22}.ring-seg{--c:var(--brand);fill:none;stroke:var(--c);stroke-width:22;stroke-linecap:round;filter:drop-shadow(0 4px 9px rgba(0,0,0,.05));cursor:pointer;transition:stroke-width .18s ease,filter .18s ease,opacity .18s ease}.ring-seg:hover,.ring-seg:focus,.ring-seg.active{stroke-width:27;filter:drop-shadow(0 8px 18px color-mix(in srgb,var(--c) 30%,transparent));opacity:1;outline:none}.ring-seg.dim{opacity:.26}.rose-circle{fill:none;stroke:rgba(0,0,0,.07);stroke-width:1}.rose-spoke{stroke:rgba(0,0,0,.05);stroke-width:1}.petal{--c:var(--purple);fill:color-mix(in srgb,var(--c) 74%,white);stroke:color-mix(in srgb,var(--c) 60%,white);stroke-width:1.2;stroke-linejoin:round;cursor:pointer;filter:drop-shadow(0 4px 9px rgba(0,0,0,.05));transition:filter .18s ease,opacity .18s ease,fill .18s ease}.petal:hover,.petal:focus,.petal.active{fill:color-mix(in srgb,var(--c) 90%,white);filter:drop-shadow(0 9px 18px color-mix(in srgb,var(--c) 32%,transparent));outline:none;opacity:1}.petal.dim{opacity:.24}.legend-list{position:relative;z-index:3;display:grid;gap:4px;align-content:center}.legend-item{--c:var(--brand);display:grid;grid-template-columns:11px 1fr;gap:9px;align-items:center;border:1px solid transparent;border-radius:8px;background:transparent;padding:5px 8px;color:inherit;font:inherit;text-align:left;cursor:pointer;transition:border-color .16s ease,box-shadow .16s ease,background .16s ease,opacity .16s ease}.legend-item:hover,.legend-item:focus,.legend-item.active{outline:none;background:#fff;border-color:color-mix(in srgb,var(--c) 40%,transparent);box-shadow:0 6px 14px color-mix(in srgb,var(--c) 12%,transparent)}.legend-item.dim{opacity:.4}.legend-swatch{width:11px;height:11px;border-radius:99px;background:var(--c);box-shadow:0 0 0 3px color-mix(in srgb,var(--c) 12%,transparent)}.legend-name{min-width:0;color:var(--ink);font-size:11.6px;line-height:1.15;font-weight:620;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.detail{min-height:76px;margin-top:10px;border:1px solid var(--border);border-radius:13px;background:#fff;padding:11px 12px;display:grid;gap:4px}.detail-k{font-family:var(--mono);font-size:10px;color:var(--tertiary);font-weight:800;letter-spacing:.06em;text-transform:uppercase}.detail b{color:var(--ink);font-size:13.5px}.detail span{color:var(--secondary);font-size:12px;line-height:1.35}.detail strong{color:var(--brand);font-weight:800}.judge-detail strong{color:var(--purple)}.chart-note{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-top:9px;color:var(--tertiary);font-family:var(--mono);font-size:9.6px}.chart-note b{color:var(--secondary);font-weight:700}
+
+  .bottom{display:grid;grid-template-columns:1.05fr .95fr;gap:16px}.preview{padding:16px}.preview-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:12px}.preview-head h2{margin:0;color:var(--ink);font-size:17px;line-height:1.2;font-weight:700}.output-card{position:relative;border:1px solid var(--border);border-radius:13px;background:#0B0C11;color:#D9D9D9;font-family:var(--mono);font-size:11.3px;line-height:1.58;padding:14px;overflow:hidden;min-height:270px}.output-card:after{content:"";position:absolute;inset:0;border-radius:inherit;padding:1px;background:linear-gradient(90deg,transparent,rgba(40,184,148,.78),rgba(103,80,164,.62),transparent);-webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);-webkit-mask-composite:xor;mask-composite:exclude;opacity:.72;animation:borderSweep 3.4s linear infinite}.code-title{color:#fff;font-weight:800;margin-bottom:8px}.line{display:block;position:relative;padding-left:4px}.hl-rule{color:#6ee7b7;background:rgba(40,184,148,.12);border:1px solid rgba(40,184,148,.22);border-radius:4px;padding:0 4px;margin-left:-4px}.hl-judge{color:#d9ccff;background:rgba(103,80,164,.16);border:1px solid rgba(103,80,164,.26);border-radius:4px;padding:0 4px;margin-left:-4px}.hl-shared{color:#7dd3fc;background:rgba(53,109,159,.14);border:1px solid rgba(53,109,159,.24);border-radius:4px;padding:0 4px;margin-left:-4px}
+  .annotations{padding:16px;display:grid;gap:10px;align-content:start;grid-template-rows:auto auto 1fr}.anno-title{display:flex;align-items:center}.anno-title h2{margin:0;color:var(--ink);font-size:17px;font-weight:700}.anno-group{display:grid;gap:6px;align-content:start;margin-top:10px}.anno{position:relative;display:flex;gap:8px;align-items:flex-start;border:1px solid var(--border);border-radius:10px;background:#fff;padding:9px 10px;overflow:hidden}.anno:before{content:"";position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--c)}.anno.rule{--c:var(--brand)}.anno.judge{--c:var(--purple)}.anno.shared{--c:var(--blue)}.anno b{display:inline-flex;align-items:center;justify-content:center;flex:none;min-height:18px;padding:0 6px;border-radius:999px;background:color-mix(in srgb,var(--c) 10%,#fff);font-family:var(--mono);font-size:8.5px;line-height:16px;color:var(--c);text-transform:uppercase;letter-spacing:.04em}.anno span{flex:1;min-width:0;font-size:12px;color:var(--body);line-height:1.35}.mini-legend{display:flex;gap:8px;flex-wrap:wrap;margin-top:2px}.mini-legend span{display:inline-flex;align-items:center;height:22px;padding:0 8px;border-radius:999px;border:1px solid var(--border);background:var(--surface-2);font-family:var(--mono);font-size:9.5px;color:var(--secondary)}.mini-legend i{width:8px;height:8px;border-radius:99px;margin-right:6px;background:var(--c)}.mini-legend .rule-dot{--c:var(--brand)}.mini-legend .judge-dot{--c:var(--purple)}.mini-legend .shared-dot{--c:var(--blue)}
+  .caption{position:relative;z-index:2;display:flex;justify-content:space-between;gap:16px;padding:0 20px 16px;color:var(--tertiary);font-size:12px;line-height:1.5}.caption b{color:var(--secondary);font-weight:500}
+  @keyframes borderSweep{0%{opacity:.25;filter:hue-rotate(0deg)}50%{opacity:.86}100%{opacity:.25;filter:hue-rotate(18deg)}}
+  .viz-tip{--c:var(--brand);position:fixed;z-index:60;top:0;left:0;display:flex;align-items:center;gap:7px;padding:5px 9px;border-radius:9px;border:1px solid var(--border-strong);background:rgba(255,255,255,.98);box-shadow:0 8px 20px rgba(0,0,0,.12);pointer-events:none;white-space:nowrap;opacity:0;transform:translate(-9999px,-9999px);transition:opacity .1s ease;font-family:var(--font)}
+  .viz-tip.show{opacity:1}
+  .viz-tip .tip-dot{width:8px;height:8px;border-radius:99px;background:var(--c);flex:none}
+  .viz-tip .tip-name{color:var(--ink);font-size:11.5px;font-weight:650;line-height:1}
+  .viz-tip .tip-c{color:var(--c);font-family:var(--mono);font-size:11.5px;font-weight:700;line-height:1}
+  .preview-sub{margin:6px 0 0;color:var(--secondary);font-size:12px;line-height:1.45}.preview-sub b{color:var(--ink);font-weight:700}
+  .preview-files{display:grid;gap:12px}
+  .file-card{position:relative;border-radius:12px;border:1px solid rgba(255,255,255,.12);background:#0B0C11;overflow:hidden}.file-card:before{content:"";position:absolute;left:0;top:0;bottom:0;width:3px}.file-card.report:before{background:#6ee7b7}.file-card.json:before{background:#7dd3fc}
+  .file-bar{display:flex;align-items:center;padding:9px 12px 9px 15px;background:rgba(255,255,255,.045);border-bottom:1px solid rgba(255,255,255,.1)}
+  .file-body{padding:12px 14px 13px 15px;color:#D9D9D9;font-family:var(--mono);font-size:11.3px;line-height:1.62}
+  .file-label{display:inline-flex;align-items:center;gap:6px;font-family:var(--mono);font-size:10.5px;font-weight:700;color:#fff}.file-label i{width:8px;height:8px;border-radius:99px}.file-label.report i{background:#6ee7b7}.file-label.json i{background:#7dd3fc}.file-sub{margin-left:9px;color:#8b8f98;font-size:9.6px}
+  .hl-rule,.hl-judge,.hl-shared{cursor:pointer;transition:background .15s ease,box-shadow .15s ease,opacity .15s ease}
+  .hl-rule.lit{background:rgba(40,184,148,.34);box-shadow:0 0 0 1px rgba(40,184,148,.65)}.hl-judge.lit{background:rgba(103,80,164,.42);box-shadow:0 0 0 1px rgba(154,131,230,.7)}.hl-shared.lit{background:rgba(53,109,159,.42);box-shadow:0 0 0 1px rgba(125,211,252,.65)}
+  .preview-files.linking .hl-rule:not(.lit),.preview-files.linking .hl-judge:not(.lit),.preview-files.linking .hl-shared:not(.lit){opacity:.3}
+  .anno[data-link]{cursor:pointer;transition:border-color .15s ease,box-shadow .15s ease,background .15s ease,opacity .15s ease}.anno.lit{background:color-mix(in srgb,var(--c) 8%,#fff);border-color:color-mix(in srgb,var(--c) 45%,transparent);box-shadow:0 8px 18px color-mix(in srgb,var(--c) 14%,transparent)}.anno-group.linking .anno:not(.lit){opacity:.38}
+  @media(max-width:980px){.metric-map,.middle,.bottom{grid-template-columns:1fr}.viz-card{grid-template-columns:1fr}.hub{width:104px;height:104px}.caption,.topline{flex-direction:column;align-items:flex-start}.source-note{white-space:normal}}
+  @media(max-width:620px){.viz-card{grid-template-columns:1fr}.hub{width:96px;height:96px}.metric-map{gap:10px}.layer-stats{grid-template-columns:1fr}.wrap{width:calc(100vw - 32px)}}
+  @media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+<style id="office-embed-override">
+/* Embedded Office-page variant: keep only the verification visualization. */
+body{background:transparent!important;min-height:0!important;display:block!important;}
+.wrap{width:100%!important;margin:0!important;padding:0!important;}
+.eyebrow, main.wrap>h1, .tagline, .caption{display:none!important;}
+.figure{margin-top:0!important;border:0!important;border-radius:0!important;background:transparent!important;box-shadow:none!important;overflow:visible!important;}
+.figure:before{display:none!important;}
+.topline{border:1px solid var(--border)!important;border-radius:14px!important;margin-bottom:12px!important;background:rgba(255,255,255,.76)!important;}
+.stage{padding:0!important;}
+
+.topline{display:none!important;}
+@media(min-width:700px){
+  .metric-map{grid-template-columns:minmax(0,.78fr) minmax(0,1.1fr) minmax(0,1.1fr)!important;}
+  .middle{grid-template-columns:repeat(2,minmax(0,1fr))!important;align-items:stretch;}
+  .bottom{grid-template-columns:minmax(0,1.22fr) minmax(0,1fr)!important;align-items:stretch;}
+  .middle>.panel{display:flex;flex-direction:column;}
+  .middle .panel-head{min-height:90px;}
+  .middle .interactive{display:flex;flex:1;}
+  .middle .viz-card{width:100%;grid-template-columns:1fr!important;grid-template-rows:270px auto;align-content:start;}
+  .middle .viz-card:before{left:50%;transform:translateX(-50%);}
+  .middle .legend-list{grid-template-columns:repeat(2,minmax(0,1fr));width:min(100%,320px);margin:0 auto;gap:3px 8px;}
+  .middle .legend-item{padding:4px 5px;gap:7px;}
+  .middle .legend-name{color:var(--secondary);font-size:10.8px;font-weight:560;}
+}
+</style>
+<style id="office-dark-theme">
+:root{color-scheme:light;--mix-surface:#fff}
+[data-theme="dark"]{color-scheme:dark;--brand:#45D9B5;--brand-2:#6EE7C8;--ink:#F5F7F7;--body:#D9DEE5;--secondary:#B8C0CA;--tertiary:#8F98A5;--page:#0B0D12;--surface:#12151B;--surface-2:#191D24;--surface-3:#292F39;--border:rgba(255,255,255,.09);--border-strong:rgba(255,255,255,.16);--purple:#B9A7FF;--purple-2:#D0C5FF;--blue:#7FB1F5;--amber:#EFB66C;--red:#FF9A90;--teal:#61D6CB;--cyan:#7CC9F5;--orange:#F0AF67;--slate:#A9B3C0;--mix-surface:#12151B}
+[data-theme="dark"] body{background:var(--page)}
+[data-theme="dark"] .figure{background:linear-gradient(180deg,#12151B,#0F1217);box-shadow:0 14px 34px rgba(0,0,0,.28)}
+[data-theme="dark"] .topline{background:rgba(18,21,27,.9)!important}
+[data-theme="dark"] .task-card,[data-theme="dark"] .layer-card,[data-theme="dark"] .panel{background:rgba(18,21,27,.94);box-shadow:0 12px 28px rgba(0,0,0,.2)}
+[data-theme="dark"] .task-card{background:linear-gradient(180deg,var(--surface-2),var(--surface))}
+[data-theme="dark"] .stat,[data-theme="dark"] .hub,[data-theme="dark"] .detail,[data-theme="dark"] .anno{background:var(--surface-2)}
+[data-theme="dark"] .viz-card{background:linear-gradient(180deg,var(--surface-2),var(--surface))}
+[data-theme="dark"] .ring-track{stroke:#2A3039}
+[data-theme="dark"] .rose-circle{stroke:rgba(255,255,255,.1)}
+[data-theme="dark"] .rose-spoke{stroke:rgba(255,255,255,.075)}
+[data-theme="dark"] .petal{fill:color-mix(in srgb,var(--c) 68%,var(--mix-surface));stroke:color-mix(in srgb,var(--c) 76%,var(--mix-surface))}
+[data-theme="dark"] .petal:hover,[data-theme="dark"] .petal:focus,[data-theme="dark"] .petal.active{fill:color-mix(in srgb,var(--c) 84%,var(--mix-surface))}
+[data-theme="dark"] .legend-item:hover,[data-theme="dark"] .legend-item:focus,[data-theme="dark"] .legend-item.active{background:var(--surface-3)}
+[data-theme="dark"] .anno b{background:color-mix(in srgb,var(--c) 14%,var(--surface))}
+[data-theme="dark"] .anno.lit{background:color-mix(in srgb,var(--c) 12%,var(--surface-2))}
+[data-theme="dark"] .viz-tip{background:rgba(25,29,36,.98);box-shadow:0 10px 24px rgba(0,0,0,.34)}
+[data-theme="dark"] .layer-badge,[data-theme="dark"] .badge,[data-theme="dark"] .mini-legend span{background:var(--surface-3)}
+[data-theme="dark"] .output-card,[data-theme="dark"] .file-card{background:#080A0E}
+</style>
+</head>
+<body>
+  <main class="wrap">
+    <div class="eyebrow">Office · 分层验证</div>
+    <h1>规则检查确定性工件，Judge 检查有证据支撑的质量。</h1>
+    <p class="tagline">同一组 50 道 Office 任务，会通过两层互补验证：细粒度确定性规则，以及基于证据的 Judge 条 rubrics。</p>
+
+    <section class="figure" aria-label="WB Bench layered verification coverage figure">
+      <div class="topline">
+        <span class="case"><b>图示</b> · 50 道 Office 任务的验证覆盖</span>
+      </div>
+
+      <div class="stage">
+        <div class="metric-map" aria-label="Verification system metrics">
+          <div class="task-card">
+            <div><div class="kicker">共同分母</div><b>50</b><span>个 Office 工作流任务</span></div>
+          </div>
+
+          <div class="layer-card rule-layer">
+            <div class="layer-head">
+              <div class="layer-name"><i class="layer-dot"></i><div><h2>确定性规则</h2><p>检查精确文件、schema、数值、状态和安全边界。</p></div></div>
+              <span class="layer-badge">RULE 层</span>
+            </div>
+            <div class="layer-stats">
+              <div class="stat"><b>18,804</b><span>条规则检查</span></div>
+              <div class="stat"><b>145</b><span>每题中位数</span></div>
+              <div class="stat"><b>376</b><span>每题平均值</span></div>
+            </div>
+          </div>
+
+          <div class="layer-card judge-layer">
+            <div class="layer-head">
+              <div class="layer-name"><i class="layer-dot"></i><div><h2>LLM Judge</h2><p>只基于可见证据判断语义质量。</p></div></div>
+              <span class="layer-badge">JUDGE layer</span>
+            </div>
+            <div class="layer-stats">
+              <div class="stat"><b>504</b><span>条 rubrics</span></div>
+              <div class="stat"><b>10</b><span>每题中位数</span></div>
+              <div class="stat"><b>10.1</b><span>每题平均值</span></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="middle">
+          <section class="panel">
+            <div class="panel-head"><div class="panel-title"><h2>规则检查什么</h2><p>环形图显示任务覆盖；悬停查看各类数量。</p></div><span class="badge green">任务 / 50</span></div>
+            <div class="interactive">
+              <div class="viz-card rule-viz">
+                <div class="chart-stage">
+                  <svg id="ruleSvg" width="250" height="250" viewBox="0 0 250 250" role="img" aria-label="Deterministic rule-family task coverage ring"></svg>
+                  <div class="hub"><div><b>Rules</b><span>task<br>coverage</span></div></div>
+                </div>
+                <div class="legend-list" id="ruleLegend" aria-label="Rule family legend"></div>
+              </div>
+            </div>
+          </section>
+
+          <section class="panel">
+            <div class="panel-head"><div class="panel-title"><h2>Judge 检查什么</h2><p>玫瑰图显示任务覆盖；悬停查看各类数量。</p></div><span class="badge purple">任务 / 50</span></div>
+            <div class="interactive">
+              <div class="viz-card judge-viz">
+                <div class="chart-stage">
+                  <svg id="judgeSvg" width="250" height="250" viewBox="0 0 250 250" role="img" aria-label="Judge rubric-family task coverage rose chart"></svg>
+                  <div class="hub"><div><b>Judge</b><span>task<br>coverage</span></div></div>
+                </div>
+                <div class="legend-list" id="judgeLegend" aria-label="Judge family legend"></div>
+              </div>
+            </div>
+          </section>
+        </div>
+
+        <div class="bottom">
+          <section class="panel preview">
+            <div class="preview-head"><div><h2>同一输出表面，两层验证</h2><p class="preview-sub">这里重绘了<b>两个输出产物</b>：一份报告和一行 manifest。悬停高亮即可看到它触发的检查。</p></div></div>
+            <div class="preview-files">
+              <div class="file-card report">
+                <div class="file-bar"><span class="file-label report"><i></i>archive_report.md</span><span class="file-sub">report sections</span></div>
+                <div class="file-body">
+                  <span class="line">## 范围 / 边界</span>
+                  <span class="line"><span class="hl-rule" tabindex="0" data-link="g2">offline mail export only</span> · archive_out writes only</span>
+                  <span class="line">## 分桶</span>
+                  <span class="line"><span class="hl-rule" tabindex="0" data-link="g4">candidate_docs</span> · <span class="hl-judge" tabindex="0" data-link="g5">needs_review</span> · reference_only · missing_refs</span>
+                  <span class="line">## 回读验证</span>
+                  <span class="line"><span class="hl-rule" tabindex="0" data-link="g1">manifest parses</span> · <span class="hl-rule" tabindex="0" data-link="g2">source files retained</span> · <span class="hl-judge" tabindex="0" data-link="g6">no overclaim</span></span>
+                </div>
+              </div>
+              <div class="file-card json">
+                <div class="file-bar"><span class="file-label json"><i></i>archive_manifest.json</span><span class="file-sub">one manifest row</span></div>
+                <div class="file-body">
+                  <span class="line">{</span>
+                  <span class="line">  "source_path": <span class="hl-shared" tabindex="0" data-link="g3">"mail_export/..."</span>,</span>
+                  <span class="line">  "archive_bucket": <span class="hl-rule" tabindex="0" data-link="g4">"needs_review"</span>,</span>
+                  <span class="line">  "relationship_trace": [<span class="hl-shared" tabindex="0" data-link="g3">"message", "attachment", "text sidecar"</span>],</span>
+                  <span class="line">  "exception_reason_codes": [<span class="hl-judge" tabindex="0" data-link="g5">"weak_link"</span>],</span>
+                  <span class="line">  "decision_rationale": <span class="hl-judge" tabindex="0" data-link="g5">"weak link; reviewer action kept"</span>,</span>
+                  <span class="line">  "archive_path": <span class="hl-rule" tabindex="0" data-link="g2">"archive_out/..."</span></span>
+                  <span class="line">}</span>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <section class="panel annotations">
+            <div class="anno-title"><h2>每一层检查什么</h2></div>
+            <div class="mini-legend"><span class="rule-dot"><i></i>RULE · 精确核对</span><span class="judge-dot"><i></i>JUDGE · 质量判断</span><span class="shared-dot"><i></i>EVIDENCE · 两层共用</span></div>
+            <div class="anno-group">
+              <div class="anno rule" tabindex="0" data-link="g1"><b>RULE</b><span>该有的清单和报告都在，能打开，也符合要求的结构。</span></div>
+              <div class="anno rule" tabindex="0" data-link="g2"><b>RULE</b><span>原始文件没有被改坏，新增内容只写到归档输出目录。</span></div>
+              <div class="anno rule" tabindex="0" data-link="g4"><b>RULE</b><span>哪些是候选文件、哪些缺失、哪些需要复核，都分对了。</span></div>
+              <div class="anno shared" tabindex="0" data-link="g3"><b>EVIDENCE</b><span>每条输出都能追到对应的邮件和附件线索。</span></div>
+              <div class="anno judge" tabindex="0" data-link="g5"><b>JUDGE</b><span>解释说得通：为什么关联不够强、为什么要交给人复核。</span></div>
+              <div class="anno judge" tabindex="0" data-link="g6"><b>JUDGE</b><span>报告对接手的人有用，也没有夸大自己做过的事。</span></div>
+            </div>
+          </section>
+        </div>
+      </div>
+    </section>
+  </main>
+<script>
+  const TOTAL = 50;
+  const RULE = [
+    {key:'rule-files',    name:'Files & schemas',    zh:'文件与结构',    c:'var(--brand)', count:50, desc:'Required files, parseability, schemas, and expected output artifacts.'},
+    {key:'rule-content',  name:'Extracted content',  zh:'内容抽取',      c:'var(--brand-2)', count:50, desc:'Values, rows, classifications, formulas, normalization, and factual content checks.'},
+    {key:'rule-report',   name:'Report ↔ artifacts', zh:'报告与产物一致', c:'var(--blue)', count:21, desc:'Report, summary, dashboard, or cross-file consistency against generated artifacts.'},
+    {key:'rule-safety',   name:'No unsafe claims',   zh:'无不安全声明',   c:'var(--red)', count:18, desc:'No live-service, private-path, OCR/VLM, external, secret, or advice boundary violations.'},
+    {key:'rule-workspace',name:'Workspace changes',  zh:'工作区变更',    c:'var(--amber)', count:10, desc:'State diff, protected files, copy/move behavior, readonly boundaries, and expected mutations.'},
+    {key:'rule-source',   name:'Source binding',     zh:'来源绑定',      c:'var(--purple)', count:8,  desc:'Explicit source paths, citations, evidence keys, source rows, or relationship traces in the scored output.'}
+  ];
+  const JUDGE = [
+    {key:'judge-contradictions', name:'No contradictions',  zh:'无证据矛盾',   c:'var(--purple)', count:49, desc:'提交内容不应与可见证据或自身产物矛盾。'},
+    {key:'judge-trace',          name:'Traceable reasoning',zh:'推理可追溯',   c:'var(--purple-2)', count:49, desc:'理由、证据使用、验证和审计链条应可见且有依据。'},
+    {key:'judge-reader',         name:'Reader usefulness',  zh:'读者可用性',   c:'var(--cyan)', count:46, desc:'输出应对目标读者、复核人、操作人或决策者有用。'},
+    {key:'judge-policy',         name:'Follows policy',     zh:'遵循任务口径', c:'var(--brand)', count:42, desc:'输出应遵循任务规则、口径约束、可见要求和允许范围。'},
+    {key:'judge-edge',           name:'Edge cases',         zh:'边界情况处理', c:'var(--orange)', count:42, desc:'能合理处理歧义、缺失数据、冲突、重复、过期输入或异常情况。'},
+    {key:'judge-fit',            name:'Artifact fit',       zh:'产物形式适配', c:'var(--red)', count:37, desc:'结果应适配要求的产物形式：报告、deck、看板、表格或交接格式。'},
+    {key:'judge-safety',         name:'Safety boundaries',  zh:'安全边界一致', c:'var(--slate)', count:29, desc:'答案应遵守安全、隐私、真实服务、外部事实、OCR/VLM 或边界约束。'}
+  ];
+  const DATA = {}; [...RULE, ...JUDGE].forEach(d => DATA[d.key] = d);
+
+  const NS = 'http://www.w3.org/2000/svg';
+  const mk = (tag, attrs) => { const e = document.createElementNS(NS, tag); for(const k in attrs) e.setAttribute(k, attrs[k]); return e; };
+  const CX = 125, CY = 125;
+  const polar = (r, deg) => { const a = (deg - 90) * Math.PI / 180; return [CX + r * Math.cos(a), CY + r * Math.sin(a)]; };
+
+  function buildRing(){
+    const svg = document.getElementById('ruleSvg');
+    const r = 90, slot = 100 / RULE.length, gap = 2.6, track = slot - gap;
+    RULE.forEach((d, i) => {
+      const off = -(i * slot);
+      svg.appendChild(mk('circle', {class:'ring-track', cx:CX, cy:CY, r, pathLength:100,
+        'stroke-dasharray':`${track} ${100 - track}`, 'stroke-dashoffset':off, transform:`rotate(-90 ${CX} ${CY})`}));
+    });
+    RULE.forEach((d, i) => {
+      const off = -(i * slot);
+      const len = Math.max(0.001, (d.count / TOTAL) * track);
+      const seg = mk('circle', {class:'ring-seg', tabindex:0, 'data-key':d.key, cx:CX, cy:CY, r, pathLength:100,
+        'stroke-dasharray':`${len} ${100 - len}`, 'stroke-dashoffset':off, transform:`rotate(-90 ${CX} ${CY})`});
+      seg.style.setProperty('--c', d.c);
+      svg.appendChild(seg);
+    });
+  }
+
+  function sectorPath(r, a0, a1){
+    const [x0, y0] = polar(r, a0), [x1, y1] = polar(r, a1);
+    const large = (a1 - a0) > 180 ? 1 : 0;
+    return `M${CX} ${CY} L${x0.toFixed(2)} ${y0.toFixed(2)} A${r} ${r} 0 ${large} 1 ${x1.toFixed(2)} ${y1.toFixed(2)} Z`;
+  }
+
+  function buildRose(){
+    const svg = document.getElementById('judgeSvg');
+    const maxR = 112, step = 360 / JUDGE.length, gap = 4.5;
+    [0.5, 0.75, 1].forEach(f => svg.appendChild(mk('circle', {class:'rose-circle', cx:CX, cy:CY, r:(maxR * f).toFixed(2)})));
+    JUDGE.forEach((d, i) => {
+      const center = i * step, a0 = center - step / 2, a1 = center + step / 2;
+      const [sx, sy] = polar(maxR + 6, center);
+      svg.appendChild(mk('line', {class:'rose-spoke', x1:CX, y1:CY, x2:sx.toFixed(2), y2:sy.toFixed(2)}));
+    });
+    JUDGE.forEach((d, i) => {
+      const center = i * step, a0 = center - step / 2 + gap / 2, a1 = center + step / 2 - gap / 2;
+      const r = (d.count / TOTAL) * maxR;
+      const p = mk('path', {class:'petal', tabindex:0, 'data-key':d.key, d:sectorPath(r, a0, a1)});
+      p.style.setProperty('--c', d.c);
+      svg.appendChild(p);
+    });
+  }
+
+  function buildLegend(id, data){
+    const box = document.getElementById(id);
+    data.forEach(d => {
+      const b = document.createElement('button');
+      b.className = 'legend-item'; b.type = 'button'; b.dataset.key = d.key;
+      b.style.setProperty('--c', d.c);
+      b.innerHTML = `<i class="legend-swatch"></i><span class="legend-name">${d.zh || d.name}</span>`;
+      box.appendChild(b);
+    });
+  }
+
+  const scopeOf = key => key.startsWith('rule-') ? 'rule' : 'judge';
+
+  const tip = document.createElement('div');
+  tip.className = 'viz-tip'; tip.setAttribute('role', 'tooltip'); tip.setAttribute('aria-hidden', 'true');
+  document.body.appendChild(tip);
+
+  function showTip(key){
+    const d = DATA[key]; if(!d) return;
+    tip.style.setProperty('--c', d.c);
+    tip.innerHTML =
+      `<i class="tip-dot"></i><span class="tip-name">${d.zh || d.name}</span><span class="tip-c">${d.count}/50</span>`;
+    tip.classList.add('show');
+    tip.setAttribute('aria-hidden', 'false');
+  }
+  function hideTip(){
+    tip.classList.remove('show');
+    tip.setAttribute('aria-hidden', 'true');
+    tip.style.transform = 'translate(-9999px,-9999px)';
+  }
+  function moveTip(x, y){
+    const pad = 14, w = tip.offsetWidth || 140, h = tip.offsetHeight || 28;
+    let left = x + pad, top = y + pad;
+    if(left + w > window.innerWidth - 8) left = x - pad - w;
+    if(top + h > window.innerHeight - 8) top = y - pad - h;
+    if(left < 8) left = 8;
+    if(top < 8) top = 8;
+    tip.style.transform = `translate(${left}px, ${top}px)`;
+  }
+
+  function highlight(key){
+    const scope = scopeOf(key);
+    document.querySelectorAll(`.${scope}-viz [data-key]`).forEach(el => {
+      const on = el.dataset.key === key;
+      el.classList.toggle('active', on);
+      el.classList.toggle('dim', !on);
+    });
+  }
+  function clearHighlight(scope){
+    document.querySelectorAll(`.${scope}-viz [data-key]`).forEach(el => el.classList.remove('active', 'dim'));
+  }
+
+  function bind(){
+    document.querySelectorAll('[data-key]').forEach(el => {
+      const key = el.dataset.key;
+      el.addEventListener('mouseenter', () => { highlight(key); showTip(key); });
+      el.addEventListener('mousemove', e => moveTip(e.clientX, e.clientY));
+      el.addEventListener('focus', () => {
+        highlight(key); showTip(key);
+        const r = el.getBoundingClientRect();
+        moveTip(r.left + r.width / 2, r.top + r.height / 2);
+      });
+      el.addEventListener('blur', hideTip);
+    });
+    document.querySelectorAll('.viz-card').forEach(card => {
+      const scope = card.classList.contains('rule-viz') ? 'rule' : 'judge';
+      card.addEventListener('mouseleave', () => { clearHighlight(scope); hideTip(); });
+    });
+  }
+
+  buildRing();
+  buildRose();
+  buildLegend('ruleLegend', RULE);
+  buildLegend('judgeLegend', JUDGE);
+  bind();
+
+  function bindLinks(){
+    const card = document.querySelector('.preview-files');
+    const grp = document.querySelector('.anno-group');
+    if(!card || !grp) return;
+    const linkEls = document.querySelectorAll('[data-link]');
+    const lightUp = g => {
+      card.classList.add('linking'); grp.classList.add('linking');
+      linkEls.forEach(el => el.classList.toggle('lit', el.dataset.link === g));
+    };
+    const clearUp = () => {
+      card.classList.remove('linking'); grp.classList.remove('linking');
+      linkEls.forEach(el => el.classList.remove('lit'));
+    };
+    linkEls.forEach(el => {
+      el.addEventListener('mouseenter', () => lightUp(el.dataset.link));
+      el.addEventListener('mouseleave', clearUp);
+      el.addEventListener('focus', () => lightUp(el.dataset.link));
+      el.addEventListener('blur', clearUp);
+    });
+  }
+  bindLinks();
+</script>
+</body>
+</html>

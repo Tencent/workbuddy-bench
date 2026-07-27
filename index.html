@@ -1,0 +1,764 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tencent WorkBuddy Bench — Agentic Coding Leaderboard</title>
+<link rel="icon" type="image/png" href="static/img/wb-icon.png?v=6">
+<script>
+/* theme boot — before first paint */
+(function(){try{var t=localStorage.getItem('cbTheme');var d=(t==='dark'||(t==null&&window.matchMedia&&window.matchMedia('(prefers-color-scheme: dark)').matches));document.documentElement.setAttribute('data-theme',d?'dark':'light');}catch(e){}})();
+</script>
+<script src="https://cdn.jsdelivr.net/npm/echarts@5.5.1/dist/echarts.min.js"></script>
+<style>
+/* ============================================================
+   WB DS · Semantic Tokens (Light 默认) — from wb设计规范.html
+   ============================================================ */
+:root{
+  --wb-brand-primary:#28B894; --wb-brand-accent:#32E6B9;
+  --wb-action-bg:#0A0B0F; --wb-action-text:#FFFFFF;
+  --wb-text-heading:#000000; --wb-text-body:#242424;
+  --wb-text-secondary:#808080; --wb-text-tertiary:#B1B1B1; --wb-text-copyright:#A0AEC0;
+  --wb-bg-page:#FAFAFA; --wb-surface-1:#FFFFFF; --wb-surface-2:#F1F2F4; --wb-surface-3:#E7E8EC;
+  --wb-surface-section:#F4F5F5; --wb-surface-footer:#F5F5F5;
+  --wb-border-subtle:rgba(0,0,0,.08); --wb-border-strong:rgba(0,0,0,.12);
+  --wb-status-success:#16A34A; --wb-status-success-bg:#E7F8EE; --wb-status-success-text:#15803D;
+  --wb-status-info:#2563EB; --wb-status-info-bg:#E8F1FE; --wb-status-info-text:#1D4ED8;
+  --wb-radius-xs:6px; --wb-radius-sm:8px; --wb-radius-md:10px; --wb-radius-lg:12px; --wb-radius-xl:16px; --wb-radius-pill:9999px;
+  --wb-font-family:"PingFang SC",-apple-system,"Helvetica Neue",Arial,"Microsoft Yahei",sans-serif;
+  --wb-font-mono:"SF Mono","JetBrains Mono",Menlo,Consolas,monospace;
+  --wb-shadow-card:0 10px 20px rgba(0,0,0,.03);
+  --wb-shadow-hover:0 20px 40px rgba(0,0,0,.08);
+  --topbar-h:60px; --footer-h:64px; --page-max:1400px;
+}
+[data-theme="dark"]{
+  --wb-bg-page:#050609; --wb-surface-1:rgba(255,255,255,.02); --wb-surface-2:rgba(255,255,255,.03);
+  --wb-surface-3:rgba(255,255,255,.08);
+  --wb-text-heading:#FFFFFF; --wb-text-body:#D9D9D9;
+  --wb-text-secondary:#B1B1B1; --wb-text-tertiary:#808080;
+  --wb-border-subtle:rgba(255,255,255,.06); --wb-border-strong:rgba(255,255,255,.10);
+  --wb-action-bg:#FFFFFF; --wb-action-text:#0A0B0F;
+  --wb-surface-section:rgba(255,255,255,.02); --wb-surface-footer:#0B0C11;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{font-family:var(--wb-font-family);background:var(--wb-bg-page);color:var(--wb-text-body);font-size:13.5px;line-height:20px;-webkit-font-smoothing:antialiased;transition:background .3s ease,color .3s ease}
+a{color:inherit;text-decoration:none}
+button{font-family:inherit}
+::selection{background:rgba(40,184,148,.22)}
+::-webkit-scrollbar{width:10px;height:10px}
+::-webkit-scrollbar-thumb{background:var(--wb-border-strong);border-radius:9999px;border:2px solid transparent;background-clip:content-box}
+:focus-visible{outline:3px solid rgba(50,230,185,.45);outline-offset:1px;border-radius:4px}
+
+.asection[id]{scroll-margin-top:calc(var(--topbar-h) + 16px)}
+
+/* ============================================================
+   Main frame: left sticky leaderboard + right article
+   ============================================================ */
+.frame{position:relative;max-width:var(--page-max);margin:0 auto;border:1px solid var(--wb-border-subtle);border-top:none;display:grid;grid-template-columns:minmax(0,1.08fr) minmax(0,.92fr);background:var(--wb-bg-page)}
+.pane-left{border-right:1px solid var(--wb-border-subtle);background:var(--wb-surface-section)}
+@media(min-width:1025px){
+  .frame{background:linear-gradient(to right,var(--wb-surface-section) 0 54%,var(--wb-bg-page) 54% 100%)}
+  .frame::before{content:"";position:absolute;top:0;bottom:0;left:54%;width:1px;background:var(--wb-border-subtle);pointer-events:none;z-index:2}
+  /* The left pane is pinned below the topbar and owns an independent
+     scroll: it is capped at the viewport height and scrolls internally, so the
+     leaderboard and the right article scroll separately and never drag each
+     other. Bounding the height here (rather than letting the pane grow to its
+     natural content height as a plain sticky element) also decouples its pin
+     from the right column's height — otherwise expanding content on the right
+     content on the right enlarges the grid row and makes the sticky left pane
+     snap back to the top. overscroll-behavior keeps a leaderboard
+     scroll from chaining to the page. */
+  .pane-left{position:sticky;top:var(--topbar-h);align-self:start;max-height:calc(100vh - var(--topbar-h) - var(--footer-h));overflow-y:auto;overscroll-behavior:contain}
+  .pane-left{border-right:none}
+}
+.pane-right{min-width:0;background:var(--wb-bg-page)}
+
+/* ---- left: title block ---- */
+.titleblock{padding:34px 28px 22px;border-bottom:1px solid var(--wb-border-subtle)}
+.titleblock .eyebrow-row{display:flex;align-items:center;gap:10px;margin-bottom:14px;flex-wrap:wrap}
+.rp-badge{display:inline-flex;align-items:center;height:22px;padding:0 10px;border-radius:var(--wb-radius-pill);background:rgba(40,184,148,.10);border:1px solid rgba(40,184,148,.35);color:var(--wb-brand-primary);font-family:var(--wb-font-mono);font-size:10px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;cursor:default}
+.badge-inhouse{display:inline-flex;align-items:center;gap:6px;height:22px;padding:0 9px;border-radius:3px;background:rgba(40,184,148,.12);color:var(--wb-brand-primary);font-family:var(--wb-font-mono);font-size:10px;font-weight:600;letter-spacing:.07em;text-transform:uppercase;cursor:default}
+.meta-pill{display:inline-flex;align-items:center;gap:6px;height:22px;padding:0 9px;border-radius:3px;background:var(--wb-surface-2);border:1px solid var(--wb-border-subtle);font-family:var(--wb-font-mono);font-size:10px;letter-spacing:.05em;text-transform:uppercase;color:var(--wb-text-secondary);font-variant-numeric:tabular-nums}
+.brand-title{margin:0}
+.brand-title img{display:block;width:min(430px,100%);height:auto}
+.titleblock .subtitle{margin-top:13px;font-size:13px;line-height:20px;color:var(--wb-text-secondary)}
+.titleblock .authors{margin-top:12px;font-size:12px;color:var(--wb-text-tertiary)}
+.titleblock .authors b{color:var(--wb-text-secondary);font-weight:600}
+
+/* ---- leaderboard container ---- */
+.lb{padding:18px 20px 30px}
+.lb-toolbar{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:14px}
+.lb-toolbar .seg button .soon{margin-left:5px;font-family:var(--wb-font-mono);font-size:9px;letter-spacing:.06em;text-transform:uppercase;background:var(--wb-surface-3);color:var(--wb-text-secondary);border-radius:var(--wb-radius-pill);padding:1px 6px}
+.lb-toolbar .seg button.active .soon{background:rgba(255,255,255,.18);color:var(--wb-action-text)}
+[data-theme="dark"] .lb-toolbar .seg button.active .soon{background:rgba(0,0,0,.15);color:var(--wb-action-text)}
+.lb-search{flex:1;min-width:150px;display:flex;align-items:center;gap:7px;height:32px;padding:0 12px;border-radius:6px;background:var(--wb-surface-1);border:1px solid var(--wb-border-strong)}
+.lb-search svg{width:13px;height:13px;color:var(--wb-text-tertiary);flex-shrink:0}
+.lb-search input{border:none;outline:none;background:transparent;font-family:inherit;font-size:13px;color:var(--wb-text-heading);width:100%}
+.lb-search input::placeholder{color:var(--wb-text-tertiary)}
+
+/* ---- table (WB card skin) ---- */
+.lb-card{background:var(--wb-surface-1);border:1px solid var(--wb-border-subtle);border-radius:3px;overflow:hidden}
+.lb-table{width:100%;border-collapse:collapse;font-size:12.5px;table-layout:fixed}
+.lb-table th{position:sticky;top:0;z-index:2;text-align:right;padding:8px 7px;background:var(--wb-surface-2);font-family:var(--wb-font-mono);font-size:9.75px;font-weight:600;letter-spacing:.05em;text-transform:uppercase;color:var(--wb-text-secondary);border-bottom:1px solid var(--wb-border-subtle);white-space:nowrap;user-select:none}
+.lb-table th.sortable{cursor:pointer;transition:color .16s ease}
+.lb-table th.sortable:hover{color:var(--wb-text-heading)}
+.lb-table th.is-sorted{color:var(--wb-text-heading)}
+.lb-table th.col-model,.lb-table td.col-model{width:32%;text-align:left}
+.lb-table th.c-track,.lb-table td.c-track{width:14%}
+/* track headers carry the track name ("Code", "Security") — let them
+   wrap to two lines instead of clipping */
+.lb-table th.c-track{white-space:normal;line-height:1.3;letter-spacing:.02em}
+.lb-table th.col-avg,.lb-table td.col-avg{width:12%}
+.lb-table td{padding:7px 7px;border-bottom:1px solid var(--wb-border-subtle);text-align:right;font-variant-numeric:tabular-nums;color:var(--wb-text-body);white-space:nowrap}
+.lb-table tbody tr.mrow{cursor:pointer;transition:background .16s ease}
+.lb-table tbody tr.mrow:hover{background:var(--wb-surface-3)}
+[data-theme="dark"] .lb-table tbody tr.mrow:hover{background:rgba(255,255,255,.07)}
+.lb-table tbody tr:last-child td{border-bottom:none}
+td.col-model{text-align:left;overflow:hidden}
+.mc{display:flex;align-items:center;gap:7px;min-width:0}
+.mc-text{min-width:0}
+.mc-top{display:flex;align-items:center;min-width:0}
+.org{flex-shrink:0;width:20px;height:20px;border-radius:5px;display:grid;place-items:center;color:#fff;font-size:9.5px;font-weight:700}
+.org svg{width:16px;height:16px}
+.m-name{font-size:13px;font-weight:560;color:var(--wb-text-heading);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.m-meta{display:flex;align-items:center;gap:5px;min-width:0;margin-top:1px}
+.m-vendor{display:block;font-size:10px;line-height:1.15;color:var(--wb-text-tertiary);overflow:hidden;text-overflow:ellipsis}
+.tg{flex-shrink:0;display:inline-flex;align-items:center;height:14px;padding:0 5px;border-radius:3px;font-family:var(--wb-font-mono);font-size:8px;letter-spacing:.04em;text-transform:uppercase}
+.tg.open{background:var(--wb-status-success-bg);color:var(--wb-status-success-text)}
+.tg.prop{background:var(--wb-status-info-bg);color:var(--wb-status-info-text)}
+[data-theme="dark"] .tg.open{background:rgba(22,163,74,.16);color:#4ade80}
+[data-theme="dark"] .tg.prop{background:rgba(37,99,235,.16);color:#93b8fd}
+.cell-best{color:var(--wb-brand-primary);font-weight:600}
+.cell-empty{color:var(--wb-text-tertiary)}
+.avgnum{font-weight:600;color:var(--wb-text-heading)}
+.avgnum.best{color:var(--wb-brand-primary)}
+.avgnum.avg-partial{color:var(--wb-text-secondary);font-weight:500}
+.avgnum sup{font-size:8px;color:var(--wb-text-tertiary);margin-left:1px;font-weight:600}
+tr.row-placeholder td{opacity:.5}
+tr.row-placeholder .m-name{font-weight:400}
+
+/* expanded detail row */
+tr.xrow td{background:var(--wb-surface-section);padding:14px 16px 16px;text-align:left;white-space:normal}
+.xgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:10px 18px;margin-bottom:12px}
+.xkv .k{font-family:var(--wb-font-mono);font-size:9.5px;letter-spacing:.07em;text-transform:uppercase;color:var(--wb-text-tertiary);margin-bottom:2px}
+.xkv .v{font-size:12.5px;color:var(--wb-text-heading)}
+.xhist{font-size:12px}
+.xhist .xh-title{font-family:var(--wb-font-mono);font-size:9.5px;letter-spacing:.07em;text-transform:uppercase;color:var(--wb-text-tertiary);margin-bottom:6px}
+.xhist table{border-collapse:collapse}
+.xhist td{padding:3px 14px 3px 0;border:none;text-align:left;font-variant-numeric:tabular-nums;color:var(--wb-text-body);font-size:12px}
+.xhist td.hv{font-family:var(--wb-font-mono);font-size:11px;color:var(--wb-text-secondary)}
+
+/* explanatory note — short stacked lines (not a run-on paragraph).
+   All reading guidance lives in this one left-aligned block, which sits
+   directly below the leaderboard table in normal document order
+   (app_v2.js renders toolbar → table → legend → notes; no reorder needed). */
+.lb-note{margin:9px 2px 12px}
+.lb-note-list{list-style:none;display:grid;gap:5px;margin:0;padding:0}
+.lb-note-line{position:relative;margin:0;padding-left:11px;font-size:11.5px;line-height:17px;color:var(--wb-text-tertiary);text-align:left;text-wrap:pretty}
+.lb-note-line::before{content:"";position:absolute;left:0;top:.68em;width:4px;height:4px;border-radius:50%;background:var(--wb-text-tertiary);opacity:.65}
+
+/* ============================================================
+   Right pane: article
+   ============================================================ */
+.article{padding:8px 40px 64px;max-width:760px}
+.asection{padding:40px 0;border-bottom:1px solid var(--wb-border-subtle)}
+.asection:last-child{border-bottom:none}
+.asection .idx{font-family:var(--wb-font-mono);font-size:11px;font-weight:600;letter-spacing:.08em;color:var(--wb-brand-primary);text-transform:uppercase;font-variant-numeric:tabular-nums;margin-bottom:8px}
+.asection h2{font-size:19px;line-height:1.25;font-weight:600;letter-spacing:-.01em;color:var(--wb-text-heading);margin-bottom:13px}
+.asection p{font-size:13px;line-height:21px;color:var(--wb-text-body);margin-bottom:11px}
+.asection p:last-child{margin-bottom:0}
+.asection code{font-family:var(--wb-font-mono);font-size:12px;background:var(--wb-surface-2);padding:1px 6px;border-radius:5px;color:var(--wb-text-heading)}
+.takeaways{list-style:none;display:flex;flex-direction:column;gap:11px}
+.takeaways li{display:flex;gap:10px;font-size:12.5px;line-height:20px;color:var(--wb-text-body)}
+.takeaways li .tick{flex-shrink:0;width:18px;height:18px;border-radius:var(--wb-radius-pill);background:rgba(40,184,148,.14);color:var(--wb-brand-primary);display:grid;place-items:center;margin-top:2.5px}
+.takeaways li .tick svg{width:10px;height:10px}
+.takeaways b{color:var(--wb-text-heading)}
+
+/* track cards */
+.track-cards{display:flex;flex-direction:column;gap:14px;margin-top:20px}
+.track-card{background:var(--wb-surface-1);border:1px solid var(--wb-border-subtle);border-radius:3px;padding:18px 20px;transition:border-color .18s ease}
+.track-card:hover{transform:translateY(-2px);box-shadow:var(--wb-shadow-hover)}
+.track-card .tc-head{display:flex;align-items:center;gap:10px;margin-bottom:8px;flex-wrap:wrap}
+.track-card h3{font-size:14px;font-weight:600;color:var(--wb-text-heading)}
+.tc-ver{display:inline-flex;align-items:center;height:20px;padding:0 8px;border-radius:var(--wb-radius-xs);background:var(--wb-surface-2);border:1px solid var(--wb-border-strong);font-family:var(--wb-font-mono);font-size:10px;letter-spacing:.04em;color:var(--wb-text-heading)}
+.track-card .tc-desc{font-size:12px;line-height:19px;color:var(--wb-text-secondary);margin-bottom:11px}
+.tc-meta{display:flex;gap:8px;flex-wrap:wrap;list-style:none;margin-bottom:12px}
+.tc-meta li{display:inline-flex;align-items:center;gap:5px;height:22px;padding:0 9px;border-radius:4px;background:var(--wb-surface-2);font-family:var(--wb-font-mono);font-size:10px;color:var(--wb-text-secondary)}
+.tc-meta li span{color:var(--wb-text-tertiary);text-transform:uppercase;letter-spacing:.05em}
+.tc-more{display:inline-flex;align-items:center;gap:5px;font-size:13px;font-weight:500;color:var(--wb-brand-primary)}
+.tc-more:hover{text-decoration:underline}
+
+/* figures */
+.figs{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:22px}
+.fig{background:var(--wb-surface-1);border:1px solid var(--wb-border-subtle);border-radius:3px;padding:14px}
+.fig img{width:100%;border-radius:var(--wb-radius-sm)}
+.fig figcaption{margin-top:9px;font-size:11.5px;line-height:17px;color:var(--wb-text-tertiary)}
+
+/* per-track breakdown */
+.bench-card{background:var(--wb-surface-1);border:1px solid var(--wb-border-subtle);border-radius:3px;overflow:hidden;margin-top:14px}
+.bench-card .bench-head{display:flex;align-items:center;gap:9px;padding:14px 18px;border-bottom:1px solid var(--wb-border-subtle);flex-wrap:wrap}
+.bench-card h3{font-size:14.5px;font-weight:600;color:var(--wb-text-heading);margin-right:auto}
+.bd-badge{display:inline-flex;align-items:center;height:20px;padding:0 8px;border-radius:var(--wb-radius-xs);background:var(--wb-surface-2);border:1px solid var(--wb-border-strong);font-family:var(--wb-font-mono);font-size:9.5px;letter-spacing:.05em;text-transform:uppercase;color:var(--wb-text-secondary)}
+.bd-badge.mint{background:rgba(40,184,148,.12);color:var(--wb-brand-primary);border-color:transparent}
+.brk-list{padding:6px 0}
+.brk-row{display:grid;grid-template-columns:24px minmax(96px,1.1fr) 1.4fr 56px;align-items:center;gap:12px;padding:9px 18px;transition:background .16s ease}
+.brk-row+.brk-row{border-top:1px solid var(--wb-border-subtle)}
+.brk-row:hover{background:var(--wb-surface-2)}
+.brk-rank{font-family:var(--wb-font-mono);font-size:11px;color:var(--wb-text-tertiary);text-align:center}
+.brk-name{font-size:13px;color:var(--wb-text-heading);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.brk-bar{height:8px;border-radius:var(--wb-radius-pill);background:var(--wb-surface-2);overflow:hidden}
+.brk-bar i{display:block;height:100%;background:var(--wb-brand-primary);border-radius:var(--wb-radius-pill)}
+.brk-row.is-best .brk-bar i{background:linear-gradient(90deg,#28B894,#32E6B9)}
+.brk-row.is-best .brk-name{font-weight:600}
+.brk-score{text-align:right;font-variant-numeric:tabular-nums;font-size:12.5px;font-weight:500;color:var(--wb-text-body)}
+.brk-row.is-best .brk-score{color:var(--wb-brand-primary);font-weight:600}
+.brk-empty{padding:16px 18px;font-size:13px;color:var(--wb-text-tertiary)}
+
+/* token-efficiency panel (right of the leaderboard) */
+.te-sub{font-family:var(--wb-font-mono);font-size:11px;letter-spacing:.02em;color:var(--wb-text-tertiary);margin:-6px 0 12px}
+/* subset switcher — reuses the site-wide .seg segmented-control skin
+   (theme-aware via --wb-action-bg/-text, same as the harness toggle) */
+.te-tabs{margin:0 0 12px}
+@media(prefers-reduced-motion:reduce){.seg button{transition:none}}
+.te-card{position:relative;background:var(--wb-surface-1);border:1px solid var(--wb-border-subtle);border-radius:3px;padding:12px 6px 4px;margin-bottom:14px}
+#ch-token-eff{width:100%;height:430px}
+.te-harness{font-family:var(--wb-font-mono);font-size:10px;color:var(--wb-text-tertiary);text-align:center;padding:0 10px 8px}
+.te-note-sec{font-size:12px;line-height:19px;color:var(--wb-text-secondary)}
+@media(max-width:640px){#ch-token-eff{height:380px}}
+
+/* responsive */
+@media(max-width:1024px){
+  .frame{grid-template-columns:minmax(0,1fr)}
+  .pane-left{border-right:none;border-bottom:1px solid var(--wb-border-subtle)}
+  .article{padding:8px 20px 48px}
+  .figs{grid-template-columns:1fr}
+  .titleblock{padding:28px 20px 20px}
+  .brand-title img{width:min(360px,100%)}
+}
+/* ============================================================
+   Topbar — narrow-viewport fixes (mobile usability pass)
+   ============================================================ */
+@media(max-width:640px){
+  /* leaderboard: let the table keep its natural (unsqueezed) column widths
+     and scroll horizontally inside its own card instead of the whole page
+     scrolling sideways. */
+  .lb-card{overflow-x:auto;overflow-y:hidden}
+  .lb-table{table-layout:auto;min-width:520px}
+}
+
+/* ============================================================
+   Subset dropdown
+   ============================================================ */
+.subset-dd{position:relative}
+.subset-dd__btn{display:inline-flex;align-items:center;gap:6px;height:34px;padding:0 12px;border-radius:var(--wb-radius-sm);border:1px solid var(--wb-border-subtle);background:var(--wb-surface-1);color:var(--wb-text-secondary);font-family:inherit;font-size:13.5px;font-weight:500;cursor:pointer;transition:background .16s ease,color .16s ease}
+.subset-dd__btn:hover,.subset-dd:hover .subset-dd__btn,.subset-dd:focus-within .subset-dd__btn{background:var(--wb-surface-2);color:var(--wb-text-heading)}
+.subset-dd__btn .chev{width:13px;height:13px;transition:transform .18s ease}
+.subset-dd:hover .subset-dd__btn .chev,.subset-dd:focus-within .subset-dd__btn .chev{transform:rotate(180deg)}
+.subset-dd__menu{position:absolute;top:calc(100% + 6px);left:0;min-width:246px;padding:6px;border-radius:var(--wb-radius-md);background:var(--wb-surface-1);border:1px solid var(--wb-border-strong);box-shadow:var(--wb-shadow-hover);opacity:0;visibility:hidden;transform:translateY(-4px);transition:opacity .16s ease,transform .16s ease,visibility .16s ease;z-index:60}
+.subset-dd:hover .subset-dd__menu,.subset-dd:focus-within .subset-dd__menu{opacity:1;visibility:visible;transform:translateY(0)}
+.subset-dd__menu a{display:flex;align-items:baseline;gap:8px;padding:8px 10px;border-radius:7px;font-size:13px;color:var(--wb-text-body);white-space:nowrap}
+.subset-dd__menu a:hover{background:var(--wb-surface-2);color:var(--wb-text-heading)}
+.subset-dd__menu a.is-current{background:var(--wb-surface-2);color:var(--wb-text-heading);font-weight:600}
+.subset-dd__menu a b{font-weight:600;color:var(--wb-text-heading)}
+.subset-dd__menu .dd-sub{font-size:11px;color:var(--wb-text-tertiary)}
+.subset-dd__menu .dd-div{height:1px;margin:6px 4px;background:var(--wb-border-subtle)}
+.subset-dd__menu .dd-lab{margin-left:auto;align-self:center;font-family:var(--wb-font-mono);font-size:9px;letter-spacing:.05em;text-transform:uppercase;color:var(--wb-brand-primary);background:rgba(40,184,148,.12);padding:2px 6px;border-radius:var(--wb-radius-pill)}
+.subset-dd__menu .dd-soon{margin-left:auto;align-self:center;font-family:var(--wb-font-mono);font-size:9px;letter-spacing:.05em;text-transform:uppercase;color:var(--wb-text-secondary);background:var(--wb-surface-3);padding:2px 6px;border-radius:var(--wb-radius-pill)}
+/* dark-mode dropdown needs an opaque surface (surface-1 is translucent in dark) */
+[data-theme="dark"] .subset-dd__menu{background:#14161d}
+@media(max-width:1024px){.subset-dd__menu{right:0;left:auto}}
+</style>
+<link rel="stylesheet" href="wbds-chrome.css?v=6">
+</head>
+<body class="lang-zh">
+
+  <!-- ===================== TOPBAR ===================== -->
+  <nav class="topbar">
+    <div class="bar-inner">
+      <a class="topbar__brand topbar__brand--icon" href="index.html" aria-label="Tencent WorkBuddy Bench home">
+        <img src="static/img/wb-icon.png?v=6" alt="">
+      </a>
+      <div class="topbar__nav">
+        <a class="is-current" href="#leaderboard"><span class="en">Leaderboard</span><span class="zh">排行榜</span></a>
+        <a href="overview.html"><span class="en">Overview</span><span class="zh">概览</span></a>
+        <a href="report/main.pdf"><span class="en">Paper</span><span class="zh">论文</span></a>
+        <a href="https://github.com/Tencent/workbuddy-bench"><span class="en">Code</span><span class="zh">代码</span></a>
+        <a href="https://huggingface.co/datasets/tencent/workbuddy-bench"><span class="en">Dataset</span><span class="zh">数据集</span></a>
+        <a href="https://github.com/Tencent/workbuddy-bench/tree/main/.agents/skills"><span class="en">Skill Bundle</span><span class="zh">技能包</span></a>
+      </div>
+      <div class="topbar__controls">
+        <div class="seg lang-toggle">
+          <button data-lang-btn="zh">中文</button>
+          <button data-lang-btn="en">EN</button>
+        </div>
+        <button class="theme-toggle" id="themeToggle" aria-label="Toggle theme" title="Light / Dark">
+          <svg class="ic-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+          <svg class="ic-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/></svg>
+        </button>
+      </div>
+    </div>
+  </nav>
+
+  <!-- ===================== FRAME ===================== -->
+  <main class="frame">
+    <!-- ---------- LEFT: sticky leaderboard ---------- -->
+    <section class="pane-left" id="leaderboard">
+      <div class="titleblock">
+        <div class="eyebrow-row"><span class="rp-badge">Research Preview</span></div>
+        <h1 class="brand-title">
+          <img class="theme-logo--light" src="static/img/wb-bench.png?v=2" alt="Tencent WorkBuddy Bench">
+          <img class="theme-logo--dark" src="static/img/wb-bench-light.png?v=2" alt="Tencent WorkBuddy Bench">
+        </h1>
+        <p class="subtitle">
+          <span class="en">Can coding agents solve real repository, front-end and office tasks end-to-end?</span>
+          <span class="zh">编程 Agent 能否端到端解决真实的仓库、前端与办公任务?</span>
+        </p>
+      </div>
+      <div class="lb">
+        <div id="app"><p style="text-align:center;color:var(--wb-text-tertiary);padding:32px 0">Loading leaderboard…</p></div>
+      </div>
+    </section>
+
+    <!-- ---------- RIGHT: article ---------- -->
+    <article class="pane-right">
+      <div class="article">
+        <section class="asection" id="takeaways">
+          <div class="idx">01</div>
+          <h2><span class="en">Key Takeaways</span><span class="zh">核心结论</span></h2>
+
+          <ul class="takeaways">
+            <li><span class="tick"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></span>
+              <span><span class="en">No single model dominates — column leadership splits across subsets and harnesses: <b>Claude Opus 4.8</b> leads five of the eight scored columns (Code on both harnesses <b>74.43 / 77.90</b>, Web on both harnesses <b>68.14 / 69.86</b>, Office on CodeBuddy Code <b>82.37</b>), <b>GLM-5.2</b> two (Security <b>76.32 / 80.86</b> on both), <b>GPT-5.5</b> one (Office <b>86.05</b> on Claude Code).</span><span class="zh">没有一家通吃：各列榜首分散在不同子集与 harness 之间:<b>Claude Opus 4.8</b> 拿下八个计分列中的五个(Code 双 harness <b>74.43 / 77.90</b>、Web 双 harness <b>68.14 / 69.86</b>、CodeBuddy Code 下 Office <b>82.37</b>),<b>GLM-5.2</b> 两个(Security 双 harness <b>76.32 / 80.86</b>),<b>GPT-5.5</b> 一个(Claude Code 下 Office <b>86.05</b>)。</span></span></li>
+            <li><span class="tick"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></span>
+              <span><span class="en">An open-weight model holds its own: <b>GLM-5.2</b> tops Security under both harnesses — <b>two of the eight columns</b> — and stays within a point of the Code lead under Claude Code; open-weight competitiveness here is board-dependent, not uniform.</span><span class="zh">开源权重模型不落下风:<b>GLM-5.2</b> 在两个 harness 下均领跑 Security(拿下八个计分列中的 <b>两个</b>),并在 Claude Code 下的 Code 榜上与榜首相差不到一分。开源权重的竞争力在这套基准上因榜单而异,并非全面领先。</span></span></li>
+            <li><span class="tick"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></span>
+              <span><span class="en">The harness is part of the result: the same model can swing hard between harnesses — <b>GLM-5.2</b> on Web scores <b>67.43 vs 60.71</b>, <b>GPT-5.5</b> on Security <b>77.91 vs 64.39</b> — so read scores per harness.</span><span class="zh">harness 是结果的一部分:同一模型在不同 harness 下可能大幅波动 —— <b>GLM-5.2</b> 在 Web 上 <b>67.43 vs 60.71</b>,<b>GPT-5.5</b> 在 Security 上 <b>77.91 vs 64.39</b>，分数应按 harness 分开解读。</span></span></li>
+            <li><span class="tick"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></span>
+              <span><span class="en">Efficiency does not follow rank: <b>GPT-5.5</b> posts the smallest CodeBuddy Code output budget on all four subsets while staying top-tier on Code and Office, yet some mid-table runs spend <b>3&ndash;4&times;</b> its tokens.</span><span class="zh">效率与排名并不一致:<b>GPT-5.5</b> 在 CodeBuddy Code 下全部四个子集的输出 token 预算都是最小,并在 Code 与 Office 保持第一梯队分数,而一些中游成绩却要花 <b>3&ndash;4 倍</b> 的 token。</span></span></li>
+            <li><span class="tick"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></span>
+              <span><span class="en">Integration details move scores: enabling cross-turn reasoning passback for <b>HY-3</b> lifted its Code score by <b>+3.82</b> (CodeBuddy Code) / <b>+1.92</b> (Claude Code) in a diagnostic rerun.</span><span class="zh">接入细节会左右分数:在一次诊断性复跑中,为 <b>HY-3</b> 开启跨轮推理回传后,其 Code 分数提升 <b>+3.82</b>(CodeBuddy Code)/ <b>+1.92</b>(Claude Code)。</span></span></li>
+          </ul>
+        </section>
+
+        <section class="asection" id="token-efficiency">
+          <div class="idx">02</div>
+          <h2><span class="en">Token efficiency</span><span class="zh">Token 效率</span></h2>
+          <p class="te-sub"><span class="en">score vs output tokens per run, 3-run avg</span><span class="zh">分数 vs 每次运行输出 token，三次运行平均</span></p>
+          <div class="seg te-tabs" role="tablist" aria-label="Token-efficiency subset / Token 效率子集">
+            <button type="button" role="tab" aria-selected="true" class="active" data-te-subset="Code">Code</button>
+            <button type="button" role="tab" aria-selected="false" data-te-subset="Web">Web</button>
+            <button type="button" role="tab" aria-selected="false" data-te-subset="Office">Office</button>
+            <button type="button" role="tab" aria-selected="false" data-te-subset="Security">Security</button>
+          </div>
+          <div class="te-card">
+            <div id="ch-token-eff" role="img" aria-label="Scatter chart: Code score versus average output tokens per run, by harness"></div>
+            <div class="te-harness">CodeBuddy Code 2.109.3 &middot; Claude Code 2.1.187 &middot; think</div>
+          </div>
+          <p>
+            <span class="en">Efficiency does not follow rank order: <b>GPT-5.5</b> posts the smallest output budget of any model on every subset under CodeBuddy Code &mdash; 6.9k output tokens per run on Code, 13.5k on Web, 10.2k on Office, 7.5k on Security &mdash; and turns that into top-tier scores on Code and Office, plus Security under Claude Code (77.91 at 7.5k). <b>GLM-5.2</b>&rsquo;s two Security leads are paid for in tokens (30&ndash;31k per run on both harnesses), and its 77.06 on Code under Claude Code costs 22.0k against GPT-5.5&rsquo;s 8.7k; the smallest Claude Code point on the Code chart &mdash; Claude Opus 4.8 at 4.7k &mdash; comes from its modified-instruction run (see the leaderboard notes). Security is by far the heaviest subset: <b>MiniMax-M3</b> averages 88.8 turns and roughly 11.1M cache-inclusive input tokens per run under CodeBuddy Code for its 74.14.</span>
+             <span class="zh">效率与排名并不一致：<b>GPT-5.5</b> 在 CodeBuddy Code 下四个子集的输出预算都是全场最小（每次运行 Code 6.9k、Web 13.5k、Office 10.2k、Security 7.5k 输出 token），并在 Code、Office 以及 Claude Code 下的 Security（77.91，7.5k）拿到第一梯队分数。<b>GLM-5.2</b> 的两个 Security 榜首是用 token 换来的（两个 harness 下每次运行均为 30&ndash;31k），其 Claude Code 下 Code 的 77.06 也花费 22.0k（GPT-5.5 为 8.7k）；Code 图中 Claude Code 下最小的点 —— Claude Opus 4.8 的 4.7k —— 来自其调整指令的运行（见榜单说明）。Security 是 token 消耗最大的子集：<b>MiniMax-M3</b> 在 CodeBuddy Code 下平均每次运行 88.8 轮交互、输入 token（含缓存）约 1,110 万，最终得分 74.14。</span>
+          </p>
+          <p>
+            <span class="en">All points are 3-run averages in think mode. Turns count unique assistant messages including subagent activity; output tokens come from each run&rsquo;s final usage. Output tokens are the comparable axis &mdash; input-token accounting differs across harness configurations, so input tokens are never compared across harnesses.</span>
+             <span class="zh">所有数据点均为 3 次运行平均、think 模式。轮数按去重后的 assistant 消息计数（含 subagent 活动）；输出 token 取自每次运行的最终 usage。图中仅比较输出 token，输入 token 的统计口径随 harness 配置不同，因此不做跨 harness 的输入 token 比较。</span>
+          </p>
+          <p class="te-note-sec" id="te-note-security" hidden>
+            <span class="en">A few runs ended in task-level refusals on security-flavored requests: Claude Opus 4.8 recorded 13 under Claude Code, and GPT-5.5 2 under CodeBuddy Code.</span>
+            <span class="zh">少数运行以任务级拒答结束（针对安全类请求）：Claude Opus 4.8 在 Claude Code 下 13 次，GPT-5.5 在 CodeBuddy Code 下 2 次。</span>
+          </p>
+        </section>
+
+      </div>
+    </article>
+  </main>
+
+  <footer class="site-footer">
+    <div class="site-footer__inner">
+      <p class="site-footer__byline">Tencent Youtu Lab · Keen &amp; Yunding Security Lab · WorkBuddy</p>
+    </div>
+  </footer>
+
+  <script src="site.js?v=1"></script>
+  <script src="lang.js?v=3"></script>
+  <script src="roster.js?v=12"></script>
+  <script src="data.js?v=22"></script>
+  <script src="app_v2.js?v=18"></script>
+  <script>
+  /* ============================================================
+     Leaderboard post-render fixups (this page only).
+     app_v2.js is shared across pages; its top-level function
+     declarations are global bindings, so this page re-points two
+     of them here and repaints once:
+       - trackHeaderLabel  -> column headers carry the track name
+                              ("Code", "Security")
+       - repaintSummary    -> after each repaint, replace the notes
+                              block with the consolidated bilingual
+                              reading guidance (incl. the scoring-
+                              caliber statement and the Security
+                              track / versions explanations).
+     ============================================================ */
+  (function(){
+    if (typeof window.repaintSummary !== "function" || typeof window.repaint !== "function") return;
+
+    var HEADER = {
+      "WorkBuddyBench-Code":     "Code",
+      "WorkBuddyBench-Web":      "Web",
+      "WorkBuddyBench-Office":   "Office",
+      "WorkBuddyBench-Security": "Security"
+    };
+    window.trackHeaderLabel = function(t){ return HEADER[t.name] || t.short; };
+
+    var SHARED_NOTES = [
+        { en: "Code uses hidden-test scores; Web uses rubric scoring with rule, LLM/VLM and agent judges; Office blends rule checks and an LLM judge with per-task weights.",
+          zh: "Code 采用隐藏测试得分；Web 采用 rule、LLM/VLM 和 agent judge 的 rubric 评分；Office 采用 Rule 检查与 LLM Judge 的按任务加权融合评分。" },
+        { en: "Avg is the unweighted mean over evaluated core tracks; * marks partial coverage.",
+          zh: "Avg 为已评测核心赛道的无加权平均；* 表示该模型未覆盖全部核心赛道。" },
+        { en: "Security is scored on both harnesses like the other tracks; it stays out of Avg because its scoring instrument differs.",
+          zh: "Security 与其他赛道一样在两个 harness 上评测；因其评分方式不同，不并入 Avg。" },
+        { en: "Scores are 3-run averages in think mode.",
+          zh: "当前分数为 3 次运行平均，均为 think 模式。" },
+        { en: "Model settings: reasoning effort defaults to high, and each model runs with its provider-default inference hyperparameters.",
+          zh: "模型设置：reasoning effort 默认为 high，各模型使用其默认推理超参。" },
+        { en: "Harness settings: the context window is unified at 200k with a unified auto-compaction threshold; the WebSearch and AskUserQuestion tools are disabled.",
+          zh: "harness 设置：上下文窗口统一为 200k，自动压缩阈值统一；禁用 WebSearch 与 AskUserQuestion 工具。" },
+        { en: "Claude Opus 4.8's Code score under Claude Code comes from a modified-instruction run: on top of the disabled AskUserQuestion tool, an explicit do-not-ask / complete-in-one-pass instruction was added, so its setup differs slightly from the other runs.",
+          zh: "Claude Opus 4.8 在 Claude Code 下的 Code 分数来自一次调整指令的运行：在禁用 AskUserQuestion 工具的基础上，额外加入了不要询问、一次性完成的指令，因此其设置与其他运行略有不同。" },
+        { en: "Evaluation is pinned to specific harness builds — codebuddy-code:2.109.3 and claude-code:2.1.187; metrics may shift as harness versions evolve.",
+          zh: "评测固定在特定 harness 构建上 —— codebuddy-code:2.109.3 与 claude-code:2.1.187；随 harness 版本演进，指标可能变化。" },
+        { en: "The HY (Hunyuan) endpoint in this evaluation is served first-party by its provider; the other models are accessed through third-party serving endpoints, whose parameter configuration and request handling may affect metrics.",
+          zh: "本次评测中 HY（混元）端点由其提供方第一方部署；其余模型通过第三方推理端点接入，第三方的参数配置与请求处理可能影响指标。" },
+        { en: "This is a research preview leaderboard intended solely for research purposes. The metrics were last updated on July 10, and we will continue to update the leaderboard as models and harnesses evolve.",
+          zh: "本榜单为 research preview，仅供研究用途；指标最后更新于 7 月 10 日，后续将随模型与评测框架的演进持续更新。" },
+    ];
+    var NOTES = {
+      cbc: SHARED_NOTES,
+      claude: SHARED_NOTES
+    };
+    function noteLine(l){
+      return '<li class="lb-note-line"><span class="en">' + l.en + '</span><span class="zh">' + l.zh + '</span></li>';
+    }
+    function fixNotes(){
+      var app = document.getElementById("app");
+      var note = app && app.querySelector(".lb-note");
+      if (!note) return;
+      var btn = app.querySelector(".lb-scaffold button.active");
+      var key = (btn && btn.dataset.scaffold === "claude") ? "claude" : "cbc";
+      note.innerHTML = '<ul class="lb-note-list">' + NOTES[key].map(noteLine).join("") + '</ul>';
+    }
+    var origRepaintSummary = window.repaintSummary;
+    window.repaintSummary = function(){ origRepaintSummary(); fixNotes(); };
+    window.repaint(); // re-render once with the new header labels + notes
+  })();
+  </script>
+  <script>
+  /* ============================================================
+     Token efficiency — four-subset scatter (Code / Web / Office /
+     Security), right of the leaderboard.
+     Data: window.TOKEN_STATS.subsets (data.js). Plots OUTPUT tokens
+     only — input-token counting differs across harness configs and
+     must not be compared across harnesses.
+     Axis ranges are recomputed per subset; label sides are chosen by
+     a small collision-avoidance pass (per-subset overrides possible
+     via POS_FIX). Theme-aware (same pattern as the detail-page charts).
+     ============================================================ */
+  (function(){
+    var el = document.getElementById("ch-token-eff");
+    var TS = window.TOKEN_STATS;
+    if (!el || !TS || !TS.subsets) return;
+
+    // Display is roster-driven: only plot models on the public roster
+    // (matched by roster key or label — TOKEN_STATS uses label-style names).
+    // Retired models keep their TOKEN_STATS entries but never render.
+    var ROSTER_NAMES = {};
+    (window.WB_ROSTER || []).forEach(function(m){ ROSTER_NAMES[m.key] = 1; ROSTER_NAMES[m.label] = 1; });
+    function onRoster(r){ return ROSTER_NAMES[r.model] === 1; }
+
+    var SUBSET = "Code";
+    function data(){
+      var d = TS.subsets[SUBSET];
+      return { metric: d.metric, cbc: d.cbc.filter(onRoster), cc: d.cc.filter(onRoster) };
+    }
+
+    function css(n, f){
+      var v = getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+      return v || f;
+    }
+    function esc(s){
+      return String(s).replace(/[&<>"']/g, function(c){
+        return { "&":"&amp;", "<":"&lt;", ">":"&gt;", '"':"&quot;", "'":"&#39;" }[c];
+      });
+    }
+    function tokens(){
+      var dark = document.documentElement.getAttribute("data-theme") === "dark";
+      return {
+        text:    css("--wb-text-heading", "#000"),
+        sub:     css("--wb-text-secondary", "#808080"),
+        faint:   css("--wb-text-tertiary", "#B1B1B1"),
+        border:  css("--wb-border-subtle", "rgba(0,0,0,.08)"),
+        borderS: css("--wb-border-strong", "rgba(0,0,0,.12)"),
+        surface: dark ? "#14161d" : "#FFFFFF",
+        cbc: dark ? "#1FA37F" : "#28B894",
+        cc: "#D97706"
+      };
+    }
+
+    /* ---- per-subset axis ranges (nice bounds around the data) ---- */
+    function niceStep(span, target){
+      var raw = span / target;
+      var mag = Math.pow(10, Math.floor(Math.log(raw) / Math.LN10));
+      var cands = [1, 2, 2.5, 5, 10];
+      for (var i = 0; i < cands.length; i++){
+        if (cands[i] * mag >= raw) return cands[i] * mag;
+      }
+      return 10 * mag;
+    }
+    function range(vals, padFrac){
+      var lo = Math.min.apply(null, vals), hi = Math.max.apply(null, vals);
+      var span = Math.max(hi - lo, 1e-6);
+      var step = niceStep(span * (1 + 2 * padFrac), 6);
+      var min = Math.floor((lo - span * padFrac) / step) * step;
+      var max = Math.ceil((hi + span * padFrac) / step) * step;
+      if (min < 0) min = 0;
+      return { min: min, max: max, step: step };
+    }
+    function axes(){
+      var d = data(), all = d.cbc.concat(d.cc);
+      return {
+        x: range(all.map(function(r){ return r.avgOutputK; }), 0.06),
+        y: range(all.map(function(r){ return r.score; }), 0.08)
+      };
+    }
+    function ticks(ax){
+      var out = [];
+      for (var v = ax.min; v <= ax.max + 1e-9; v += ax.step) out.push(Math.round(v * 100) / 100);
+      return out;
+    }
+
+    /* ---- label sides: greedy collision-avoidance in plot space ----
+       Per-subset manual touch-ups (checked visually) go in POS_FIX. */
+    var POS_FIX = {
+      "Code": {}, "Web": {}, "Office": {}, "Security": {}
+    };
+    function labelPlan(){
+      var ax = axes(), d = data();
+      // plot-area size measured from the live element (grid margins + tick
+      // labels eat ~100 x 90 px) so collision estimates track the real layout
+      var W = Math.max(280, (el.clientWidth || 640) - 100);
+      var H = Math.max(220, (el.clientHeight || 430) - 90);
+      var GAP = 8, PH = 12;
+      var pts = [];
+      ["cbc", "cc"].forEach(function(key){
+        d[key].forEach(function(r){
+          pts.push({
+            key: key + ":" + r.model, model: r.model,
+            X: (r.avgOutputK - ax.x.min) / (ax.x.max - ax.x.min) * W,
+            Y: H - (r.score - ax.y.min) / (ax.y.max - ax.y.min) * H,
+            w: r.model.length * 5.8 + 4
+          });
+        });
+      });
+      function rectFor(p, pos){
+        if (pos === "right") return { x0: p.X + GAP, x1: p.X + GAP + p.w, y0: p.Y - PH / 2, y1: p.Y + PH / 2 };
+        if (pos === "left")  return { x0: p.X - GAP - p.w, x1: p.X - GAP, y0: p.Y - PH / 2, y1: p.Y + PH / 2 };
+        if (pos === "top")   return { x0: p.X - p.w / 2, x1: p.X + p.w / 2, y0: p.Y - GAP - PH, y1: p.Y - GAP };
+        return { x0: p.X - p.w / 2, x1: p.X + p.w / 2, y0: p.Y + GAP, y1: p.Y + GAP + PH };
+      }
+      function overlapArea(a, b){
+        var w = Math.min(a.x1, b.x1) - Math.max(a.x0, b.x0);
+        var h = Math.min(a.y1, b.y1) - Math.max(a.y0, b.y0);
+        return (w > 0 && h > 0) ? w * h : 0;
+      }
+      var placed = [];
+      var plan = {};
+      pts.slice().sort(function(a, b){ return a.X - b.X || a.Y - b.Y; }).forEach(function(p){
+        var best = "right", bestCost = Infinity;
+        var bias = { right: 0, left: 20, top: 45, bottom: 45 };
+        ["right", "left", "top", "bottom"].forEach(function(pos){
+          var r = rectFor(p, pos), c = bias[pos];
+          // keep on-canvas
+          c += Math.max(0, -r.x0) * 24 + Math.max(0, r.x1 - W) * 24;
+          c += Math.max(0, -r.y0) * 24 + Math.max(0, r.y1 - H) * 24;
+          // avoid other markers
+          pts.forEach(function(o){
+            if (o === p) return;
+            c += overlapArea(r, { x0: o.X - 7, x1: o.X + 7, y0: o.Y - 7, y1: o.Y + 7 }) * 2;
+          });
+          // avoid labels already placed
+          placed.forEach(function(o){ c += overlapArea(r, o) * 3; });
+          if (c < bestCost){ bestCost = c; best = pos; }
+        });
+        plan[p.key] = best;
+        placed.push(rectFor(p, best));
+      });
+      Object.keys(POS_FIX[SUBSET] || {}).forEach(function(k){ plan[k] = POS_FIX[SUBSET][k]; });
+      return plan;
+    }
+
+    function yAxisName(zh){
+      return zh ? SUBSET + " 分数" : SUBSET + " score";
+    }
+    function updateAria(){
+      el.setAttribute("aria-label",
+        "Scatter chart: " + SUBSET + " score versus average output tokens per run, by harness");
+    }
+
+    function renderSvgFallback(){
+      var zh = document.body.classList.contains("lang-zh");
+      var t = tokens();
+      var ax = axes(), plan = labelPlan(), d = data();
+      var w = 680, h = 430, m = { l: 58, r: 22, t: 34, b: 56 };
+      function sx(x){ return m.l + (x - ax.x.min) / (ax.x.max - ax.x.min) * (w - m.l - m.r); }
+      function sy(y){ return h - m.b - (y - ax.y.min) / (ax.y.max - ax.y.min) * (h - m.t - m.b); }
+      function gridX(v){
+        var x = sx(v);
+        return '<line x1="' + x + '" y1="' + m.t + '" x2="' + x + '" y2="' + (h - m.b) + '" stroke="' + t.border + '" stroke-dasharray="4 4"/>' +
+          '<text x="' + x + '" y="' + (h - 30) + '" text-anchor="middle" fill="' + t.faint + '" font-size="10">' + v + 'k</text>';
+      }
+      function gridY(v){
+        var y = sy(v);
+        return '<line x1="' + m.l + '" y1="' + y + '" x2="' + (w - m.r) + '" y2="' + y + '" stroke="' + t.border + '" stroke-dasharray="4 4"/>' +
+          '<text x="' + (m.l - 12) + '" y="' + (y + 4) + '" text-anchor="end" fill="' + t.faint + '" font-size="10">' + v + '</text>';
+      }
+      function point(key, label, color, hollow){
+        return d[key].map(function(r){
+          var pos = plan[key + ":" + r.model] || "right";
+          var dx = pos === "left" ? -8 : (pos === "right" ? 8 : 0);
+          var dy = pos === "bottom" ? 17 : (pos === "top" ? -9 : 4);
+          var anchor = pos === "left" ? "end" : (pos === "right" ? "start" : "middle");
+          var x = sx(r.avgOutputK), y = sy(r.score);
+          var shape = hollow
+            ? '<circle cx="' + x + '" cy="' + y + '" r="5" fill="' + t.surface + '" stroke="' + color + '" stroke-width="2"/>'
+            : '<circle cx="' + x + '" cy="' + y + '" r="5" fill="' + color + '" stroke="' + t.surface + '" stroke-width="1.5"/>';
+          return '<g><title>' + esc(r.model + ' · ' + label + ' · score ' + r.score.toFixed(2) + ' · output ' + r.avgOutputK.toFixed(1) + 'k · turns ' + r.avgTurns.toFixed(1)) + '</title>' +
+            shape + '<text x="' + (x + dx) + '" y="' + (y + dy) + '" text-anchor="' + anchor + '" fill="' + t.sub + '" font-size="10">' + esc(r.model) + '</text></g>';
+        }).join("");
+      }
+      el.innerHTML =
+        '<svg viewBox="0 0 ' + w + ' ' + h + '" width="100%" height="100%" role="img" aria-label="Token efficiency scatter chart — ' + esc(SUBSET) + '">' +
+          '<rect width="' + w + '" height="' + h + '" fill="transparent"/>' +
+          ticks(ax.x).map(gridX).join("") +
+          ticks(ax.y).map(gridY).join("") +
+          '<line x1="' + m.l + '" y1="' + (h - m.b) + '" x2="' + (w - m.r) + '" y2="' + (h - m.b) + '" stroke="' + t.borderS + '"/>' +
+          '<line x1="' + m.l + '" y1="' + m.t + '" x2="' + m.l + '" y2="' + (h - m.b) + '" stroke="' + t.borderS + '"/>' +
+          '<text x="' + (w / 2) + '" y="' + (h - 8) + '" text-anchor="middle" fill="' + t.sub + '" font-size="11">' + esc(zh ? "每次运行平均输出 token(k)" : "Avg output tokens per run (k)") + '</text>' +
+          '<text x="16" y="' + (h / 2) + '" transform="rotate(-90 16 ' + (h / 2) + ')" text-anchor="middle" fill="' + t.sub + '" font-size="11">' + esc(yAxisName(zh)) + '</text>' +
+          '<g transform="translate(418 12)"><circle cx="0" cy="6" r="5" fill="' + t.cbc + '"/><text x="12" y="10" fill="' + t.sub + '" font-size="11">CodeBuddy Code</text>' +
+          '<circle cx="132" cy="6" r="5" fill="' + t.surface + '" stroke="' + t.cc + '" stroke-width="2"/><text x="144" y="10" fill="' + t.sub + '" font-size="11">Claude Code</text></g>' +
+          point("cbc", "CodeBuddy Code", t.cbc, false) +
+          point("cc", "Claude Code", t.cc, true) +
+        '</svg>';
+    }
+
+    function opt(){
+      var zh = document.body.classList.contains("lang-zh");
+      var t = tokens();
+      var ax = axes(), plan = labelPlan(), d = data();
+      function series(key, name, color, hollow){
+        return {
+          name: name, type: "scatter", symbolSize: 11,
+          itemStyle: hollow
+            ? { color: t.surface, borderColor: color, borderWidth: 2 }
+            : { color: color, borderColor: t.surface, borderWidth: 1 },
+          emphasis: { scale: 1.3 },
+          labelLayout: { hideOverlap: true },
+          data: d[key].map(function(r){
+            return {
+              value: [r.avgOutputK, r.score], name: r.model, avgTurns: r.avgTurns,
+              label: { show: true, position: plan[key + ":" + r.model] || "right",
+                       distance: 5, color: t.sub, fontSize: 10, formatter: r.model }
+            };
+          })
+        };
+      }
+      return {
+        backgroundColor: "transparent",
+        legend: { top: 0, right: 4, itemWidth: 12, itemHeight: 8,
+                  textStyle: { color: t.sub, fontSize: 11 } },
+        tooltip: {
+          backgroundColor: t.surface, borderColor: t.borderS,
+          textStyle: { color: t.text, fontSize: 12 },
+          extraCssText: "box-shadow:0 8px 24px rgba(0,0,0,.12);border-radius:8px",
+          formatter: function(p){
+            return "<b>" + p.name + "</b> &middot; " + p.seriesName + "<br/>" + p.marker +
+              (zh ? "分数 " : "score ") + p.value[1].toFixed(2) + " &middot; " +
+              (zh ? "输出 " : "output ") + p.value[0].toFixed(1) + "k tok/run &middot; " +
+              (zh ? "轮数 " : "turns ") + p.data.avgTurns.toFixed(1);
+          }
+        },
+        /* containLabel only reserves space for tick labels, not axis names —
+           pad left/bottom so the names stay on-canvas */
+        grid: { top: 30, left: 34, right: 26, bottom: 34, containLabel: true },
+        xAxis: {
+          type: "value", min: ax.x.min, max: ax.x.max, interval: ax.x.step,
+          name: zh ? "每次运行平均输出 token(k)" : "Avg output tokens per run (k)",
+          nameLocation: "middle", nameGap: 28,
+          nameTextStyle: { color: t.sub, fontSize: 11.5 },
+          axisLabel: { color: t.faint, fontSize: 10.5, formatter: "{value}k" },
+          axisLine: { lineStyle: { color: t.border } }, axisTick: { show: false },
+          splitLine: { lineStyle: { type: "dashed", color: t.border } }
+        },
+        yAxis: {
+          type: "value", min: ax.y.min, max: ax.y.max, interval: ax.y.step,
+          name: yAxisName(zh),
+          nameLocation: "middle", nameGap: 34,
+          nameTextStyle: { color: t.sub, fontSize: 11.5 },
+          axisLabel: { color: t.faint, fontSize: 10.5 },
+          axisLine: { lineStyle: { color: t.border } }, axisTick: { show: false },
+          splitLine: { lineStyle: { type: "dashed", color: t.border } }
+        },
+        series: [
+          series("cbc", "CodeBuddy Code", t.cbc, false),
+          series("cc",  "Claude Code",    t.cc,  true)
+        ]
+      };
+    }
+
+    /* ---- render plumbing (echarts if available, static SVG otherwise) ---- */
+    var chart = null;
+    if (typeof echarts !== "undefined") chart = echarts.init(el);
+    function rerender(){
+      updateAria();
+      if (chart) chart.setOption(opt(), true);
+      else renderSvgFallback();
+    }
+    rerender();
+    if (chart) window.addEventListener("resize", function(){ chart.resize(); });
+    var tgl = document.getElementById("themeToggle");
+    if (tgl) tgl.addEventListener("click", function(){ setTimeout(rerender, 60); });
+    document.querySelectorAll("[data-lang-btn]").forEach(function(b){
+      b.addEventListener("click", function(){ setTimeout(rerender, 30); });
+    });
+    // lang.js applies the saved language on DOMContentLoaded, possibly after this IIFE — sync once more.
+    window.addEventListener("load", rerender);
+
+    /* ---- subset switcher (tablist; Left/Right arrows move focus+select) ---- */
+    var tabWrap = document.querySelector(".te-tabs");
+    var tabBtns = tabWrap ? Array.prototype.slice.call(tabWrap.querySelectorAll("button[data-te-subset]")) : [];
+    var secNote = document.getElementById("te-note-security");
+    function setSubset(s){
+      if (!TS.subsets[s]) return;
+      SUBSET = s;
+      tabBtns.forEach(function(b){
+        var on = b.dataset.teSubset === s;
+        b.classList.toggle("active", on);
+        b.setAttribute("aria-selected", on ? "true" : "false");
+      });
+      if (secNote) secNote.hidden = s !== "Security";
+      rerender();
+    }
+    tabBtns.forEach(function(b){
+      b.addEventListener("click", function(){ setSubset(b.dataset.teSubset); });
+      b.addEventListener("keydown", function(ev){
+        if (ev.key !== "ArrowLeft" && ev.key !== "ArrowRight") return;
+        ev.preventDefault();
+        var i = tabBtns.indexOf(b);
+        var next = ev.key === "ArrowRight" ? (i + 1) % tabBtns.length : (i - 1 + tabBtns.length) % tabBtns.length;
+        tabBtns[next].focus();
+        setSubset(tabBtns[next].dataset.teSubset);
+      });
+    });
+  })();
+  </script>
+</body>
+</html>
