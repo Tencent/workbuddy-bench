@@ -120,6 +120,10 @@ uv run ./scripts/run.sh --job <slug>            # run it
 Results land under `results/`. The full set of job and model fields is documented
 in [`configs/README.md`](configs/README.md).
 
+## Community resources
+
+- [Awesome WorkBuddy](https://github.com/sandbaseai/awesome-workbuddy) - An independent, bilingual directory of WorkBuddy documentation, Skills, MCP integrations, workflows, and benchmarks. The directory includes this benchmark with links to the official website and dataset; inclusion is not a Tencent endorsement.
+
 ## Citation & license
 
 Licensed under the Tencent license. See [`LICENSE`](LICENSE).
