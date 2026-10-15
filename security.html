@@ -191,14 +191,14 @@
       <div class="en">
         <p>Every task is scored by a per-task <code>scoring.py</code> running inside an isolated Docker container &mdash; there is <b>no LLM judge</b> in the loop. Exploitation tasks are scored on PoC / flag verification, malware-analysis tasks on IOC ground truth, YARA tasks on match-rate plus a zero-false-positive constraint, and SOC tasks on macro-F1 and Kendall-tau; results are deterministic and repeat exactly on re-scoring.</p>
         <p>The numbers on the <a href="index.html#leaderboard">leaderboard</a> come from the <b>CodeBuddy Code</b> harness, averaged over 3 runs to reduce variance.</p>
-        <p>Some models declined a small number of security-flavored tasks; a refused task scores 0. Across the 3-run protocol, GPT-5.5 recorded 2 refusals under CodeBuddy Code.</p>
+        <p>Refused tasks score 0. Across the 3-run protocol, none of the currently displayed models recorded a refusal under CodeBuddy Code.</p>
       </div>
       <div class="zh">
         <p>每道任务都由每题独立的 <code>scoring.py</code> 在隔离 Docker 容器内评分，评测链路中<b>没有 LLM 裁判</b>。漏洞利用任务按 PoC / flag 验证评分,恶意软件任务按 IOC ground truth 评分,YARA 任务按匹配率加零误报约束评分,SOC 任务按分类准确率与排序一致性评分;结果具备确定性,重复评分完全一致。</p>
         <p>排行榜上的数字来自 <b>CodeBuddy Code</b> 评测框架,取 <b>3 次运行的平均值</b>以降低方差。</p>
-        <p>部分模型对少量安全类任务选择拒答;拒答任务计 0 分。按 3 次运行合计,GPT-5.5 在 CodeBuddy Code 下拒答 2 次。</p>
+        <p>拒答任务计 0 分。按 3 次运行合计,当前展示的模型在 CodeBuddy Code 下均无拒答记录。</p>
       </div>
-      <p class="callout"><span class="en"><b>Scope.</b> The leaderboard covers seven models scored on the CodeBuddy Code harness, 3 runs averaged in think mode.</span><span class="zh"><b>范围。</b>榜单覆盖七个模型,在 CodeBuddy Code 评测框架上评测,取 3 次运行平均(think 模式)。</span></p>
+      <p class="callout"><span class="en"><b>Scope.</b> The leaderboard covers eight models scored on the CodeBuddy Code harness, 3 runs averaged in think mode.</span><span class="zh"><b>范围。</b>榜单覆盖八个模型,在 CodeBuddy Code 评测框架上评测,取 3 次运行平均(think 模式)。</span></p>
     </section>
 
     </div><!-- /.detail-main -->
@@ -209,8 +209,8 @@
     </div>
   </footer>
   <script src="lang.js?v=3"></script>
-  <script src="roster.js?v=12"></script>
-  <script src="data.js?v=22"></script>
+  <script src="roster.js?v=14"></script>
+  <script src="data.js?v=26"></script>
   <script src="subset-lb.js?v=6"></script>
   <script>
     renderSubsetLB("WorkBuddyBench-Security","lb-security",{scoreKey:"scores"});

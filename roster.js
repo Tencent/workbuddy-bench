@@ -6,15 +6,21 @@
 //   access     -> which harnesses the model can run on
 //   track.preview=true -> shown as a column but excluded from the cross-track Average
 window.WB_ROSTER = [
-  // --- proprietary models — both harnesses usable ---
-  { key: "Claude Opus 4.8",   label: "Claude Opus 4.8",   vendor: "Anthropic", type: "proprietary", access: "CodeBuddy Code · Claude Code", real: true  },
-  { key: "GPT-5.5",           label: "GPT-5.5",           vendor: "OpenAI",    type: "proprietary", access: "CodeBuddy Code · Claude Code", real: true  },
+  // --- proprietary models ---
+  // Roster policy: only the latest GPT / Claude generation is kept on the
+  // public board; older snapshots (Claude Opus 5 / 4.8, GPT-5.6 Sol, GPT-5.5)
+  // remain in data.js as history but are not displayed.
+  { key: "Claude Opus 5.5",   label: "Claude Opus 5.5",   vendor: "Anthropic", type: "proprietary", access: "CodeBuddy Code",               real: true  },
   // --- open-weight models ---
+  { key: "Hy4 preview",        label: "Hy4 preview",        vendor: "Tencent",   brand: "Hunyuan", type: "open", access: "CodeBuddy Code",               real: true  },
+  { key: "Kimi K3",           label: "Kimi K3",           vendor: "Moonshot AI", type: "open",      access: "CodeBuddy Code",               real: true  },
+  { key: "GLM-5.3",           label: "GLM-5.3",           vendor: "Zhipu",     type: "open",        access: "CodeBuddy Code",               real: true  },
   { key: "GLM-5.2",           label: "GLM-5.2",           vendor: "Zhipu",     type: "open",        access: "CodeBuddy Code · Claude Code", real: true  },
   { key: "DeepSeek-V4-Pro",   label: "DeepSeek-V4-Pro",   vendor: "DeepSeek",  type: "open",        access: "CodeBuddy Code · Claude Code", real: true  },
+  { key: "DeepSeek-v4.1-flash", label: "DeepSeek-V4.1-Flash", vendor: "DeepSeek", type: "open",        access: "CodeBuddy Code",               real: true  },
   { key: "DeepSeek-v4-flash", label: "DeepSeek-V4-Flash", vendor: "DeepSeek",  type: "open",        access: "CodeBuddy Code · Claude Code", real: true  },
   { key: "MiniMax-M3",        label: "MiniMax-M3",        vendor: "MiniMax",   type: "open",        access: "CodeBuddy Code · Claude Code", real: true  },
-  { key: "HY-3",               label: "HY-3",         vendor: "Tencent",   brand: "Hunyuan", type: "open", access: "CodeBuddy Code · Claude Code", real: true  },
+  { key: "HY-3",              label: "HY-3",              vendor: "Tencent",   brand: "Hunyuan", type: "open", access: "CodeBuddy Code · Claude Code", real: true  },
 ];
 
 window.WB_TRACKS = [

@@ -14,8 +14,9 @@
 // (missing-trial reward counted as 0, matching the `scores` methodology).
 window.LEADERBOARD_DATA = {
   "_meta": {
-    "generated": "2026-07-14",
-    "last_verified": "2026-07-14"
+    "leaderboard_version": "v1.2",
+    "generated": "2026-10-15",
+    "last_verified": "2026-10-15"
   },
   "benchmarks": [
     {
@@ -47,23 +48,30 @@ window.LEADERBOARD_DATA = {
         {
           "dataset_version": "v2.3",
           "notes": "HIGH confidence",
-          "_source": "Aligned leaderboard stats (2026-07-09): run-level score, 3 runs averaged, think mode.",
+          "_source": "Aligned leaderboard stats: run-level score, 3 runs averaged, think mode; CodeBuddy Code results refreshed 2026-09-10.",
           // Diagnostic rerun (2026-07-14, same 3-run averaging): HY-3 with
           // cross-turn reasoning passback enabled scored 66.72 on cbc (+3.82)
           // and 68.18 on cc (+1.92). Exposed below as `passback_note` — rendered
           // as a footnote only, never as a leaderboard row.
           "passback_note": { "model": "HY-3", "cbc": 66.72, "cbc_delta": "+3.82", "cc": 68.18, "cc_delta": "+1.92" },
           "scores": {
+            "Claude Opus 5.5": "83.26%(think)",
+            "Claude Opus 5": "80.54%(think)",
+            "GPT-5.6 Sol": "78.78%(think)",
+            "Kimi K3": "77.14%(think)",
+            "GLM-5.3": "76.93%(think)",
+            "DeepSeek-v4.1-flash": "76.91%(think)",
+            "DeepSeek-V4-Pro": "76.82%(think)",
+            "Hy4 preview": "75.80%(think)",
+            "DeepSeek-v4-flash": "74.80%(think)",
             "Claude Opus 4.8": "74.43%(think)",
             "GPT-5.5": "72.90%(think)",
             "GLM-5.2": "71.54%(think)",
             "GLM5.1-nothink": "63.74%(think)",
-            "MiniMax-M3": "60.14%(think)",
-            "DeepSeek-V4-Pro": "58.92%(think)",
-            "DeepSeek-v4-flash": "55.73%(think)",
-            "Kimi K2.6": "55.93%(think)",
             "Kimi K2.7": "63.42%(think)",
             "HY-3": "62.90%(think)",
+            "MiniMax-M3": "60.14%(think)",
+            "Kimi K2.6": "55.93%(think)",
             "HY-3-preview": "53.57%(think)"
           },
           "scores_cc": {
@@ -344,16 +352,23 @@ window.LEADERBOARD_DATA = {
         {
           "dataset_version": "current",
           "notes": "HIGH confidence",
-          "_source": "WorkBuddyBench-Web current 70-task results, 3 runs averaged, think mode.",
+          "_source": "WorkBuddyBench-Web current 70-task results, 3 runs averaged, think mode; CodeBuddy Code results refreshed 2026-09-10.",
           "scores": {
+            "Claude Opus 5.5": "76.24%(think)",
+            "GLM-5.3": "75.36%(think)",
+            "DeepSeek-v4.1-flash": "74.00%(think)",
+            "Hy4 preview": "72.76%(think)",
+            "DeepSeek-v4-flash": "72.43%(think)",
+            "DeepSeek-V4-Pro": "72.29%(think)",
+            "Kimi K3": "72.00%(think)",
+            "GPT-5.6 Sol": "71.94%(think)",
+            "Claude Opus 5": "71.86%(think)",
             "Claude Opus 4.8": "68.14%(think)",
             "HY-3": "67.71%(think)",
             "GLM-5.2": "67.43%(think)",
             "GPT-5.5": "61.14%(think)",
             "MiniMax-M3": "58.00%(think)",
-            "DeepSeek-V4-Pro": "54.57%(think)",
-            "Kimi K2.7": "54.29%(think)",
-            "DeepSeek-v4-flash": "47.29%(think)"
+            "Kimi K2.7": "54.29%(think)"
           },
           "scores_cc": {
             "Claude Opus 4.8": "69.86%(think)",
@@ -398,18 +413,25 @@ window.LEADERBOARD_DATA = {
         {
           "dataset_version": "current",
           "notes": "HIGH confidence",
-          "_source": "Aligned leaderboard stats (2026-07-15): 50-case office set, 3 runs averaged, think mode, dual harness.",
+          "_source": "Aligned leaderboard stats: 50-case office set, 3 runs averaged, think mode; CodeBuddy Code results refreshed 2026-09-10.",
           "scores": {
+            "Claude Opus 5.5": "85.24%(think)",
             "Claude Opus 4.8": "82.37%(think)",
             "HY-3": "82.08%(think)",
             "GPT-5.5": "81.96%(think)",
+            "Hy4 preview": "81.22%(think)",
+            "Kimi K3": "81.04%(think)",
+            "DeepSeek-v4.1-flash": "80.77%(think)",
             "Kimi K2.7": "80.88%(think)",
+            "GLM-5.3": "79.78%(think)",
             "GLM-5.2": "79.60%(think)",
-            "DeepSeek-V4-Pro": "79.11%(think)",
             "Kimi K2.6": "78.98%(think)",
             "MiniMax-M3": "78.28%(think)",
-            "DeepSeek-v4-flash": "77.47%(think)",
-            "HY-3-preview": "76.44%(think)"
+            "Claude Opus 5": "77.95%(think)",
+            "DeepSeek-V4-Pro": "77.83%(think)",
+            "DeepSeek-v4-flash": "77.44%(think)",
+            "HY-3-preview": "76.44%(think)",
+            "GPT-5.6 Sol": "73.59%(think)"
           },
           // HY-3 breakdown matches the 2026-07-14 CBC rerun above.
           "score_breakdown": {
@@ -459,17 +481,20 @@ window.LEADERBOARD_DATA = {
         {
           "dataset_version": "current",
           "notes": "HIGH confidence",
-          "_source": "Aligned leaderboard stats (2026-07-15): 60-task security set, 3 runs averaged, think mode, dual harness.",
+          "_source": "Aligned leaderboard stats: 60-task security set, 3 runs averaged, think mode; CodeBuddy Code results refreshed 2026-09-10.",
           "scores": {
             "GLM-5.2": "76.32%(think)",
             "MiniMax-M3": "74.14%(think)",
-            "DeepSeek-V4-Pro": "70.04%(think)",
-            "DeepSeek-v4-flash": "67.11%(think)",
+            "Kimi K3": "67.61%(think)",
+            "GLM-5.3": "66.52%(think)",
+            "DeepSeek-v4-flash": "65.65%(think)",
             "HY-3": "64.50%(think)",
             "GPT-5.5": "64.39%(think)",
             "Claude Opus 4.8": "64.37%(think)",
             "HY-3-preview": "64.17%(think)",
+            "DeepSeek-V4-Pro": "62.61%(think)",
             "Gemini-3.5-Flash": "59.37%(think)",
+            "Hy4 preview": "58.08%(think)",
             "Kimi K2.6": "54.50%(think)"
           },
           "scores_cc": {
