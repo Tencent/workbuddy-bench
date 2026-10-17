@@ -485,6 +485,7 @@ window.LEADERBOARD_DATA = {
           "scores": {
             "GLM-5.2": "76.32%(think)",
             "MiniMax-M3": "74.14%(think)",
+            "DeepSeek-v4.1-flash": "69.54%(think)",
             "Kimi K3": "67.61%(think)",
             "GLM-5.3": "66.52%(think)",
             "DeepSeek-v4-flash": "65.65%(think)",
