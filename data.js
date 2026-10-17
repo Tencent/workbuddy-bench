@@ -482,9 +482,10 @@ window.LEADERBOARD_DATA = {
           "dataset_version": "current",
           "notes": "HIGH confidence",
           "_source": "Aligned leaderboard stats: 60-task security set, 3 runs averaged, think mode; CodeBuddy Code results refreshed 2026-09-10.",
+          // GLM-5.2 and MiniMax-M3 Security scores are WITHHELD (pending
+          // re-verification, 2026-10-17) — removed from scores/scores_cc and
+          // TOKEN_STATS until confirmed.
           "scores": {
-            "GLM-5.2": "76.32%(think)",
-            "MiniMax-M3": "74.14%(think)",
             "DeepSeek-v4.1-flash": "69.54%(think)",
             "Kimi K3": "67.61%(think)",
             "GLM-5.3": "66.52%(think)",
@@ -499,12 +500,10 @@ window.LEADERBOARD_DATA = {
             "Kimi K2.6": "54.50%(think)"
           },
           "scores_cc": {
-            "GLM-5.2": "80.86%(think)",
             "GPT-5.5": "77.91%(think)",
             "Gemini-3.5-Flash": "76.99%(think)",
             "Claude Opus 4.8": "65.87%(think)",
             "HY-3": "65.59%(think)",
-            "MiniMax-M3": "59.30%(think)",
             "DeepSeek-V4-Pro": "58.73%(think)",
             "HY-3-preview": "58.63%(think)",
             "DeepSeek-v4-flash": "53.90%(think)",
@@ -637,8 +636,8 @@ window.TOKEN_STATS = {
     "Security": {
       "metric": "Deterministic scoring",
       "cbc": [
-        { "model": "GLM-5.2",           "score": 76.32, "avgTurns": 60.6,  "avgInputK": 2729.18,  "avgOutputK": 31.00, "cachedInputK": 1079.23, "refusals": 0 },
-        { "model": "MiniMax-M3",        "score": 74.14, "avgTurns": 88.8,  "avgInputK": 11086.46, "avgOutputK": 26.12, "cachedInputK": 4588.36, "refusals": 0 },
+        // GLM-5.2 / MiniMax-M3 Security stats withheld along with their scores
+        // (pending re-verification, 2026-10-17).
         { "model": "DeepSeek-V4-Pro",   "score": 70.04, "avgTurns": 70.1,  "avgInputK": 3367.29,  "avgOutputK": 29.77, "cachedInputK": 1334.53, "refusals": 0 },
         { "model": "DeepSeek-V4-Flash", "score": 67.11, "avgTurns": 69.7,  "avgInputK": 3339.06,  "avgOutputK": 24.20, "cachedInputK": 1336.73, "refusals": 0 },
         { "model": "HY-3",              "score": 64.50, "avgTurns": 54.5,  "avgInputK": 3258.86,  "avgOutputK": 24.23, "cachedInputK": 1595.96, "refusals": 0 },
@@ -649,12 +648,10 @@ window.TOKEN_STATS = {
         { "model": "Kimi K2.6",         "score": 54.50, "avgTurns": 112.4, "avgInputK": 10030.76, "avgOutputK": 20.77, "cachedInputK": 4354.29, "refusals": 0 }
       ],
       "cc": [
-        { "model": "GLM-5.2",           "score": 80.86, "avgTurns": 77.4, "avgInputK": 2255.98, "avgOutputK": 30.31, "cachedInputK": 1912.30, "refusals": 0 },
         { "model": "GPT-5.5",           "score": 77.91, "avgTurns": 29.8, "avgInputK": 695.02,  "avgOutputK": 7.50,  "cachedInputK": 534.74,  "refusals": 0 },
         { "model": "Gemini-3.5-Flash",  "score": 76.99, "avgTurns": 59.8, "avgInputK": 3355.59, "avgOutputK": 15.46, "cachedInputK": 104.63,  "refusals": 4 },
         { "model": "Claude Opus 4.8",   "score": 65.87, "avgTurns": 47.0, "avgInputK": 1149.49, "avgOutputK": 22.89, "cachedInputK": 1149.45, "refusals": 13 },
         { "model": "HY-3",              "score": 65.59, "avgTurns": 44.1, "avgInputK": 922.25,  "avgOutputK": 25.11, "cachedInputK": 707.26,  "refusals": 0 },
-        { "model": "MiniMax-M3",        "score": 59.30, "avgTurns": 54.6, "avgInputK": 2211.03, "avgOutputK": 14.24, "cachedInputK": 1841.21, "refusals": 0 },
         { "model": "DeepSeek-V4-Pro",   "score": 58.73, "avgTurns": 56.1, "avgInputK": 987.66,  "avgOutputK": 36.20, "cachedInputK": 828.19,  "refusals": 0 },
         { "model": "HY-3-preview",      "score": 58.63, "avgTurns": 89.9, "avgInputK": 2867.51, "avgOutputK": 31.56, "cachedInputK": 2215.42, "refusals": 0 },
         { "model": "Kimi K2.6",         "score": 43.67, "avgTurns": 22.2, "avgInputK": 394.83,  "avgOutputK": 11.25, "cachedInputK": 344.98,  "refusals": 0 }

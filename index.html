@@ -329,9 +329,9 @@ tr.xrow td{background:var(--wb-surface-section);padding:14px 16px 16px;text-alig
 
           <ul class="takeaways">
             <li><span class="tick"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></span>
-              <span><span class="en"><b>Claude Opus 5.5</b> sweeps the core tracks: under CodeBuddy Code it leads Code at <b>83.26</b>, Web at <b>76.24</b>, and Office at <b>85.24</b>, while <b>GLM-5.2</b> leads Security at <b>76.32</b>. Under Claude Code, <b>GLM-5.2</b> tops Code and Security, and <b>HY-3</b> leads Web and Office.</span><span class="zh"><b>Claude Opus 5.5</b> 横扫核心赛道：CodeBuddy Code 下以 <b>83.26 / 76.24 / 85.24</b> 领跑 Code、Web、Office，<b>GLM-5.2</b> 以 <b>76.32</b> 领跑 Security；Claude Code 下 <b>GLM-5.2</b> 拿下 Code 与 Security，<b>HY-3</b> 领跑 Web 与 Office。</span></span></li>
+              <span><span class="en"><b>Claude Opus 5.5</b> sweeps the core tracks: under CodeBuddy Code it leads Code at <b>83.26</b>, Web at <b>76.24</b>, and Office at <b>85.24</b>, while <b>DeepSeek-V4.1-Flash</b> leads Security at <b>69.54</b>. Under Claude Code, <b>GLM-5.2</b> tops Code, and <b>HY-3</b> leads Web, Office and Security.</span><span class="zh"><b>Claude Opus 5.5</b> 横扫核心赛道：CodeBuddy Code 下以 <b>83.26 / 76.24 / 85.24</b> 领跑 Code、Web、Office，<b>DeepSeek-V4.1-Flash</b> 以 <b>69.54</b> 领跑 Security；Claude Code 下 <b>GLM-5.2</b> 拿下 Code，<b>HY-3</b> 领跑 Web、Office 与 Security。</span></span></li>
             <li><span class="tick"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></span>
-              <span><span class="en">An open-weight model holds its own: <b>GLM-5.2</b> tops Security under both harnesses and Code under Claude Code — <b>three of the eight columns</b>; open-weight competitiveness here is board-dependent, not uniform.</span><span class="zh">开源权重模型不落下风:<b>GLM-5.2</b> 在两个 harness 下均领跑 Security,并在 Claude Code 下拿下 Code 榜首(八个计分列中的 <b>三个</b>)。开源权重的竞争力在这套基准上因榜单而异,并非全面领先。</span></span></li>
+              <span><span class="en">Open-weight models hold their own: they lead Security and every Claude Code column, with <b>GLM-5.2</b> topping Code and <b>HY-3</b> topping Web, Office and Security under Claude Code; open-weight competitiveness here is board-dependent, not uniform.</span><span class="zh">开源权重模型不落下风:Security 及 Claude Code 下各列榜首均为开源模型 —— <b>GLM-5.2</b> 拿下 Claude Code 下的 Code 榜首,<b>HY-3</b> 领跑 Web、Office 与 Security。开源权重的竞争力在这套基准上因榜单而异,并非全面领先。</span></span></li>
             <li><span class="tick"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></span>
               <span><span class="en">The harness is part of the result: the same model can swing hard between harnesses — <b>GLM-5.2</b> on Web scores <b>67.43 vs 60.71</b>, <b>DeepSeek-V4-Flash</b> on Security <b>65.65 vs 53.90</b> — so read scores per harness.</span><span class="zh">harness 是结果的一部分:同一模型在不同 harness 下可能大幅波动 —— <b>GLM-5.2</b> 在 Web 上 <b>67.43 vs 60.71</b>,<b>DeepSeek-V4-Flash</b> 在 Security 上 <b>65.65 vs 53.90</b>，分数应按 harness 分开解读。</span></span></li>
             <li><span class="tick"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></span>
@@ -356,8 +356,8 @@ tr.xrow td{background:var(--wb-surface-section);padding:14px 16px 16px;text-alig
             <div class="te-harness">CodeBuddy Code 2.109.3 &middot; Claude Code 2.1.187 &middot; think</div>
           </div>
           <p>
-            <span class="en">Efficiency does not follow rank order: <b>GLM-5.2</b>&rsquo;s two Security leads are paid for in tokens (30&ndash;31k output tokens per run on both harnesses), and its 77.06 on Code under Claude Code costs 22.0k per run, while leaner mid-table models reach similar scores on a fraction of that budget. Security is by far the heaviest subset: <b>MiniMax-M3</b> averages 88.8 turns and roughly 11.1M cache-inclusive input tokens per run under CodeBuddy Code for its 74.14.</span>
-             <span class="zh">效率与排名并不一致：<b>GLM-5.2</b> 的两个 Security 榜首是用 token 换来的（两个 harness 下每次运行均为 30&ndash;31k 输出 token），其 Claude Code 下 Code 的 77.06 也花费 22.0k，而更精简的中游模型只花其中一小部分预算就能拿到相近分数。Security 是 token 消耗最大的子集：<b>MiniMax-M3</b> 在 CodeBuddy Code 下平均每次运行 88.8 轮交互、输入 token（含缓存）约 1,110 万，最终得分 74.14。</span>
+            <span class="en">Efficiency does not follow rank order: <b>GLM-5.2</b>&rsquo;s 77.06 on Code under Claude Code costs 22.0k output tokens per run, while leaner mid-table models reach similar scores on a fraction of that budget. Security is by far the heaviest subset: mid-board runs there average up to roughly 90 turns and around 11M cache-inclusive input tokens per run under CodeBuddy Code.</span>
+             <span class="zh">效率与排名并不一致：<b>GLM-5.2</b> 在 Claude Code 下 Code 的 77.06 每次运行花费 22.0k 输出 token，而更精简的中游模型只花其中一小部分预算就能拿到相近分数。Security 是 token 消耗最大的子集：中游成绩在 CodeBuddy Code 下平均每次运行可达约 90 轮交互、约 1,100 万输入 token（含缓存）。</span>
           </p>
           <p>
             <span class="en">All points are 3-run averages in think mode. Turns count unique assistant messages including subagent activity; output tokens come from each run&rsquo;s final usage. Output tokens are the comparable axis &mdash; input-token accounting differs across harness configurations, so input tokens are never compared across harnesses.</span>
@@ -382,7 +382,7 @@ tr.xrow td{background:var(--wb-surface-section);padding:14px 16px 16px;text-alig
   <script src="site.js?v=1"></script>
   <script src="lang.js?v=3"></script>
   <script src="roster.js?v=14"></script>
-  <script src="data.js?v=27"></script>
+  <script src="data.js?v=28"></script>
   <script src="app_v2.js?v=20"></script>
   <script>
   /* ============================================================
