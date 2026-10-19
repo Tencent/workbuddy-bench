@@ -57,10 +57,10 @@ window.LEADERBOARD_DATA = {
           "scores": {
             "Claude Opus 5.5": "83.26%(think)",
             "Claude Opus 5": "80.54%(think)",
+            "DeepSeek-v4.1-flash-1017": "80.18%(think)",
             "GPT-5.6 Sol": "78.78%(think)",
             "Kimi K3": "77.14%(think)",
             "GLM-5.3": "76.93%(think)",
-            "DeepSeek-v4.1-flash": "76.91%(think)",
             "DeepSeek-V4-Pro": "76.82%(think)",
             "Hy4 preview": "75.80%(think)",
             "DeepSeek-v4-flash": "74.80%(think)",
@@ -356,11 +356,11 @@ window.LEADERBOARD_DATA = {
           "scores": {
             "Claude Opus 5.5": "76.24%(think)",
             "GLM-5.3": "75.36%(think)",
-            "DeepSeek-v4.1-flash": "74.00%(think)",
             "Hy4 preview": "72.76%(think)",
             "DeepSeek-v4-flash": "72.43%(think)",
             "DeepSeek-V4-Pro": "72.29%(think)",
             "Kimi K3": "72.00%(think)",
+            "DeepSeek-v4.1-flash-1017": "71.98%(think)",
             "GPT-5.6 Sol": "71.94%(think)",
             "Claude Opus 5": "71.86%(think)",
             "Claude Opus 4.8": "68.14%(think)",
@@ -416,12 +416,12 @@ window.LEADERBOARD_DATA = {
           "_source": "Aligned leaderboard stats: 50-case office set, 3 runs averaged, think mode; CodeBuddy Code results refreshed 2026-09-10.",
           "scores": {
             "Claude Opus 5.5": "85.24%(think)",
+            "DeepSeek-v4.1-flash-1017": "82.70%(think)",
             "Claude Opus 4.8": "82.37%(think)",
             "HY-3": "82.08%(think)",
             "GPT-5.5": "81.96%(think)",
             "Hy4 preview": "81.22%(think)",
             "Kimi K3": "81.04%(think)",
-            "DeepSeek-v4.1-flash": "80.77%(think)",
             "Kimi K2.7": "80.88%(think)",
             "GLM-5.3": "79.78%(think)",
             "GLM-5.2": "79.60%(think)",
@@ -433,7 +433,8 @@ window.LEADERBOARD_DATA = {
             "HY-3-preview": "76.44%(think)",
             "GPT-5.6 Sol": "73.59%(think)"
           },
-          // HY-3 breakdown matches the 2026-07-14 CBC rerun above.
+          // (DeepSeek-v4.1-flash-1017 replaces the earlier deepseek-v4.1-flash
+          // entry across all four tracks; 1016-checkpoint results, 2026-10-19.)          // HY-3 breakdown matches the 2026-07-14 CBC rerun above.
           "score_breakdown": {
             "rule_checks": {
               "Claude Opus 4.8": "82.03%",
@@ -486,7 +487,7 @@ window.LEADERBOARD_DATA = {
           // re-verification, 2026-10-17) — removed from scores/scores_cc and
           // TOKEN_STATS until confirmed.
           "scores": {
-            "DeepSeek-v4.1-flash": "69.54%(think)",
+            "DeepSeek-v4.1-flash-1017": "72.22%(think)",
             "Kimi K3": "67.61%(think)",
             "GLM-5.3": "66.52%(think)",
             "DeepSeek-v4-flash": "65.65%(think)",

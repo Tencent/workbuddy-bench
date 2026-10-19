@@ -17,7 +17,7 @@ window.WB_ROSTER = [
   { key: "GLM-5.3",           label: "GLM-5.3",           vendor: "Zhipu",     type: "open",        access: "CodeBuddy Code",               real: true  },
   { key: "GLM-5.2",           label: "GLM-5.2",           vendor: "Zhipu",     type: "open",        access: "CodeBuddy Code · Claude Code", real: true  },
   { key: "DeepSeek-V4-Pro",   label: "DeepSeek-V4-Pro",   vendor: "DeepSeek",  type: "open",        access: "CodeBuddy Code · Claude Code", real: true  },
-  { key: "DeepSeek-v4.1-flash", label: "DeepSeek-V4.1-Flash", vendor: "DeepSeek", type: "open",        access: "CodeBuddy Code",               real: true  },
+  { key: "DeepSeek-v4.1-flash-1017", label: "DeepSeek-V4.1-Flash-1017", vendor: "DeepSeek", type: "open", access: "CodeBuddy Code",          real: true  },
   { key: "DeepSeek-v4-flash", label: "DeepSeek-V4-Flash", vendor: "DeepSeek",  type: "open",        access: "CodeBuddy Code · Claude Code", real: true  },
   { key: "MiniMax-M3",        label: "MiniMax-M3",        vendor: "MiniMax",   type: "open",        access: "CodeBuddy Code · Claude Code", real: true  },
   { key: "HY-3",              label: "HY-3",              vendor: "Tencent",   brand: "Hunyuan", type: "open", access: "CodeBuddy Code · Claude Code", real: true  },
