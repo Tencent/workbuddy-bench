@@ -49,8 +49,15 @@ class DatasetRuntimeContract:
     def delivery_for_harness(self, harness_name: str) -> str:
         return self.harness_delivery_by_harness.get(harness_name, self.harness_delivery)
 
-    def requires_split_mount_for(self, harness_name: str) -> bool:
-        return self.requires_harness_mount or self.delivery_for_harness(harness_name) == "split-mount"
+    def requires_split_mount_for(self, harness_name: str, *, harness_has_mount: bool = False) -> bool:
+        delivery = self.delivery_for_harness(harness_name)
+        # Harness-free task images carry no agent, so a harness that ships a
+        # mount image needs it even when the dataset does not list it by name.
+        return (
+            self.requires_harness_mount
+            or delivery == "split-mount"
+            or (harness_has_mount and delivery == "harness-free")
+        )
 
     def to_manifest(self, repo_root: Path | None = None) -> dict[str, Any]:
         data: dict[str, Any] = {

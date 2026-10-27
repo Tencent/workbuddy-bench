@@ -910,7 +910,9 @@ def resolve_manifest(
     )
 
     dataset_runtime = load_dataset_runtime_contract(dataset, repo_root=_repo_root())
-    dataset_requires_mount = dataset_runtime.requires_split_mount_for(harness_name)
+    dataset_requires_mount = dataset_runtime.requires_split_mount_for(
+        harness_name, harness_has_mount=bool(harness.get("mount"))
+    )
     backend_for_mount = "local"
     if dataset_requires_mount:
         validate_harness_mount_available(

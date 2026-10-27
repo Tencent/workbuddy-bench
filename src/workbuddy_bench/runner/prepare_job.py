@@ -400,8 +400,10 @@ def compose_job_config(
     if dataset_for_runtime:
         dataset_runtime = load_dataset_runtime_contract(dataset_for_runtime, repo_root=_repo_root())
     harness_name = harness.get("name", "")
-    dataset_requires_mount = dataset_runtime.requires_split_mount_for(str(harness_name))
     harness_mount = harness.get("mount")
+    dataset_requires_mount = dataset_runtime.requires_split_mount_for(
+        str(harness_name), harness_has_mount=bool(harness_mount)
+    )
     if dataset_requires_mount:
         validate_harness_mount_available(
             harness,
