@@ -93,6 +93,9 @@ class HarborAttemptRuntime:
             tmp.write(transformed)
             tmp_path = Path(tmp.name)
         try:
+            # NamedTemporaryFile is 0600 and the copy keeps that mode, which a
+            # non-root verifier_user (bench default: dev) cannot read.
+            tmp_path.chmod(0o644)
             await self.environment.upload_file(tmp_path, f"{self.tests_dir}/verifier.py")
         finally:
             tmp_path.unlink(missing_ok=True)
