@@ -166,11 +166,15 @@ function columnMaxima(summary) {
 // ---- expanded row detail (per-model history across tracks) ----
 function detailRow(r, colSpan) {
   const m = r.model;
+  // Single "Harness" field: the harness that produced the scores shown in this
+  // card (= the active scaffold tab). The old "Harnesses"(roster access) +
+  // "Scaffold" pair read as a contradiction on the Claude Code tab
+  // ("Harnesses: CodeBuddy Code · Claude Code" next to "Scaffold: Claude Code");
+  // a model's supported harnesses are already implied by which tabs it appears on.
   const kv = [
     { k: "Vendor", v: m.vendor },
     { k: "Type", v: m.type === "open" ? "Open-weights" : "Proprietary" },
-    { k: "Harnesses", v: m.access },
-    { k: "Scaffold", v: SCAFFOLDS.find(s => s.key === SCAFFOLD).label },
+    { k: "Harness", v: SCAFFOLDS.find(s => s.key === SCAFFOLD).label },
   ];
   // Only the current scored snapshot is public (site is de-versioned) — show one
   // row per track for the model's latest score, never the internal dataset_version
