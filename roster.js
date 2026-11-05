@@ -12,13 +12,18 @@ window.WB_ROSTER = [
   // remain in data.js as history but are not displayed.
   { key: "Claude Opus 5.5",   label: "Claude Opus 5.5",   vendor: "Anthropic", type: "proprietary", access: "CodeBuddy Code",               real: true  },
   // --- open-weight models ---
+  { key: "Hy4-dev",             label: "Hy4-dev",             vendor: "Tencent",    brand: "Hunyuan", type: "open", access: "CodeBuddy Code",               real: true  },
+  { key: "Kimi K3.1-Pro",       label: "Kimi K3.1-Pro",       vendor: "Moonshot AI", type: "open",      access: "CodeBuddy Code",               real: true  },
   { key: "Hy4 preview",        label: "Hy4 preview",        vendor: "Tencent",   brand: "Hunyuan", type: "open", access: "CodeBuddy Code",               real: true  },
   { key: "Kimi K3",           label: "Kimi K3",           vendor: "Moonshot AI", type: "open",      access: "CodeBuddy Code",               real: true  },
   { key: "GLM-5.3",           label: "GLM-5.3",           vendor: "Zhipu",     type: "open",        access: "CodeBuddy Code",               real: true  },
   { key: "GLM-5.2",           label: "GLM-5.2",           vendor: "Zhipu",     type: "open",        access: "CodeBuddy Code · Claude Code", real: true  },
+  { key: "MiMo-V2.6-Pro",       label: "MiMo-V2.6-Pro",       vendor: "Xiaomi",     type: "open",      access: "CodeBuddy Code",               real: true  },
   { key: "DeepSeek-V4-Pro",   label: "DeepSeek-V4-Pro",   vendor: "DeepSeek",  type: "open",        access: "CodeBuddy Code · Claude Code", real: true  },
   { key: "DeepSeek-v4.1-flash-1017", label: "DeepSeek-V4.1-Flash-1017", vendor: "DeepSeek", type: "open", access: "CodeBuddy Code",          real: true  },
   { key: "DeepSeek-v4-flash", label: "DeepSeek-V4-Flash", vendor: "DeepSeek",  type: "open",        access: "CodeBuddy Code · Claude Code", real: true  },
+  { key: "MiniMax-M3.1-Flash", label: "MiniMax-M3.1-Flash", vendor: "MiniMax",  type: "open",       access: "CodeBuddy Code",               real: true  },
+  { key: "Step-5 Preview",      label: "Step-5 Preview",      vendor: "StepFun",    type: "open",      access: "CodeBuddy Code",               real: true  },
   { key: "MiniMax-M3",        label: "MiniMax-M3",        vendor: "MiniMax",   type: "open",        access: "CodeBuddy Code · Claude Code", real: true  },
   { key: "HY-3",              label: "HY-3",              vendor: "Tencent",   brand: "Hunyuan", type: "open", access: "CodeBuddy Code · Claude Code", real: true  },
 ];

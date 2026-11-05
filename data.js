@@ -14,9 +14,9 @@
 // (missing-trial reward counted as 0, matching the `scores` methodology).
 window.LEADERBOARD_DATA = {
   "_meta": {
-    "leaderboard_version": "v1.2",
-    "generated": "2026-10-15",
-    "last_verified": "2026-10-15"
+    "leaderboard_version": "v1.3",
+    "generated": "2026-11-05",
+    "last_verified": "2026-11-05"
   },
   "benchmarks": [
     {
@@ -58,12 +58,17 @@ window.LEADERBOARD_DATA = {
             "Claude Opus 5.5": "83.26%(think)",
             "Claude Opus 5": "80.54%(think)",
             "DeepSeek-v4.1-flash-1017": "80.18%(think)",
+            "Hy4-dev": "79.07%(think)",
             "GPT-5.6 Sol": "78.78%(think)",
             "Kimi K3": "77.14%(think)",
             "GLM-5.3": "76.93%(think)",
+            "Kimi K3.1-Pro": "76.91%(think)",
             "DeepSeek-V4-Pro": "76.82%(think)",
+            "Step-5 Preview": "76.18%(think)",
             "Hy4 preview": "75.80%(think)",
+            "MiMo-V2.6-Pro": "75.29%(think)",
             "DeepSeek-v4-flash": "74.80%(think)",
+            "MiniMax-M3.1-Flash": "74.62%(think)",
             "Claude Opus 4.8": "74.43%(think)",
             "GPT-5.5": "72.90%(think)",
             "GLM-5.2": "71.54%(think)",
@@ -356,15 +361,20 @@ window.LEADERBOARD_DATA = {
           "scores": {
             "Claude Opus 5.5": "76.24%(think)",
             "GLM-5.3": "75.36%(think)",
+            "Hy4-dev": "74.10%(think)",
             "Hy4 preview": "72.76%(think)",
+            "Kimi K3.1-Pro": "72.71%(think)",
             "DeepSeek-v4-flash": "72.43%(think)",
             "DeepSeek-V4-Pro": "72.29%(think)",
             "Kimi K3": "72.00%(think)",
             "DeepSeek-v4.1-flash-1017": "71.98%(think)",
             "GPT-5.6 Sol": "71.94%(think)",
             "Claude Opus 5": "71.86%(think)",
+            "Step-5 Preview": "71.52%(think)",
+            "MiniMax-M3.1-Flash": "69.79%(think)",
             "Claude Opus 4.8": "68.14%(think)",
             "HY-3": "67.71%(think)",
+            "MiMo-V2.6-Pro": "67.62%(think)",
             "GLM-5.2": "67.43%(think)",
             "GPT-5.5": "61.14%(think)",
             "MiniMax-M3": "58.00%(think)",
@@ -415,8 +425,11 @@ window.LEADERBOARD_DATA = {
           "notes": "HIGH confidence",
           "_source": "Aligned leaderboard stats: 50-case office set, 3 runs averaged, think mode; CodeBuddy Code results refreshed 2026-09-10.",
           "scores": {
+            "Kimi K3.1-Pro": "86.42%(think)",
             "Claude Opus 5.5": "85.24%(think)",
+            "Hy4-dev": "84.65%(think)",
             "DeepSeek-v4.1-flash-1017": "82.70%(think)",
+            "MiniMax-M3.1-Flash": "82.40%(think)",
             "Claude Opus 4.8": "82.37%(think)",
             "HY-3": "82.08%(think)",
             "GPT-5.5": "81.96%(think)",
@@ -425,12 +438,14 @@ window.LEADERBOARD_DATA = {
             "Kimi K2.7": "80.88%(think)",
             "GLM-5.3": "79.78%(think)",
             "GLM-5.2": "79.60%(think)",
+            "Step-5 Preview": "79.06%(think)",
             "Kimi K2.6": "78.98%(think)",
             "MiniMax-M3": "78.28%(think)",
             "Claude Opus 5": "77.95%(think)",
             "DeepSeek-V4-Pro": "77.83%(think)",
             "DeepSeek-v4-flash": "77.44%(think)",
             "HY-3-preview": "76.44%(think)",
+            "MiMo-V2.6-Pro": "75.66%(think)",
             "GPT-5.6 Sol": "73.59%(think)"
           },
           // (DeepSeek-v4.1-flash-1017 replaces the earlier deepseek-v4.1-flash
@@ -487,17 +502,22 @@ window.LEADERBOARD_DATA = {
           // re-verification, 2026-10-17) — removed from scores/scores_cc and
           // TOKEN_STATS until confirmed.
           "scores": {
+            "Hy4-dev": "73.16%(think)",
             "DeepSeek-v4.1-flash-1017": "72.22%(think)",
+            "Kimi K3.1-Pro": "68.36%(think)",
             "Kimi K3": "67.61%(think)",
             "GLM-5.3": "66.52%(think)",
+            "Step-5 Preview": "66.31%(think)",
             "DeepSeek-v4-flash": "65.65%(think)",
             "HY-3": "64.50%(think)",
             "GPT-5.5": "64.39%(think)",
             "Claude Opus 4.8": "64.37%(think)",
+            "MiMo-V2.6-Pro": "64.37%(think)",
             "HY-3-preview": "64.17%(think)",
             "DeepSeek-V4-Pro": "62.61%(think)",
             "Gemini-3.5-Flash": "59.37%(think)",
             "Hy4 preview": "58.08%(think)",
+            "MiniMax-M3.1-Flash": "57.11%(think)",
             "Kimi K2.6": "54.50%(think)"
           },
           "scores_cc": {

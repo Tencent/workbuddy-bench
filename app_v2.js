@@ -79,6 +79,8 @@ const VENDOR_COLOR = {
   Tencent: "#0052d9", Alibaba: "#ff6a00", MiniMax: "#e0405e", Moonshot: "#16191E",
   "Moonshot AI": "#16191E", // roster vendor string — alias of Moonshot
   Hunyuan: "#0055e9", Google: "#4285F4",
+  Xiaomi: "#FF6900",   // official brand orange (MiMo models)
+  StepFun: "#16191E", // dark brand mark; letter fallback until an official SVG path is on hand
 };
 // Official brand marks — real paths fetched from simple-icons (MIT) / official brand SVGs.
 // Rendered white on the vendor-color badge. {d, vb} — vb is the source viewBox.
@@ -296,8 +298,8 @@ function renderSummary() {
       zh: `评测固定在特定 harness 构建上 —— codebuddy-code:2.109.3 与 claude-code:2.1.187；随 harness 版本演进，指标可能变化。` },
     { en: `The HY (Hunyuan) endpoint in this evaluation is served first-party by its provider; the other models are accessed through third-party serving endpoints, whose parameter configuration and request handling may affect metrics.`,
       zh: `本次评测中 HY（混元）端点由其提供方第一方部署；其余模型通过第三方推理端点接入，第三方的参数配置与请求处理可能影响指标。` },
-    { en: `This is the Leaderboard metrics snapshot v1.2, updated on October 15, 2026. It is a research preview intended solely for research purposes and will continue to evolve with models and harnesses.`,
-      zh: `当前为 Leaderboard 指标快照 v1.2，更新于 2026 年 10 月 15 日。本榜单为 research preview，仅供研究用途，后续将随模型与评测框架持续演进。` },
+    { en: `This is the Leaderboard metrics snapshot v1.3, updated on November 5, 2026. It is a research preview intended solely for research purposes and will continue to evolve with models and harnesses.`,
+      zh: `当前为 Leaderboard 指标快照 v1.3，更新于 2026 年 11 月 5 日。本榜单为 research preview，仅供研究用途，后续将随模型与评测框架持续演进。` },
   ];
   const note = `<ul class="lb-note-list">${noteLines.map(l => `<li class="lb-note-line"><span class="en">${l.en}</span><span class="zh">${l.zh}</span></li>`).join("")}</ul>`;
 
