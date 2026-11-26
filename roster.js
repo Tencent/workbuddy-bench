@@ -12,7 +12,7 @@ window.WB_ROSTER = [
   // remain in data.js as history but are not displayed.
   { key: "Claude Opus 5.5",   label: "Claude Opus 5.5",   vendor: "Anthropic", type: "proprietary", access: "CodeBuddy Code",               real: true  },
   // --- open-weight models ---
-  { key: "Hy4-dev",             label: "Hy4-dev",             vendor: "Tencent",    brand: "Hunyuan", type: "open", access: "CodeBuddy Code",               real: true  },
+  { key: "Hy4",             label: "Hy4",             vendor: "Tencent",    brand: "Hunyuan", type: "open", access: "CodeBuddy Code",               real: true  },
   { key: "Kimi K3.1-Pro",       label: "Kimi K3.1-Pro",       vendor: "Moonshot AI", type: "open",      access: "CodeBuddy Code",               real: true  },
   { key: "Hy4 preview",        label: "Hy4 preview",        vendor: "Tencent",   brand: "Hunyuan", type: "open", access: "CodeBuddy Code",               real: true  },
   { key: "Kimi K3",           label: "Kimi K3",           vendor: "Moonshot AI", type: "open",      access: "CodeBuddy Code",               real: true  },
@@ -25,7 +25,7 @@ window.WB_ROSTER = [
   { key: "MiniMax-M3.1-Flash", label: "MiniMax-M3.1-Flash", vendor: "MiniMax",  type: "open",       access: "CodeBuddy Code",               real: true  },
   { key: "Step-5 Preview",      label: "Step-5 Preview",      vendor: "StepFun",    type: "open",      access: "CodeBuddy Code",               real: true  },
   { key: "MiniMax-M3",        label: "MiniMax-M3",        vendor: "MiniMax",   type: "open",        access: "CodeBuddy Code · Claude Code", real: true  },
-  { key: "HY-3",              label: "HY-3",              vendor: "Tencent",   brand: "Hunyuan", type: "open", access: "CodeBuddy Code · Claude Code", real: true  },
+  { key: "Hy3",              label: "Hy3",              vendor: "Tencent",   brand: "Hunyuan", type: "open", access: "CodeBuddy Code · Claude Code", real: true  },
 ];
 
 window.WB_TRACKS = [

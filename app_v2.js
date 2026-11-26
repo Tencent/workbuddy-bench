@@ -101,7 +101,7 @@ const VENDOR_ICON = {
   // penguin — used for models tagged with brand:"Hunyuan" (see roster.js).
   Hunyuan: { vb: "0 0 24 24", d: "M12 0c6.627 0 12 5.373 12 12s-5.373 12-12 12S0 18.627 0 12 5.373 0 12 0zm1.652 1.123l-.01-.001c.533.097 1.023.233 1.41.404 6.084 2.683 7.396 9.214 1.601 14.338a3.781 3.781 0 01-5.337-.328 3.654 3.654 0 01-.884-3.044c-1.934.6-3.295 2.305-3.524 4.45-.204 1.912.324 4.044 2.056 5.634l.245.067C10.1 22.876 11.036 23 12 23c6.075 0 11-4.925 11-11 0-5.513-4.056-10.08-9.348-10.877zM2.748 6.21c-.178.269-.348.536-.51.803l-.235.394.078-.167A10.957 10.957 0 001 12c0 4.919 3.228 9.083 7.682 10.49l.214.065C3.523 18.528 2.84 14.149 6.47 8.68A2.234 2.234 0 102.748 6.21zm10.157-5.172c4.408 1.33 3.61 5.41 2.447 6.924-.86 1.117-2.922 1.46-3.708 2.238-.666.657-1.077 1.462-1.212 2.291A5.303 5.303 0 0112 12.258a5.672 5.672 0 001.404-11.169 10.51 10.51 0 00-.5-.052z" },
 };
-// brand overrides vendor for icon+color lookup (e.g. HY-3 is vended by
+// brand overrides vendor for icon+color lookup (e.g. Hy3 is vended by
 // Tencent but has its own logo/mark, distinct from the Tencent QQ penguin).
 function brandKey(m) { return m.brand || m.vendor; }
 function orgBadge(m) {
@@ -305,8 +305,10 @@ function renderSummary() {
       zh: `评测固定在特定 harness 构建上 —— codebuddy-code:2.109.3 与 claude-code:2.1.187；随 harness 版本演进，指标可能变化。` },
     { en: `The HY (Hunyuan) endpoint in this evaluation is served first-party by its provider; the other models are accessed through third-party serving endpoints, whose parameter configuration and request handling may affect metrics.`,
       zh: `本次评测中 HY（混元）端点由其提供方第一方部署；其余模型通过第三方推理端点接入，第三方的参数配置与请求处理可能影响指标。` },
-    { en: `This is the Leaderboard metrics snapshot v1.3, updated on November 5, 2026. It is a research preview intended solely for research purposes and will continue to evolve with models and harnesses.`,
-      zh: `当前为 Leaderboard 指标快照 v1.3，更新于 2026 年 11 月 5 日。本榜单为 research preview，仅供研究用途，后续将随模型与评测框架持续演进。` },
+    { en: `This is the Leaderboard metrics snapshot v1.3, updated on November 5, 2026.`,
+      zh: `当前为 Leaderboard 指标快照 v1.3，更新于 2026 年 11 月 5 日。` },
+    { en: `It is a research preview intended solely for research purposes and will continue to evolve with models and harnesses.`,
+      zh: `本榜单为 research preview，仅供研究用途，后续将随模型与评测框架持续演进。` },
   ];
   const note = `<ul class="lb-note-list">${noteLines.map(l => `<li class="lb-note-line"><span class="en">${l.en}</span><span class="zh">${l.zh}</span></li>`).join("")}</ul>`;
 
