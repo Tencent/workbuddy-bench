@@ -16,7 +16,7 @@ window.WB_ROSTER = [
   { key: "Qwen-4-Max",        label: "Qwen-4-Max",        vendor: "Alibaba",   type: "proprietary", access: "CodeBuddy Code",               real: true  },
   // --- open-weight models ---
   { key: "Hy4",             label: "Hy4",             vendor: "Tencent",    brand: "Hunyuan", type: "open", access: "CodeBuddy Code",               real: true  },
-  { key: "Hy4-Flash-dev",       label: "Hy4-Flash-dev",       vendor: "Tencent",    brand: "Hunyuan", type: "open", access: "CodeBuddy Code",               real: true  },
+  { key: "Hy4-Flash",           label: "Hy4-Flash",           vendor: "Tencent",    brand: "Hunyuan", type: "open", access: "CodeBuddy Code",               real: true  },
   { key: "Kimi K3.1-Pro",       label: "Kimi K3.1-Pro",       vendor: "Moonshot AI", type: "open",      access: "CodeBuddy Code",               real: true  },
   { key: "Hy4 preview",        label: "Hy4 preview",        vendor: "Tencent",   brand: "Hunyuan", type: "open", access: "CodeBuddy Code",               real: true  },
   { key: "Kimi K3",           label: "Kimi K3",           vendor: "Moonshot AI", type: "open",      access: "CodeBuddy Code",               real: true  },
