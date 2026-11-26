@@ -79,8 +79,11 @@ const VENDOR_COLOR = {
   Tencent: "#0052d9", Alibaba: "#ff6a00", MiniMax: "#e0405e", Moonshot: "#16191E",
   "Moonshot AI": "#16191E", // roster vendor string — alias of Moonshot
   Hunyuan: "#0055e9", Google: "#4285F4",
-  Xiaomi: "#FF6900",   // official brand orange (MiMo models)
-  StepFun: "#16191E", // dark brand mark; letter fallback until an official SVG path is on hand
+  Xiaomi: "transparent", StepFun: "#fff",
+};
+const VENDOR_LOGO = {
+  Xiaomi: "static/img/xiaomi.svg",
+  StepFun: "static/img/stepfun.svg",
 };
 // Official brand marks — real paths fetched from simple-icons (MIT) / official brand SVGs.
 // Rendered white on the vendor-color badge. {d, vb} — vb is the source viewBox.
@@ -104,10 +107,14 @@ function brandKey(m) { return m.brand || m.vendor; }
 function orgBadge(m) {
   const k = brandKey(m);
   const c = VENDOR_COLOR[k] || "#9aa1ab";
+  const logo = VENDOR_LOGO[k];
   const ic = VENDOR_ICON[k];
-  const inner = ic
-    ? `<svg viewBox="${ic.vb}" width="16" height="16" fill="#fff" aria-hidden="true"><path d="${ic.d}"/></svg>`
-    : escapeHtml((m.vendor || "?")[0]);
+  let inner = escapeHtml((m.vendor || "?")[0]);
+  if (logo) {
+    inner = `<img src="${logo}" width="20" height="20" alt="">`;
+  } else if (ic) {
+    inner = `<svg viewBox="${ic.vb}" width="16" height="16" fill="#fff" aria-hidden="true"><path d="${ic.d}"/></svg>`;
+  }
   return `<span class="org" style="background:${c}" title="${escapeHtml(m.vendor)}">${inner}</span>`;
 }
 function modelCell(m) {
