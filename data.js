@@ -58,6 +58,7 @@ window.LEADERBOARD_DATA = {
             "Claude Opus 5.5": "83.26%(think)",
             "Claude Opus 5": "80.54%(think)",
             "DeepSeek-v4.1-flash-1017": "80.18%(think)",
+            "Qwen-4-Max": "80.10%(think)",
             "Hy4": "79.07%(think)",
             "GPT-5.6 Sol": "78.78%(think)",
             "Kimi K3": "77.14%(think)",

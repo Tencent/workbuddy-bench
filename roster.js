@@ -11,8 +11,6 @@ window.WB_ROSTER = [
   // public board; older snapshots (Claude Opus 5 / 4.8, GPT-5.6 Sol, GPT-5.5)
   // remain in data.js as history but are not displayed.
   { key: "Claude Opus 5.5",   label: "Claude Opus 5.5",   vendor: "Anthropic", type: "proprietary", access: "CodeBuddy Code",               real: true  },
-  // Qwen-4-Max has no Code score in the 2026-11-24 chart set — it renders as
-  // partial coverage (Code = "—") and is marked with * on the Avg column.
   { key: "Qwen-4-Max",        label: "Qwen-4-Max",        vendor: "Alibaba",   type: "proprietary", access: "CodeBuddy Code",               real: true  },
   // --- open-weight models ---
   { key: "Hy4",             label: "Hy4",             vendor: "Tencent",    brand: "Hunyuan", type: "open", access: "CodeBuddy Code",               real: true  },
