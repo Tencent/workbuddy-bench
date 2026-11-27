@@ -79,11 +79,12 @@ const VENDOR_COLOR = {
   Tencent: "#0052d9", Alibaba: "#ff6a00", MiniMax: "#e0405e", Moonshot: "#16191E",
   "Moonshot AI": "#16191E", // roster vendor string — alias of Moonshot
   Hunyuan: "#0055e9", Google: "#4285F4",
-  Xiaomi: "transparent", StepFun: "#fff",
+  Xiaomi: "transparent", StepFun: "#fff", Qwen: "transparent",
 };
 const VENDOR_LOGO = {
   Xiaomi: "static/img/xiaomi.svg",
   StepFun: "static/img/stepfun.svg",
+  Qwen: "static/img/qwen-color.svg",
 };
 // Official brand marks — real paths fetched from simple-icons (MIT) / official brand SVGs.
 // Rendered white on the vendor-color badge. {d, vb} — vb is the source viewBox.

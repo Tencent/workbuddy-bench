@@ -11,7 +11,7 @@ window.WB_ROSTER = [
   // public board; older snapshots (Claude Opus 5 / 4.8, GPT-5.6 Sol, GPT-5.5)
   // remain in data.js as history but are not displayed.
   { key: "Claude Opus 5.5",   label: "Claude Opus 5.5",   vendor: "Anthropic", type: "proprietary", access: "CodeBuddy Code",               real: true  },
-  { key: "Qwen-4-Max",        label: "Qwen-4-Max",        vendor: "Alibaba",   type: "proprietary", access: "CodeBuddy Code",               real: true  },
+  { key: "Qwen4-Max",        label: "Qwen4-Max",        vendor: "Alibaba", brand: "Qwen",   type: "proprietary", access: "CodeBuddy Code",               real: true  },
   // --- open-weight models ---
   { key: "Hy4",             label: "Hy4",             vendor: "Tencent",    brand: "Hunyuan", type: "open", access: "CodeBuddy Code",               real: true  },
   { key: "Hy4-Flash",           label: "Hy4-Flash",           vendor: "Tencent",    brand: "Hunyuan", type: "open", access: "CodeBuddy Code",               real: true  },
